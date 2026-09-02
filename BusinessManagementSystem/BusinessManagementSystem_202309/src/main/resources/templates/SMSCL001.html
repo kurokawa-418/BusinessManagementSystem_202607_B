@@ -50,23 +50,29 @@
 
 		<main class="w-100 bg-light">
 			<div class="container bg-white border py-3 my-3">
-				<div class="card shadow bg-light">
+				<div class="card-body p-2" style="display: flex">
 
-					<div th:if="${message}" class="text-danger" th:text="${message}"></div>
+					<form th:action="@{/client/list}" method="get">
 
-					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
-					<div class="accordion">
-						<div class="card-body p-2" style="display: flex">
-							<div class="input-group mb-2 mx-2">
-								<span class="input-group-text">顧客番号</span>
-								<input type="text" aria-label="emNo" class="form-control" style="width: 100px">
-								<span class="input-group-text">顧客名</span>
-								<input type="text" class="form-control" style="width: 200px;">
-								<button type="button" class="btn btn-success border border-dark mb-2 mx-2"
-									style="color: white; background-color: cornflowerblue;">検索</button>
-							</div>
+						<div class="input-group mb-2 mx-2">
+
+							<span class="input-group-text">顧客番号</span>
+							<input type="text" name="clientId" class="form-control" style="width: 100px"
+								th:value="${clientId}">
+
+							<span class="input-group-text">顧客名</span>
+							<input type="text" name="clientName" class="form-control" style="width: 200px;"
+								th:value="${clientName}">
+
+							<button type="submit" class="btn btn-success border border-dark mb-2 mx-2"
+								style="color: white; background-color: cornflowerblue;">
+								検索
+							</button>
+
 						</div>
-					</div>
+
+					</form>
+
 				</div>
 
 				<!-- 登録、削除ボタン -->

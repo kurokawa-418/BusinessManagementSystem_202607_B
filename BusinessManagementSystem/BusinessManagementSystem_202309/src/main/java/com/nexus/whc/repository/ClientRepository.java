@@ -1,5 +1,6 @@
 package com.nexus.whc.repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -143,5 +144,28 @@ public class ClientRepository {
 				+ "WHERE client_id IN (" + placeholder + ")";
 
 		return jdbcTemplate.update(sql, clientIds.toArray());
+	}
+
+	public List<Map<String, Object>> searchClients(
+			String clientId, String clientName) {
+
+		StringBuilder sql = new StringBuilder(
+				"SELECT * FROM m_client WHERE delete_flg = 0 ");
+
+		List<Object> param = new ArrayList<>();
+
+		if (clientId != null && !clientId.isEmpty()) {
+			sql.append("AND client_id = ? ");
+			param.add(clientId);
+		}
+
+		if (clientName != null && !clientName.isEmpty()) {
+			sql.append("AND client_name LIKE ? ");
+			param.add("%" + clientName + "%");
+		}
+
+		sql.append("ORDER BY client_id");
+
+		return jdbcTemplate.queryForList(sql.toString(), param.toArray());
 	}
 }
