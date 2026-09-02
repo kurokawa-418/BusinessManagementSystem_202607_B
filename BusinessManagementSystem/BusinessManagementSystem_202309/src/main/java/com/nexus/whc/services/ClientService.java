@@ -82,4 +82,10 @@ public class ClientService {
 	public int deleteClients(List<Integer> clientIds) {
 		return clientRepository.deleteClients(clientIds);
 	}
+
+	public List<Map<String, Object>> searchClients(
+			String clientId, String clientName) {
+
+		return clientRepository.searchClients(clientId, clientName);
+	}
 }

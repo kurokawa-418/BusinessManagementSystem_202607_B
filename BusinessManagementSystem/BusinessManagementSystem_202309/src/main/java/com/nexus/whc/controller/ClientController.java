@@ -38,11 +38,16 @@ public class ClientController {
 	}
 
 	@GetMapping("/list")
-	public String clientList(Model model) {
+	public String clientList(
+			@RequestParam(name = "clientId", defaultValue = "") String clientId,
+			@RequestParam(name = "clientName", defaultValue = "") String clientName,
+			Model model) {
 
-		List<Map<String, Object>> clientList = clientService.findAllClient();
+		List<Map<String, Object>> clientList = clientService.searchClients(clientId, clientName);
 
 		model.addAttribute("clientList", clientList);
+		model.addAttribute("clientId", clientId);
+		model.addAttribute("clientName", clientName);
 
 		return "SMSCL001";
 	}
