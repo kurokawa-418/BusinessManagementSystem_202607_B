@@ -34,6 +34,10 @@ public class EmployeeController {
 		//顧客選択ダイアログ用
 		List<Map<String, Object>> clientList = employeeService.getClient();
 		model.addAttribute("client_list", clientList);
+		
+		List<Map<String, Object>> employeeList =
+                employeeService.searchEmployeeList();
+        model.addAttribute("employeeList", employeeList);
 
 		return "SMSEM001";
 	}
