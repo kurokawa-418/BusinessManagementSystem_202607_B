@@ -37,17 +37,29 @@ public class EmployeeService {
 		return employeeRepository.registEmployee(employeeForm);
 	}
 
-	public int registPaidVacation(String employeeId) {
-		return employeeRepository.registPaidVacation(employeeId);
+	public int registPaidVacation(EmployeeForm employeeForm) {
+		return employeeRepository.registPaidVacation(employeeForm);
 	}
 
 	public List<Map<String, Object>> checkEmployeeDuplicate(EmployeeForm employeeForm) {
 		return employeeRepository.checkEmployeeDuplicate(employeeForm);
 	}
 
+	public List<Map<String, Object>> searchEmployee(
+			String employeeId,
+			String employeeName,
+			String clientId,
+			String clientName) {
+		return employeeRepository.searchEmployee(employeeId,
+				employeeName,
+				clientId,
+				clientName);
+	}
+
 	public Map<String, Object> searchEmployeeById(String employeeId) {
 		return employeeRepository.searchEmployeeById(employeeId);
 	}
+
 	public List<Map<String, Object>> searchEmployeeList() {
 		return employeeRepository.searchEmployeeList();
 	}
@@ -57,8 +69,16 @@ public class EmployeeService {
 		return employeeRepository.updateEmployee(employeeForm);
 	}
 
+	public int updatePaidVacation(EmployeeForm employeeForm) {
+		return employeeRepository.updatePaidVacation(employeeForm);
+	}
+
 	// 削除
 	public int deleteEmployee(String employeeId, String updatedUser) {
 		return employeeRepository.deleteEmployee(employeeId, updatedUser);
+	}
+
+	public int deletePaidVacation(String employeeId, String updatedUser) {
+		return employeeRepository.deletePaidVacation(employeeId, updatedUser);
 	}
 }
