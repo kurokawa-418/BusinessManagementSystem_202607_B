@@ -2,103 +2,131 @@ package com.nexus.whc.form;
 
 public class EmployeeForm {
 
-	private String employeeId;
-	private String employeeName;
-	private String clientId;
-	private String clientName;
-	private String hourlyWage;
-	private String paidHolidayStd;
-	private String deleteFlg;
-	private String createdAt;
-	private String createdUser;
-	private String updatedAt;
-	private String updatedUser;
+    private String employeeId;
+    private String employeeName;
+    private String clientId;
+    private String clientName;
+    private String hourlyWage;
+    private String paidHolidayStd;
+    private String deleteFlg;
+    private String createdAt;
+    private String createdUser;
+    private String updatedAt;
+    private String updatedUser;
 
-	public String getEmployeeId() {
-		return employeeId;
-	}
+    private String year;
+    private String remaindThisYear;
+    private String remaindLastYear;
 
-	public void setEmployeeId(String employeeId) {
-		this.employeeId = employeeId;
-	}
+    public String getEmployeeId() {
+        return employeeId;
+    }
 
-	public String getEmployeeName() {
-		return employeeName;
-	}
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
 
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
-	}
+    public String getEmployeeName() {
+        return employeeName;
+    }
 
-	public String getClientId() {
-		return clientId;
-	}
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
-	}
+    public String getClientId() {
+        return clientId;
+    }
 
-	public String getClientName() {
-		return clientName;
-	}
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
-	}
+    public String getClientName() {
+        return clientName;
+    }
 
-	public String getHourlyWage() {
-		return hourlyWage;
-	}
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
 
-	public void setHourlyWage(String hourlyWage) {
-		this.hourlyWage = hourlyWage;
-	}
+    public String getHourlyWage() {
+        return hourlyWage;
+    }
 
-	public String getPaidHolidayStd() {
-		return paidHolidayStd;
-	}
+    public void setHourlyWage(String hourlyWage) {
+        this.hourlyWage = hourlyWage;
+    }
 
-	public void setPaidHolidayStd(String paidHolidayStd) {
-		this.paidHolidayStd = paidHolidayStd;
-	}
+    public String getPaidHolidayStd() {
+        return paidHolidayStd;
+    }
 
-	public String getDeleteFlg() {
-		return deleteFlg;
-	}
+    public void setPaidHolidayStd(String paidHolidayStd) {
+        this.paidHolidayStd = paidHolidayStd;
+    }
 
-	public void setDeleteFlg(String deleteFlg) {
-		this.deleteFlg = deleteFlg;
-	}
+    public String getDeleteFlg() {
+        return deleteFlg;
+    }
 
-	public String getCreatedAt() {
-		return createdAt;
-	}
+    public void setDeleteFlg(String deleteFlg) {
+        this.deleteFlg = deleteFlg;
+    }
 
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
-	}
+    public String getCreatedAt() {
+        return createdAt;
+    }
 
-	public String getCreatedUser() {
-		return createdUser;
-	}
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	public void setCreatedUser(String createdUser) {
-		this.createdUser = createdUser;
-	}
+    public String getCreatedUser() {
+        return createdUser;
+    }
 
-	public String getUpdatedAt() {
-		return updatedAt;
-	}
+    public void setCreatedUser(String createdUser) {
+        this.createdUser = createdUser;
+    }
 
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
 
-	public String getUpdatedUser() {
-		return updatedUser;
-	}
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-	public void setUpdatedUser(String updatedUser) {
-		this.updatedUser = updatedUser;
-	}
+    public String getUpdatedUser() {
+        return updatedUser;
+    }
+
+    public void setUpdatedUser(String updatedUser) {
+        this.updatedUser = updatedUser;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getRemaindThisYear() {
+        return remaindThisYear;
+    }
+
+    public void setRemaindThisYear(String remaindThisYear) {
+        this.remaindThisYear = remaindThisYear;
+    }
+
+    public String getRemaindLastYear() {
+        return remaindLastYear;
+    }
+
+    public void setRemaindLastYear(String remaindLastYear) {
+        this.remaindLastYear = remaindLastYear;
+    }
 }

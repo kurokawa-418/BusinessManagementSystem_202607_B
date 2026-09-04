@@ -23,7 +23,6 @@ public class EmployeeService {
 		this.employeeRepository = employeeRepository;
 	}
 
-
 	/**
 	 * 顧客選択ダイアログ
 	 */
@@ -33,29 +32,53 @@ public class EmployeeService {
 
 		return list;
 	}
-	
-	public List<Map<String, Object>> searchEmployeeList() {
-        return employeeRepository.searchEmployeeList();
-    }
-	
+
 	public int registEmployee(EmployeeForm employeeForm) {
 		return employeeRepository.registEmployee(employeeForm);
 	}
 
-    // 1件取得
-    public Map<String, Object> searchEmployee(String employeeId) {
-        return employeeRepository.searchEmployee(employeeId);
-    }
+	public int registPaidVacation(EmployeeForm employeeForm) {
+		return employeeRepository.registPaidVacation(employeeForm);
+	}
 
+	public List<Map<String, Object>> checkEmployeeDuplicate(EmployeeForm employeeForm) {
+		return employeeRepository.checkEmployeeDuplicate(employeeForm);
+	}
 
-    // 更新
-    public int updateEmployee(EmployeeForm employeeForm) {
-        return employeeRepository.updateEmployee(employeeForm);
-    }
+	public List<Map<String, Object>> searchEmployee(
+			String employeeId,
+			String employeeName,
+			String clientId,
+			String clientName) {
+		return employeeRepository.searchEmployee(employeeId,
+				employeeName,
+				clientId,
+				clientName);
+	}
 
+	public Map<String, Object> searchEmployeeById(String employeeId) {
+		return employeeRepository.searchEmployeeById(employeeId);
+	}
 
-    // 削除
-    public int deleteEmployee(String employeeId, String updatedUser) {
-        return employeeRepository.deleteEmployee(employeeId, updatedUser);
-    }
+	public List<Map<String, Object>> searchEmployeeList() {
+		return employeeRepository.searchEmployeeList();
+	}
+
+	// 更新
+	public int updateEmployee(EmployeeForm employeeForm) {
+		return employeeRepository.updateEmployee(employeeForm);
+	}
+
+	public int updatePaidVacation(EmployeeForm employeeForm) {
+		return employeeRepository.updatePaidVacation(employeeForm);
+	}
+
+	// 削除
+	public int deleteEmployee(String employeeId, String updatedUser) {
+		return employeeRepository.deleteEmployee(employeeId, updatedUser);
+	}
+
+	public int deletePaidVacation(String employeeId, String updatedUser) {
+		return employeeRepository.deletePaidVacation(employeeId, updatedUser);
+	}
 }
