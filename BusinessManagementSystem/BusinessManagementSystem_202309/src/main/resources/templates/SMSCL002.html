@@ -48,16 +48,22 @@
 		<object data="menu.html" type="text/html"></object>
 
 		<main class="w-100 h-100 bg-light">
+
 			<div class="container bg-white border py-3 my-3" style="max-width: 850px">
+
 				<form th:action="@{/client/regist}" th:object="${clientForm}" method="post">
+
+					<div th:if="${message}" class="text-danger mb-3" style="color: red;" th:text="${message}"></div>
 
 					<div class="input-group mb-3" style="max-width: 800px">
 
 						<span class="input-group-text">顧客番号</span>
-						<input type="text" class="form-control" style="width: 150px" th:field="*{clientId}">
+						<input type="text" class="form-control" style="width: 150px" th:field="*{clientId}"
+							th:readonly="${isUpdateMode}" maxlength="3" inputmode="numeric">
 
 						<span class="input-group-text">顧客名</span>
-						<input type="text" class="form-control" style="width: 150px" th:field="*{clientName}">
+						<input type="text" class="form-control" style="width: 150px" th:field="*{clientName}"
+							th:readonly="${isUpdateMode}" maxlength="50">
 
 					</div>
 
@@ -128,21 +134,31 @@
 						<input type="time" th:field="*{adjustRestTimeEnd}">
 					</div>
 					<p>備考</p>
-					<textarea style="width: 100%; height: 150px;" th:field="*{comment}"></textarea>
-					<button type="submit" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">
+					<textarea th:field="*{comment}" maxlength="100" style="width: 100%; height: 150px;"></textarea>
+					<button type="submit" th:if="${!isUpdateMode}" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;"
+						onclick="return confirm('登録します。よろしいですか？');">
 						登録
 					</button>
-				<button type="submit" th:formaction="@{/client/update}" class="btn border border-dark mb-3 my-3"
-					style="color: white; background-color: cornflowerblue;">
-					更新
-				</button>
-				<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-					style="color: white; background-color: cornflowerblue;">登録して次へ</button>
-				<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-					style="color: white; background-color: cornflowerblue;">削除</button>
-				<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-					style="color: white; background-color: cornflowerblue;">キャンセル</button>
+					<button type="submit" th:if="${isUpdateMode}" th:formaction="@{/client/update}"
+						class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;"
+						onclick="return confirm('更新します。よろしいですか？');">
+						更新
+					</button>
+					<button type="submit" th:if="${!isUpdateMode}" th:formaction="@{/client/regist-next}"
+						class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;">
+						登録して次へ
+					</button>
+					<button type="button" th:if="${isUpdateMode}" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;">
+						削除
+					</button>
+					<a th:href="@{/client/list}" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;"
+						onclick="return confirm('入力内容を破棄します。よろしいですか？');">
+						キャンセル
+					</a>
 				</form>
 			</div>
 		</main>

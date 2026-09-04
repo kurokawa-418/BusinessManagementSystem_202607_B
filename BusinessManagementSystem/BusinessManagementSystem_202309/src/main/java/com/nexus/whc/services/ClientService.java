@@ -84,8 +84,17 @@ public class ClientService {
 	}
 
 	public List<Map<String, Object>> searchClients(
-			String clientId, String clientName) {
+			String clientId, String clientName, int page) {
 
-		return clientRepository.searchClients(clientId, clientName);
+		return clientRepository.searchClients(clientId, clientName, page);
+	}
+
+	public int countClients(String clientId, String clientName) {
+		return clientRepository.countClients(clientId, clientName);
+	}
+
+	public boolean existsClient(Integer clientId, String clientName) {
+
+		return clientRepository.existsClient(clientId, clientName);
 	}
 }

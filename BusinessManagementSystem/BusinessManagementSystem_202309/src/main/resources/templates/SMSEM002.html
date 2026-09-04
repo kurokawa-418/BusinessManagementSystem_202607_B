@@ -45,21 +45,21 @@
 
 			<main class="w-100 h-100 bg-light">
 				<div class="container bg-white border py-3 my-3" style="width: 850px">
-
+					<form method="post" action="/employee/regist">
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">社員番号</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px">
 						<span class="input-group-text">社員氏名</span>
-						<input type="text" class="form-control" style="width: 150px">
+						<input type="text" name="employeeName" class="form-control" style="width: 150px">
 					</div>
 
 
 					<div class="input-group mb-3" style="width: 800px">
 						<span class="input-group-text">担当顧客番号</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="customerNumberField">
+						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px" id="customerNumberField">
 						<span class="input-group-text">担当顧客名</span>
 						<input type="text" class="form-control" style="width: 150px" id="customerNumberField">
-						<button type="button" class="btn btn-success border border-dark mb-2 mx-2" style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
+						<button type="button" name="clientName" class="btn btn-success border border-dark mb-2 mx-2" style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
 					</div>
 
 					<!-- ダイアログ -->
@@ -80,7 +80,7 @@
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
-						<input type="checkbox" id="inlineCheckbox1" value="option1" name="selectChecks">
+						<input type="checkbox" id="inlineCheckbox1" value="option1" name="hourlyWage">
 						<label class="form-check-label" for="inlineCheckbox1">時給</label>
 					</div>
 
@@ -94,9 +94,9 @@
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text"style="width: 90px">有給残日数</span>
 						<span class="input-group-text">当年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="paidLeaveDays" >
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="paidLeaveDays" name="remaindThisYear">
 						<span class="input-group-text">前年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" name="remaindLastYear">
 						<span class="input-group-text" style="width: 40px">日</span>
 					</div>
 
@@ -111,10 +111,18 @@
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
 					</div>
 						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">登録</button>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
+						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
 						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">登録して次へ</button>
+						</form>
+						<form method="post" action="/employee/delete">
+							<!-- ★追加：社員番号を削除処理へ渡す -->
+						<input type="hidden" name="employeeId" th:value="${employee != null ? employee.employee_id : ''}">
+							<!-- ★追加：更新ユーザーを渡す -->
+						<input type="hidden" name="updatedUser" value="">
 						<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">削除</button>
-						<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">キャンセル</button>
+						</form>
+						
+						<a href="/employee/list" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">キャンセル</a>
 				</div>
 			</main>
 	</div>
