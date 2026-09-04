@@ -204,4 +204,19 @@ public class ClientRepository {
 
 		return count != null && count > 0;
 	}
+
+	public boolean existsActiveClient(Integer clientId) {
+
+		String sql = "SELECT COUNT(*) "
+				+ "FROM m_client "
+				+ "WHERE client_id = ? "
+				+ "AND delete_flg = 0";
+
+		Integer count = jdbcTemplate.queryForObject(
+				sql,
+				Integer.class,
+				clientId);
+
+		return count != null && count > 0;
+	}
 }

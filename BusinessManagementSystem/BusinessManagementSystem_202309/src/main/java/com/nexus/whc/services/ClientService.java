@@ -97,4 +97,9 @@ public class ClientService {
 
 		return clientRepository.existsClient(clientId, clientName);
 	}
+
+	public boolean existsActiveClient(Integer clientId) {
+
+		return clientRepository.existsActiveClient(clientId);
+	}
 }

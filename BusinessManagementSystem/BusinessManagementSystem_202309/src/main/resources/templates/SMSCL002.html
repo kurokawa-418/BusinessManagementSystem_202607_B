@@ -154,11 +154,17 @@
 						style="color: white; background-color: cornflowerblue;">
 						削除
 					</button>
-					<a th:href="@{/client/list}" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;"
-						onclick="return confirm('入力内容を破棄します。よろしいですか？');">
+					<a th:if="${!isUpdateMode}" th:href="@{/client/list}"
+						onclick="return confirm('入力内容を破棄します。よろしいですか？');" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;">
 						キャンセル
 					</a>
+
+					<button type="submit" th:if="${isUpdateMode}" th:formaction="@{/client/cancel}"
+						onclick="return confirm('入力内容を破棄します。よろしいですか？');" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;">
+						キャンセル
+					</button>
 				</form>
 			</div>
 		</main>
