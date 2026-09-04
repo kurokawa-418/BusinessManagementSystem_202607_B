@@ -155,7 +155,8 @@
 						削除
 					</button>
 					<a th:href="@{/client/list}" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">
+						style="color: white; background-color: cornflowerblue;"
+						onclick="return confirm('入力内容を破棄します。よろしいですか？');">
 						キャンセル
 					</a>
 				</form>
