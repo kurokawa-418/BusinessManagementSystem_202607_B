@@ -54,89 +54,107 @@
 
 					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
 					<div class="accordion">
-						<div class="card-body p-2" style="display: flex">
-							<div class="input-group mb-2 mx-2" style="width: 600px">
-								<span class="input-group-text">ユーザID</span>
-								<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
-								<span class="input-group-text">ユーザ名</span>
-								<input type="text" class="form-control" style="width: 150px;">
+						<form method="get" action="/user/list">
+							<div class="card-body p-2" style="display: flex">
+								<div class="input-group mb-2 mx-2" style="width: 600px">
+									<span class="input-group-text">ユーザID</span>
+									<input type="text" name="user_id" aria-label="emNo" class="form-control"
+										style="width: 150px">
+									<span class="input-group-text">ユーザ名</span>
+									<input type="text" name="user_name" class="form-control" style="width: 150px;">
+								</div>
 							</div>
-						</div>
 
-						<div class="card-body p-2" style="display: flex">
-							<div class="input-group mb-2 mx-2" style="width: 300px">
-								<span class="input-group-text">権限</span>
-								<select name="permission" id="permission-select">
-									<option value="all">全て</option>
-									<option value="admin">管理者</option>
-									<option value="user">一般</option>
-								</select>
-							</div>
-						</div>
+							<div class="card-body p-2" style="display: flex">
 
-						<div class="card-body p-2" style="display: flex">
-							<div class="input-group mb-2 mx-2" style="width: 500px">
-								<span class="input-group-text">メールアドレス</span>
-								<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
-							</div>
-						</div>
+								<div class="input-group mb-2 mx-2" style="width: 300px">
+									<span class="input-group-text">権限</span>
+									<select name="permission" id="permission-select">
+										<option value="all">全て</option>
+										<option value="admin">管理者</option>
+										<option value="user">一般</option>
+									</select>
+									<div class="input-group mb-2 mx-2">
+										<span>メールアドレス</span>
+										<input type="text" name="mail_address">
+									</div>
 
-						<div class="card-body p-2" style="display: flex">
-							<button type="button" class="btn btn-success border border-dark mb-2 mx-2"
-								style="color: white; background-color: cornflowerblue">検索</button>
-						</div>
+									<button type="submit">検索</button>
+
+						</form>
+
+
+						新規登録
+						</a>
+
+					</div>
+
+				</div>
+
+				<div class="card-body p-2" style="display: flex">
+					<div class="input-group mb-2 mx-2" style="width: 500px">
+						<span class="input-group-text">メールアドレス</span>
+						<input type="text" name="mail_address" aria-label="emNo" class="form-control"
+							style="width: 150px">
 					</div>
 				</div>
+
 				<div class="card-body p-2" style="display: flex">
 					<button type="button" class="btn btn-success border border-dark mb-2 mx-2"
-						style="color: white; background-color: cornflowerblue;">新規登録</button>
-					<button type="button" class="btn btn-success border border-dark mb-2 mx-2"
-						style="color: white; background-color: cornflowerblue;">選択行削除</button>
+						style="color: white; background-color: cornflowerblue">検索</button>
 				</div>
-
-				<div class="text-nowrap table-responsive">
-					<table class="table table-sm table-striped table-bordered my-3" style="width: 600px">
-						<thead>
-							<tr bgcolor="royalblue" class="text-center" style="color: white">
-								<th scope="col" style="width: 20px"><input type="checkbox"></th>
-								<th scope="col" style="width: 45px">ユーザID</th>
-								<th scope="col" style="width: 120px">ユーザ名</th>
-								<th scope="col" style="width: 45px">権限</th>
-								<th scope="col" style="width: 200px">メールアドレス</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th class="text-center"><input type="checkbox"></th>
-								<th>nexus001</th>
-								<td><a href="SMSTCD00X5.html">ネクサス太郎</a></td>
-								<td class="text-center">管理者</td>
-								<th>t_nexus@nexus.com</th>
-							</tr>
-							<tr>
-								<th class="text-center"><input type="checkbox"></th>
-								<th>nexus002</th>
-								<td><a href="SMSTCD00X5.html">ネクサス次郎</a></td>
-								<td class="text-center">管理者</td>
-								<th>j_nexus@nexus.com</th>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="ms-5">
-					<a class="mx-3">←　前のページ</a>
-					<a class="mx-1">1</a>
-					<a class="mx-1">2</a>
-					<a class="mx-1">3</a>
-					<a class="mx-1">...</a>
-					<a class="mx-1">10</a>
-					<a class="mx-3">次のページ　→</a>
-				</div>
-
-
 			</div>
+	</div>
+	<div class="card-body p-2" style="display: flex">
+		<a href="/user/input" class="btn btn-success border border-dark mb-2 mx-2"
+			style="color: white; background-color: cornflowerblue;">新規登録</button>
+			<a href="/user/delete" class="btn btn-success border border-dark mb-2 mx-2"
+				style="color: white; background-color: cornflowerblue;">選択行削除</ahrefbutto>
+	</div>
 
-		</main>
+	<div class="text-nowrap table-responsive">
+		<table class="table table-sm table-striped table-bordered my-3" style="width: 600px">
+			<thead>
+				<tr bgcolor="royalblue" class="text-center" style="color: white">
+					<th scope="col" style="width: 20px"><input type="checkbox"></th>
+					<th scope="col" style="width: 45px">ユーザID</th>
+					<th scope="col" style="width: 120px">ユーザ名</th>
+					<th scope="col" style="width: 45px">権限</th>
+					<th scope="col" style="width: 200px">メールアドレス</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th class="text-center"><input type="checkbox"></th>
+					<th>nexus001</th>
+					<td><a href="SMSTCD00X5.html">ネクサス太郎</a></td>
+					<td class="text-center">管理者</td>
+					<th>t_nexus@nexus.com</th>
+				</tr>
+				<tr>
+					<th class="text-center"><input type="checkbox"></th>
+					<th>nexus002</th>
+					<td><a href="SMSTCD00X5.html">ネクサス次郎</a></td>
+					<td class="text-center">管理者</td>
+					<th>j_nexus@nexus.com</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="ms-5">
+		<a class="mx-3">←　前のページ</a>
+		<a class="mx-1">1</a>
+		<a class="mx-1">2</a>
+		<a class="mx-1">3</a>
+		<a class="mx-1">...</a>
+		<a class="mx-1">10</a>
+		<a class="mx-3">次のページ　→</a>
+	</div>
+
+
+	</div>
+
+	</main>
 	</div>
 	<script>
 		// Example starter JavaScript for disabling form submissions if there are invalid fields

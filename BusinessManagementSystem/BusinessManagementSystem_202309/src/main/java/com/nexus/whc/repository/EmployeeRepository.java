@@ -63,197 +63,86 @@ public class EmployeeRepository {
 				+ ") "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		Object[] param = {
+		return jdbcTemplate.update(
+				sql,
 				Integer.valueOf(employeeForm.getEmployeeId()),
 				employeeForm.getEmployeeName(),
 				Integer.valueOf(employeeForm.getClientId()),
 				employeeForm.getHourlyWage(),
-				Date.valueOf(employeeForm.getPaidHolidayStd().replace("/", "-")),
+				Date.valueOf(employeeForm.getPaidHolidayStd()),
 				Integer.valueOf(employeeForm.getDeleteFlg()),
 				LocalDateTime.now(),
 				employeeForm.getCreatedUser(),
 				LocalDateTime.now(),
-				employeeForm.getUpdatedUser()
-		};
-
-		return jdbcTemplate.update(sql, param);
-	}
-
-	public int registPaidVacation(EmployeeForm employeeForm) {
-
-		String sql = "INSERT INTO m_employee_paid_vacation ("
-				+ "employee_id, "
-				+ "year, "
-				+ "remaind_this_year, "
-				+ "remaind_last_year, "
-				+ "delete_flg, "
-				+ "created_at, "
-				+ "created_user, "
-				+ "updated_at, "
-				+ "updated_user"
-				+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-		Object[] param = {
-				Integer.valueOf(employeeForm.getEmployeeId()),
-				null,
-				null,
-				null,
-				0,
-				new java.sql.Timestamp(System.currentTimeMillis()),
-				employeeForm.getCreatedUser(),
-				new java.sql.Timestamp(System.currentTimeMillis()),
-				employeeForm.getUpdatedUser()
-		};
-		return jdbcTemplate.update(sql, param);
-	}
-
-	public List<Map<String, Object>> checkEmployeeDuplicate(
-			EmployeeForm employeeForm) {
-
-		String sql = "SELECT "
-				+ "employee_id "
-				+ "FROM m_employee "
-				+ "WHERE employee_id = ? "
-				+ "AND employee_name = ? "
-				+ "AND delete_flg = 0";
-
-		Object[] param = {
-				Integer.valueOf(employeeForm.getEmployeeId()),
-				employeeForm.getEmployeeName() };
-
-		return jdbcTemplate.queryForList(
-				sql, param);
-	}
-
-	public List<Map<String, Object>> searchEmployee(
-			String employeeId,
-			String employeeName,
-			String clientId,
-			String clientName) {
-
-		String sql = "SELECT "
-				+ "m_employee.employee_id, "
-				+ "m_employee.employee_name, "
-				+ "m_employee.client_id, "
-				+ "m_client.client_name, "
-				+ "m_employee.hourly_wage, "
-				+ "m_employee.paid_holiday_std, "
-				+ "m_employee_paid_vacation.remaind_this_year, "
-				+ "m_employee_paid_vacation.remaind_last_year, "
-				+ "t_work_leave_application.holiday_date, "
-				+ "t_work_leave_application.application_class "
-				+ "FROM m_employee "
-				+ "LEFT JOIN m_client "
-				+ "ON m_employee.client_id = m_client.client_id "
-				+ "LEFT JOIN m_employee_paid_vacation "
-				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "AND m_employee_paid_vacation.year = YEAR(CURDATE()) "
-				+ "LEFT JOIN t_work_leave_application "
-				+ "ON m_employee.employee_id = t_work_leave_application.employee_id "
-				+ "AND t_work_leave_application.holiday_date "
-				+ "BETWEEN DATE_SUB(m_employee.paid_holiday_std, INTERVAL 1 YEAR) "
-				+ "AND DATE_ADD(m_employee.paid_holiday_std, INTERVAL 1 YEAR) "
-				+ "WHERE m_employee.delete_flg = 0 "
-				+ "AND m_employee.employee_id = ? "
-				+ "AND m_employee.employee_name LIKE ? "
-				+ "AND m_employee.client_id = ? "
-				+ "AND m_client.client_name LIKE ?";
-
-		Object[] param = {
-				Integer.valueOf(employeeId),
-				"%" + employeeName + "%",
-				Integer.valueOf(clientId),
-				"%" + clientName + "%"
-		};
-
-		return jdbcTemplate.queryForList(sql, param);
-	}
-
-	public Map<String, Object> searchEmployeeById(String employeeId) {
-
-		String sql = "SELECT "
-				+ "m_employee.employee_id, "
-				+ "m_employee.employee_name, "
-				+ "m_employee.client_id, "
-				+ "m_client.client_name, "
-				+ "m_employee.hourly_wage, "
-				+ "m_employee.paid_holiday_std, "
-				+ "m_employee_paid_vacation.remaind_this_year, "
-				+ "m_employee_paid_vacation.remaind_last_year "
-				+ "FROM m_employee "
-				+ "LEFT JOIN m_client "
-				+ "ON m_employee.client_id = m_client.client_id "
-				+ "LEFT JOIN m_employee_paid_vacation "
-				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "WHERE m_employee.employee_id = ? "
-				+ "AND m_employee.delete_flg = 0";
-
-		Object[] param = { Integer.valueOf(employeeId) };
-
-		return jdbcTemplate.queryForMap(sql, param);
+				employeeForm.getUpdatedUser());
 	}
 
 	public List<Map<String, Object>> searchEmployeeList() {
 
 		String sql = "SELECT "
-				+ "m_employee.employee_id, "
-				+ "m_employee.employee_name, "
-				+ "m_employee.client_id, "
-				+ "m_client.client_name, "
-				+ "m_employee.hourly_wage, "
-				+ "m_employee.paid_holiday_std, "
-				+ "m_employee_paid_vacation.remaind_this_year, "
-				+ "m_employee_paid_vacation.remaind_last_year "
+				+ "employee_id, "
+				+ "employee_name, "
+				+ "client_id, "
+				+ "client_name, "
+				+ "hourly_wage, "
+				+ "paid_holiday_std, "
+				+ "delete_flg, "
+				+ "created_at, "
+				+ "created_user, "
+				+ "updated_at, "
+				+ "updated_user "
 				+ "FROM m_employee "
-				+ "LEFT JOIN m_client "
-				+ "ON m_employee.client_id = m_client.client_id "
-				+ "LEFT JOIN m_employee_paid_vacation "
-				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "AND m_employee.delete_flg = 0";
+				+ "WHERE delete_flg = 0 "
+				+ "ORDER BY employee_id";
 
 		return jdbcTemplate.queryForList(sql);
+	}
+
+	public Map<String, Object> searchEmployee(String employeeId) {
+
+		String sql = "SELECT "
+				+ "employee_id, "
+				+ "employee_name, "
+				+ "client_id, "
+				+ "client_name, "
+				+ "hourly_wage, "
+				+ "paid_holiday_std, "
+				+ "delete_flg, "
+				+ "created_at, "
+				+ "created_user, "
+				+ "updated_at, "
+				+ "updated_user "
+				+ "FROM m_employee "
+				+ "WHERE employee_id = ? "
+				+ "AND delete_flg = 0";
+
+		return jdbcTemplate.queryForMap(
+				sql,
+				Integer.valueOf(employeeId));
 	}
 
 	public int updateEmployee(EmployeeForm employeeForm) {
 
 		String sql = "UPDATE m_employee SET "
+				+ "employee_name = ?, "
 				+ "client_id = ?, "
+				+ "client_name = ?, "
 				+ "hourly_wage = ?, "
 				+ "paid_holiday_std = ?, "
 				+ "updated_at = ?, "
 				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
-				+ "AND delete_flg = false";
+				+ "WHERE employee_id = ?";
 
-		Object[] param = {
+		return jdbcTemplate.update(
+				sql,
 				employeeForm.getEmployeeName(),
 				Integer.valueOf(employeeForm.getClientId()),
+				employeeForm.getClientName(),
 				employeeForm.getHourlyWage(),
 				Date.valueOf(employeeForm.getPaidHolidayStd()),
 				LocalDateTime.now(),
 				employeeForm.getUpdatedUser(),
-				Integer.valueOf(employeeForm.getEmployeeId()) };
-		return jdbcTemplate.update(sql, param);
-	}
-
-	public int updatePaidVacation(EmployeeForm employeeForm) {
-
-		String sql = "UPDATE m_employee_paid_vacation SET "
-				+ "remaind_this_year = ?, "
-				+ "remaind_last_year = ?, "
-				+ "updated_at = ?, "
-				+ "updated_user = ? "
-				+ "WHERE employee_id = ? "
-				+ "AND delete_flg = 0";
-
-		Object[] param = {
-				null,
-				null,
-				LocalDateTime.now(),
-				employeeForm.getUpdatedUser(),
-				Integer.valueOf(employeeForm.getEmployeeId())
-		};
-		return jdbcTemplate.update(sql, param);
+				Integer.valueOf(employeeForm.getEmployeeId()));
 	}
 
 	public int deleteEmployee(String employeeId, String updatedUser) {
@@ -262,32 +151,12 @@ public class EmployeeRepository {
 				+ "delete_flg = 1, "
 				+ "updated_at = ?, "
 				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
-				+ "AND delete_flg = 0";
+				+ "WHERE employee_id = ?";
 
-		Object[] param = {
+		return jdbcTemplate.update(
+				sql,
 				LocalDateTime.now(),
 				updatedUser,
-				Integer.valueOf(employeeId) };
-		return jdbcTemplate.update(sql, param);
-	}
-
-	public int deletePaidVacation(String employeeId, String updatedUser) {
-
-		String sql = "UPDATE m_employee_paid_vacation SET "
-				+ "delete_flg = 1, "
-				+ "updated_at = ?, "
-				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
-				+ "AND year = ?"
-				+ "AND delete_flg = 0";
-
-		Object[] param = {
-				LocalDateTime.now(),
-				updatedUser,
-				Integer.valueOf(employeeId),
-				null
-		};
-		return jdbcTemplate.update(sql, param);
+				Integer.valueOf(employeeId));
 	}
 }
