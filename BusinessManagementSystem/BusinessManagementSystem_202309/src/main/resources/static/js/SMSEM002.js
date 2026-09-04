@@ -1,7 +1,95 @@
-/**
- *
- */
-        function calculatePaidLeave() {
+function checkPaidHolidayStd() {
+
+    var input = document.getElementById("paidHolidayStd");
+    var error = document.getElementById("paidHolidayStdError");
+    var value = input.value.trim();
+
+    console.log("paidHolidayStd value = [" + value + "]");
+
+    if (value === "") {
+        error.hidden = true;
+        return true;
+    }
+
+    var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
+
+    if (!pattern.test(value)) {
+        error.hidden = false;
+        return false;
+    }
+
+    var parts = value.split("/");
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    var day = Number(parts[2]);
+
+    var date = new Date(year, month - 1, day);
+
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
+    ) {
+        error.hidden = false;
+        return false;
+    }
+
+    error.hidden = true;
+    return true;
+}
+// 有休残日数（当年度分）のフォーマットチェック
+function checkRemaindThisYear() {
+
+    var input = document.getElementById("remaindThisYear");
+    var error = document.getElementById("remaindThisYearError");
+
+    var value = input.value.trim();
+
+    // 空欄の場合は必須チェック側で処理する
+    if (value === "") {
+        error.hidden = true;
+        return true;
+    }
+
+    // DECIMAL用
+    var pattern = /^\d+(\.\d+)?$/;
+
+    if (!pattern.test(value)) {
+        error.hidden = false;
+        return false;
+    }
+
+    error.hidden = true;
+    return true;
+}
+
+
+// 有休残日数（前年度分）のフォーマットチェック
+function checkRemaindLastYear() {
+
+    var input = document.getElementById("remaindLastYear");
+    var error = document.getElementById("remaindLastYearError");
+
+    var value = input.value.trim();
+
+    // 空欄の場合は必須チェック側で処理する
+    if (value === "") {
+        error.hidden = true;
+        return true;
+    }
+
+    // DECIMAL用
+    var pattern = /^\d+(\.\d+)?$/;
+
+    if (!pattern.test(value)) {
+        error.hidden = false;
+        return false;
+    }
+
+    error.hidden = true;
+    return true;
+}
+function calculatePaidLeave() {
             // 基準日の入力値を取得
             var paidHolidayStd = new Date(document.getElementById("paidHolidayStd").value);
 
@@ -62,4 +150,14 @@
     }
 
     return status;
+}
+function checkAllFormat() {
+
+    var paidHolidayStdResult = checkPaidHolidayStd();
+    var remaindThisYearResult = checkRemaindThisYear();
+    var remaindLastYearResult = checkRemaindLastYear();
+
+    return paidHolidayStdResult
+        && remaindThisYearResult
+        && remaindLastYearResult;
 }

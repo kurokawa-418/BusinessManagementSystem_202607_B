@@ -67,7 +67,7 @@ public class EmployeeRepository {
 				Integer.valueOf(employeeForm.getEmployeeId()),
 				employeeForm.getEmployeeName(),
 				Integer.valueOf(employeeForm.getClientId()),
-				employeeForm.getHourlyWage(),
+				Integer.valueOf(employeeForm.getHourlyWage()),
 				Date.valueOf(employeeForm.getPaidHolidayStd().replace("/", "-")),
 				Integer.valueOf(employeeForm.getDeleteFlg()),
 				LocalDateTime.now(),
