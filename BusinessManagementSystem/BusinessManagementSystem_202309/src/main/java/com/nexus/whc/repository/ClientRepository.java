@@ -147,7 +147,7 @@ public class ClientRepository {
 	}
 
 	public List<Map<String, Object>> searchClients(
-			String clientId, String clientName) {
+			String clientId, String clientName, int page) {
 
 		StringBuilder sql = new StringBuilder(
 				"SELECT * FROM m_client WHERE delete_flg = 0 ");
@@ -164,8 +164,44 @@ public class ClientRepository {
 			param.add("%" + clientName + "%");
 		}
 
-		sql.append("ORDER BY client_id");
+		sql.append("ORDER BY client_id LIMIT 20 OFFSET ?");
+		param.add((page - 1) * 20);
 
 		return jdbcTemplate.queryForList(sql.toString(), param.toArray());
+	}
+
+	public int countClients(String clientId, String clientName) {
+
+		StringBuilder sql = new StringBuilder(
+				"SELECT COUNT(*) FROM m_client WHERE delete_flg = 0 ");
+
+		List<Object> param = new ArrayList<>();
+
+		if (clientId != null && !clientId.isEmpty()) {
+			sql.append("AND client_id = ? ");
+			param.add(clientId);
+		}
+
+		if (clientName != null && !clientName.isEmpty()) {
+			sql.append("AND client_name LIKE ? ");
+			param.add("%" + clientName + "%");
+		}
+
+		return jdbcTemplate.queryForObject(
+				sql.toString(), param.toArray(), Integer.class);
+	}
+
+	public boolean existsClient(Integer clientId, String clientName) {
+
+		String sql = "SELECT COUNT(*) FROM m_client "
+				+ "WHERE client_id = ? OR client_name = ?";
+
+		Integer count = jdbcTemplate.queryForObject(
+				sql,
+				Integer.class,
+				clientId,
+				clientName);
+
+		return count != null && count > 0;
 	}
 }
