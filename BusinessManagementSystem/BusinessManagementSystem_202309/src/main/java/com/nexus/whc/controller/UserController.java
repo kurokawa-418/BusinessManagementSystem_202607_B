@@ -1,5 +1,6 @@
+ 
 package com.nexus.whc.controller;
-
+ 
 import java.util.List;
 import java.util.Map;
 
@@ -17,40 +18,40 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nexus.whc.form.UserForm;
 import com.nexus.whc.services.UserService;
-
+ 
 /*
- * UserController.java
- * 
- * UserControllerクラス
- */
-
+* UserController.java
+* 
+* UserControllerクラス
+*/
+ 
 /*
- * Controllerクラス
- */
+* Controllerクラス
+*/
 @Controller
 @RequestMapping("/user")
 public class UserController {
 	private UserService userService;
-
+ 
 	@Autowired
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-
+ 
 	/*ユーザ情報入力画面Get用*/
 	@GetMapping("/input")
 	public String getUser() {
-
+ 
 		/*ユーザー情報入力画面に遷移*/
 		return "userInput";
 	}
-
+ 
 	/*ユーザー情報入力画面Post用*/
 	@PostMapping("/input")
 	public String postUser() {
 		return "userInput";
 	}
-
+ 
 	/*ユーザー一覧*/
 	@GetMapping("/list")
 	public String userList(
@@ -59,7 +60,7 @@ public class UserController {
 			@RequestParam(name = "permission", defaultValue = "") String authId,
 			@RequestParam(name = "mail_address", defaultValue = "") String mailAddress,
 			Model model) {
-
+ 
 		/*DB検索*/
 		List<Map<String, Object>> userlist = userService.searchList(userId, userName, authId, mailAddress);
 		if (userlist.isEmpty()) {
@@ -74,7 +75,7 @@ public class UserController {
 		/*ユーザーマスタ一覧画面に遷移*/
 		return "SMSUS001";
 	}
-
+ 
 	/*ユーザー登録(新規追加モード）*/
 	@PostMapping("/regist")
 	public String userRegist(@Validated @ModelAttribute UserForm userForm,
@@ -88,7 +89,7 @@ public class UserController {
 		// 登録結果
 		/*宣言＋初期値の設定＋Serviceの呼び出し*/
 		int result = userService.registUser(userForm);
-
+ 
 		if (0 == result) {
 			// エラーメッセージをフラッシュスコープに保存
 			attr.addFlashAttribute("message", "登録エラーが発生しました");
@@ -99,7 +100,7 @@ public class UserController {
 			return "redirect:/user/list";
 		}
 	}
-
+ 
 	/*削除*/
 	@PostMapping("/delete")
 	public String deleteUser(@RequestParam(required = false) List<Integer> sequenceId, RedirectAttributes attr) {
@@ -107,13 +108,13 @@ public class UserController {
 			attr.addFlashAttribute("message", "COM01W003");
 			return "redirect:/user/list";
 		}
-
+ 
 		for (Integer seqId : sequenceId) {
 			/*排他チェックメソッド呼び出し（削除、編集中）*/
 			userService.deleteUser(seqId);
 		}
-
+ 
 		return "redirect:/user/list";
-
+ 
 	}
 }

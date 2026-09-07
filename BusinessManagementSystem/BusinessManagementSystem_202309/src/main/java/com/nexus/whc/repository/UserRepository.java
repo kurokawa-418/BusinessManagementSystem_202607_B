@@ -1,5 +1,6 @@
+ 
 package com.nexus.whc.repository;
-
+ 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,25 +9,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.nexus.whc.form.UserForm;
-
+ 
 /*
 *UserRepository.java
 *
 **UserRepositoryクラス*/
-
+ 
 /*
 * Repositoryクラス
 */
 public class UserRepository {
 	/* JdbcTemplate */
 	private final JdbcTemplate jdbcTemplate;
-
+ 
 	/* UserRepositoryクラス */
 	@Autowired
 	public UserRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
-
+ 
 	/*ユーザ一覧検索*/
 	/*一部の情報でも検索可*/
 	public List<Map<String, Object>> searchList(
@@ -38,7 +39,7 @@ public class UserRepository {
 				+ "FROM m_user "
 				+ "WHERE delete_flg = 0");
 		List<Object> param = new ArrayList<>();
-
+ 
 		if (!userId.isEmpty()) {
 			sql.append(" AND user_id LIKE ?");
 			param.add("%" + userId + "%");
@@ -60,7 +61,7 @@ public class UserRepository {
 		/*Serviceに返す*/
 		return list;
 	}
-
+ 
 	/*登録*/
 	public int registUser(UserForm userForm) {
 		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address)"
@@ -72,14 +73,14 @@ public class UserRepository {
 				userForm.getMailAddress() };
 		return jdbcTemplate.update(sql, param);
 	}
-
+ 
 	/*一覧から削除*/
 	public void deleteUser(int seqId) {
-
+ 
 		String sql = "DELETE FROM m_user WHERE seq_id = ?";
 		Object[] param = { seqId };
-
+ 
 		jdbcTemplate.update(sql, param);
 	}
-
+ 
 }

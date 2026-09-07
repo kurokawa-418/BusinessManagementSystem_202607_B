@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-
+ 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +17,7 @@
 	<script src="../js/index.js"></script>
 	<title>WHC:ユーザーマスタ一覧</title>
 </head>
-
+ 
 <body>
 	<header>
 		<!--        ヘッダー部分は、Tymeleafで共通化すること-->
@@ -26,7 +26,7 @@
 				<span class="ml-1" style="color: white; font-size: 1.0em; font-weight: bold;">労働時間計算システム </span></a>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto"></ul>
-
+ 
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -43,15 +43,15 @@
 			</div>
 		</nav>
 	</header>
-
+ 
 	<div class="d-flex flex-row" style="height: 1000px">
-
+ 
 		<div th:replace="~{menu::menu}"></div>
-
+ 
 		<main class="w-100 bg-light">
 			<div class="container bg-white border py-3 my-3">
 				<div class="card shadow bg-light">
-
+ 
 					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
 					<div class="accordion">
 						<form method="get" action="/user/list">
@@ -64,9 +64,9 @@
 									<input type="text" name="user_name" class="form-control" style="width: 150px;">
 								</div>
 							</div>
-
+ 
 							<div class="card-body p-2" style="display: flex">
-
+ 
 								<div class="input-group mb-2 mx-2" style="width: 300px">
 									<span class="input-group-text">権限</span>
 									<select name="permission" id="permission-select">
@@ -74,11 +74,11 @@
 										<option value="admin">管理者</option>
 										<option value="user">一般</option>
 									</select>
-
+ 
 								</div>
-
+ 
 							</div>
-
+ 
 							<div class="card-body p-2" style="display: flex">
 								<div class="input-group mb-2 mx-2" style="width: 500px">
 									<span class="input-group-text">メールアドレス</span>
@@ -86,7 +86,7 @@
 										style="width: 150px">
 								</div>
 							</div>
-
+ 
 							<div class="card-body p-2" style="display: flex">
 								<button type="submit" class="btn btn-success border border-dark mb-2 mx-2"
 									style="color: white; background-color: cornflowerblue">検索</button>
@@ -137,10 +137,10 @@
 					<a class="mx-1">10</a>
 					<a class="mx-3">次のページ　→</a>
 				</div>
-
-
+ 
+ 
 			</div>
-
+ 
 		</main>
 	</div>
 	<script>
@@ -182,5 +182,5 @@
 		flatpickr('.flatpickr', config);
 	</script>
 </body>
-
+ 
 </html>
