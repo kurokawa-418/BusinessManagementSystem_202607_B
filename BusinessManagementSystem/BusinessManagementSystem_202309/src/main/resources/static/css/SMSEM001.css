@@ -31,6 +31,4 @@ info::before{
     max-height: calc(33px * 12);
     overflow-y: scroll;
     }
-.class{
-	color: red;
-}
+

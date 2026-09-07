@@ -147,29 +147,6 @@ public class ClientRepository {
 	}
 
 	public List<Map<String, Object>> searchClients(
-			String clientId, String clientName) {
-
-		StringBuilder sql = new StringBuilder(
-				"SELECT * FROM m_client WHERE delete_flg = 0 ");
-
-		List<Object> param = new ArrayList<>();
-
-		if (clientId != null && !clientId.isEmpty()) {
-			sql.append("AND client_id = ? ");
-			param.add(clientId);
-		}
-
-		if (clientName != null && !clientName.isEmpty()) {
-			sql.append("AND client_name LIKE ? ");
-			param.add("%" + clientName + "%");
-		}
-
-		sql.append("ORDER BY client_id");
-
-		return jdbcTemplate.queryForList(sql.toString(), param.toArray());
-	}
-
-	public List<Map<String, Object>> searchClients(
 			String clientId, String clientName, int page) {
 
 		StringBuilder sql = new StringBuilder(
@@ -187,19 +164,13 @@ public class ClientRepository {
 			param.add("%" + clientName + "%");
 		}
 
-		sql.append("ORDER BY client_id ");
-		sql.append("LIMIT 20 OFFSET ?");
+		sql.append("ORDER BY client_id LIMIT 20 OFFSET ?");
+		param.add((page - 1) * 20);
 
-		int offset = (page - 1) * 20;
-		param.add(offset);
-
-		return jdbcTemplate.queryForList(
-				sql.toString(),
-				param.toArray());
+		return jdbcTemplate.queryForList(sql.toString(), param.toArray());
 	}
 
-	public int countClients(
-			String clientId, String clientName) {
+	public int countClients(String clientId, String clientName) {
 
 		StringBuilder sql = new StringBuilder(
 				"SELECT COUNT(*) FROM m_client WHERE delete_flg = 0 ");
@@ -216,21 +187,14 @@ public class ClientRepository {
 			param.add("%" + clientName + "%");
 		}
 
-		Integer count = jdbcTemplate.queryForObject(
-				sql.toString(),
-				Integer.class,
-				param.toArray());
-
-		return count == null ? 0 : count;
+		return jdbcTemplate.queryForObject(
+				sql.toString(), param.toArray(), Integer.class);
 	}
 
-	public boolean existsClient(
-			Integer clientId, String clientName) {
+	public boolean existsClient(Integer clientId, String clientName) {
 
-		String sql = "SELECT COUNT(*) "
-				+ "FROM m_client "
-				+ "WHERE client_id = ? "
-				+ "OR client_name = ?";
+		String sql = "SELECT COUNT(*) FROM m_client "
+				+ "WHERE client_id = ? OR client_name = ?";
 
 		Integer count = jdbcTemplate.queryForObject(
 				sql,

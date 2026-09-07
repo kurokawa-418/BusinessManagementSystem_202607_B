@@ -41,12 +41,8 @@ public class EmployeeService {
 		return employeeRepository.registPaidVacation(employeeForm);
 	}
 
-	public boolean checkEmployeeDuplicate(EmployeeForm employeeForm) {
-
-	    List<Map<String, Object>> result =
-	            employeeRepository.checkEmployeeDuplicate(employeeForm);
-
-	    return !result.isEmpty();
+	public List<Map<String, Object>> checkEmployeeDuplicate(EmployeeForm employeeForm) {
+		return employeeRepository.checkEmployeeDuplicate(employeeForm);
 	}
 
 	public List<Map<String, Object>> searchEmployee(

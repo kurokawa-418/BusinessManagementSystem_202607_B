@@ -1,28 +1,80 @@
 package com.nexus.whc.form;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class ClientForm {
 
+	@NotNull
+	@Min(0)
+	@Max(999)
 	private Integer clientId;
+
+	@NotBlank
+	@Size(max = 50)
 	private String clientName;
+
+	@NotBlank
+	@Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$")
 	private String openTime;
+
+	@NotBlank
+	@Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$")
 	private String closeTime;
+
+	@NotBlank
+	@Pattern(regexp = "^\\d{1,3}(\\.\\d{1,2})?$")
 	private String workingTime;
 
+	@NotBlank
+	@Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$")
 	private String rest1Start;
+
+	@NotBlank
+	@Pattern(regexp = "^([01]\\d|2[0-3]):[0-5]\\d$")
 	private String rest1End;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest2Start;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest2End;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest3Start;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest3End;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest4Start;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest4End;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest5Start;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest5End;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest6Start;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String rest6End;
 
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String adjustRestTimeStart;
+
+	@Pattern(regexp = "^(|([01]\\d|2[0-3]):[0-5]\\d)$")
 	private String adjustRestTimeEnd;
+
+	@Size(max = 100)
 	private String comment;
 
 	public Integer getClientId() {
