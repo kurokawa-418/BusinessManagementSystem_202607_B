@@ -1,6 +1,7 @@
 package com.nexus.whc.form;
 
 public class EmployeeForm {
+	//フィールド
 
 	private String employeeId;
 
