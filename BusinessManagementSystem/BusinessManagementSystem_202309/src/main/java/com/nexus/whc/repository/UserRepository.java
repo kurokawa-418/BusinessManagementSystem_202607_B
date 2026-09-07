@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.nexus.whc.form.UserForm;
+
 /*
 *UserRepository.java
 *
@@ -26,7 +28,7 @@ public class UserRepository {
 	}
 
 	/*ユーザ一覧検索*/
-	/*一部の情報でも検索できるようにしてる*/
+	/*一部の情報でも検索可*/
 	public List<Map<String, Object>> searchList(
 			String userId,
 			String userName,
@@ -58,27 +60,26 @@ public class UserRepository {
 		/*Serviceに返す*/
 		return list;
 	}
-	
+
+	/*登録*/
+	public int registUser(UserForm userForm) {
+		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address)"
+				+ "VALUES(?,?,?,?)";
+		Object[] param = {
+				userForm.getUserId(),
+				userForm.getUserName(),
+				userForm.getAuthId(),
+				userForm.getMailAddress() };
+		return jdbcTemplate.update(sql, param);
+	}
+
 	/*一覧から削除*/
 	public void deleteUser(int seqId) {
 
-	    String sql = "DELETE FROM m_user WHERE seq_id = ?";
-	    Object[] param = { seqId };
+		String sql = "DELETE FROM m_user WHERE seq_id = ?";
+		Object[] param = { seqId };
 
-	    jdbcTemplate.update(sql, param);
+		jdbcTemplate.update(sql, param);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

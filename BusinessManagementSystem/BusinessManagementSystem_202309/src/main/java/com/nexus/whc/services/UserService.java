@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nexus.whc.form.UserForm;
 import com.nexus.whc.repository.UserRepository;
 
 /* UserService.java
@@ -33,6 +34,11 @@ public class UserService {
 				userName,
 				authId,
 				mailAddress);
+	}
+
+	/*ユーザー登録*/
+	public int registUser(UserForm userForm) {
+		return userRepository.registUser(userForm);
 	}
 
 	/*ユーザー削除*/
