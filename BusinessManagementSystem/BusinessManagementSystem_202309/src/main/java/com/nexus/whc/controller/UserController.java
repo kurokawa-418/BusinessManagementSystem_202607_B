@@ -75,7 +75,7 @@ public class UserController {
 		return "SMSUS001";
 	}
 
-	/*ユーザー登録*/
+	/*ユーザー登録(新規追加モード）*/
 	@PostMapping("/regist")
 	public String userRegist(@Validated @ModelAttribute UserForm userForm,
 			BindingResult bindingResult,

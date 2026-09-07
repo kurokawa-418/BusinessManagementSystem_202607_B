@@ -1,5 +1,6 @@
 package com.nexus.whc.form;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /* UserForm.java
@@ -10,10 +11,11 @@ public class UserForm {
 	@NotBlank(message = "{COM01E001}")
 	private String userId;
 	@NotBlank(message = "{COM01E001}")
-	private String userName;	
+	private String userName;
 	@NotBlank(message = "{COM01E001}")
 	private String authId;
 	@NotBlank(message = "{COM01E001}")
+	@Email(message = "{COM01E003}")
 	private String mailAddress;
 
 	public String getUserId() {
