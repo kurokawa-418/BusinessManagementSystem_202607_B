@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="../static/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../css/SMSEM001.css" rel="stylesheet" type="text/css">
 <link href="../static/css/index.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link th:href="@{../static/css/menu.css}" rel="stylesheet" type="text/css">
@@ -45,12 +46,17 @@
 
 			<main class="w-100 h-100 bg-light">
 				<div class="container bg-white border py-3 my-3" style="width: 850px">
-					<form method="post" action="/employee/regist">
+					<form method="post" action="/employee/regist" th:object="${employeeForm}" onsubmit="return checkAllFormat();">
+						<div class="error" th:errors="*{employeeId}"></div>
+						<div class="error" th:errors="*{employeeName}"></div>
+						<div class="error" th:errors="*{paidHolidayStd}"></div>
+						<div class="error" th:errors="*{remaindThisYear}"></div>
+						<div class="error" th:errors="*{remaindLastYear}"></div>
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">社員番号</span>
-						<input type="text" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px" th:field="*{employeeId}" th:readonly="${session.employeeMode == 'update'}">
 						<span class="input-group-text">社員氏名</span>
-						<input type="text" name="employeeName" class="form-control" style="width: 150px">
+						<input type="text" name="employeeName" class="form-control" style="width: 150px" th:field="*{employeeName}" th:readonly="${session.employeeMode == 'update'}">
 					</div>
 
 
@@ -80,7 +86,7 @@
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
-						<input type="checkbox" id="inlineCheckbox1" value="option1" name="hourlyWage">
+						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage">
 						<label class="form-check-label" for="inlineCheckbox1">時給</label>
 					</div>
 
@@ -88,15 +94,18 @@
 						<span class="input-group-text">有給基準日</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
 							id="paidHolidayStd" name="paidHolidayStd"
-							th:value="*{paidHolidayStd}" onchange="calculatePaidLeave()">
+							th:value="*{paidHolidayStd}" onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
+							<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text"style="width: 90px">有給残日数</span>
 						<span class="input-group-text">当年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="paidLeaveDays" name="remaindThisYear">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindThisYear" name="remaindThisYear" onblur="checkRemaindThisYear()">
+						<div id="remaindThisYearError" style="color: red;" hidden>有休残日数-当年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text">前年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" name="remaindLastYear">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindLastYear" name="remaindLastYear" onblur="checkRemaindLastYear()">
+						<div id="remaindLastYearError" style="color: red;" hidden>有休残日数-前年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text" style="width: 40px">日</span>
 					</div>
 
@@ -110,16 +119,16 @@
 						<span class="input-group-text">ステータス</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
 					</div>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">登録</button>
+						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録</button>
 						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">登録して次へ</button>
+						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録して次へ</button>
 						</form>
 						<form method="post" action="/employee/delete">
 							<!-- ★追加：社員番号を削除処理へ渡す -->
 						<input type="hidden" name="employeeId" th:value="${employee != null ? employee.employee_id : ''}">
 							<!-- ★追加：更新ユーザーを渡す -->
 						<input type="hidden" name="updatedUser" value="">
-						<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">削除</button>
+						<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}">削除</button>
 						</form>
 						
 						<a href="/employee/list" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">キャンセル</a>
@@ -129,7 +138,7 @@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-	<script src="../static/js/SMSEM002.js"></script>
+	<script th:src="@{/js/SMSEM002.js}"></script>
 	<script src="../static/js/bootstrap.bundle.min.js"></script>
 	<script src="../static/js/index.js"></script>
 	<script src="../static/js/menu.js"></script>
