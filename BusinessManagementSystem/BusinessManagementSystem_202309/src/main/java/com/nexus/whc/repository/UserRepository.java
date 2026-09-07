@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import com.nexus.whc.form.UserForm;
  
@@ -18,6 +19,7 @@ import com.nexus.whc.form.UserForm;
 /*
 * Repositoryクラス
 */
+@Repository
 public class UserRepository {
 	/* JdbcTemplate */
 	private final JdbcTemplate jdbcTemplate;
