@@ -1,4 +1,4 @@
-
+ 
 package com.nexus.whc.form;
  
 import javax.validation.constraints.Email;
@@ -51,5 +51,3 @@ public class UserForm {
 		this.mailAddress = mailAddress;
 	}
 }
- 
- 
