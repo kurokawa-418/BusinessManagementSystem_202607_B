@@ -50,8 +50,12 @@
 
 		<main class="w-100 h-100 bg-light">
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
-				<form method="post" action="/user/regist">
+
+				<form method="post" action="/user/regist" th:object="${userForm}">
+					<div th:if="${#fields.hasErrors('*')}" th:errors="*{*}" style="color:red">
+					</div>
 					<div class="input-group mb-3" style="width: 600px">
+
 						<span class="input-group-text">ユーザID</span>
 						<input type="text" name="user_id" aria-label="emNo" class="form-control" style="width: 150px">
 						<span class="input-group-text">ユーザ名</span>
