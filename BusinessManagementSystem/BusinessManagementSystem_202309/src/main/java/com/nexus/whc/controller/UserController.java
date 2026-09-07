@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,8 +77,14 @@ public class UserController {
 
 	/*ユーザー登録*/
 	@PostMapping("/regist")
-	public String userRegist(@ModelAttribute UserForm userForm,
+	public String userRegist(@Validated @ModelAttribute UserForm userForm,
+			BindingResult bindingResult,
 			RedirectAttributes attr) {
+		//未入力チェック
+		if (bindingResult.hasErrors()) {
+			//入力画面に遷移する
+			return "SMSUS002";
+		}
 		// 登録結果
 		/*宣言＋初期値の設定＋Serviceの呼び出し*/
 		int result = userService.registUser(userForm);
@@ -101,7 +109,7 @@ public class UserController {
 		}
 
 		for (Integer seqId : sequenceId) {
-			/*排他チェックメソッド呼び出し*/
+			/*排他チェックメソッド呼び出し（削除、編集中）*/
 			userService.deleteUser(seqId);
 		}
 
