@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,14 +39,17 @@ public class ClientController {
 
 	private final ClientService clientService;
 	private final LockService lockService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public ClientController(
 			ClientService clientService,
-			LockService lockService) {
+			LockService lockService,
+			MessageSource messageSource) {
 
 		this.clientService = clientService;
 		this.lockService = lockService;
+		this.messageSource = messageSource;
 
 	}
 
@@ -54,7 +58,6 @@ public class ClientController {
 	private static final String SESSION_USER_ID = "userId";
 
 	private String getUserId(HttpSession session) {
-
 		String userId = (String) session.getAttribute(SESSION_USER_ID);
 
 		if (userId == null) {
@@ -63,6 +66,20 @@ public class ClientController {
 		}
 
 		return userId;
+	}
+
+	private String getMessage1(String code) {
+		return messageSource.getMessage(
+				code,
+				null,
+				null);
+	}
+
+	private String getMessage(String code) {
+		return messageSource.getMessage(
+				code,
+				null,
+				null);
 	}
 
 	@GetMapping("/list")
@@ -222,27 +239,6 @@ public class ClientController {
 		}
 
 		// 他ユーザーが編集中かチェック
-		if (lockService.isLockedByOtherUser(
-				LOCK_TABLE_NAME,
-				clientForm.getClientId(),
-				userId)) {
-
-			model.addAttribute("isUpdateMode", true);
-			model.addAttribute(
-					"message",
-					"対象のデータは他のユーザーが編集中です。");
-
-			return "SMSCL002";
-		}
-
-		if (!clientService.existsActiveClient(clientForm.getClientId())) {
-
-			model.addAttribute("isUpdateMode", true);
-			model.addAttribute("message", "対象のデータは削除されています。");
-
-			return "SMSCL002";
-		}
-
 		if (lockService.isLockedByOtherUser(
 				LOCK_TABLE_NAME,
 				clientForm.getClientId(),
