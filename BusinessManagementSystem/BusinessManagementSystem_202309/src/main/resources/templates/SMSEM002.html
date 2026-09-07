@@ -95,17 +95,17 @@
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
 							id="paidHolidayStd" name="paidHolidayStd"
 							th:value="*{paidHolidayStd}" onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
-							<div id="paidHolidayStdError" style="color: red;" hidden th:text="${paidHolidayStdMessage}"></div>
+							<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text"style="width: 90px">有給残日数</span>
 						<span class="input-group-text">当年度分</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindThisYear" name="remaindThisYear" onblur="checkRemaindThisYear()">
-						<div id="remaindThisYearError" style="color: red;" hidden th:text="${remaindThisYearMessage}"></div>
+						<div id="remaindThisYearError" style="color: red;" hidden>有休残日数-当年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text">前年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"　id="remaindLastYear" name="remaindLastYear" onblur="checkRemaindLastYear()">
-						<div id="remaindLastYearError" style="color: red;" hidden th:text="${remaindLastYearMessage}"></div>
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindLastYear" name="remaindLastYear" onblur="checkRemaindLastYear()">
+						<div id="remaindLastYearError" style="color: red;" hidden>有休残日数-前年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text" style="width: 40px">日</span>
 					</div>
 

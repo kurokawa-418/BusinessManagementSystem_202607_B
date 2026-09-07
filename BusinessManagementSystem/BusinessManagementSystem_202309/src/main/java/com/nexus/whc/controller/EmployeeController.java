@@ -157,6 +157,24 @@ public class EmployeeController {
 	            employeeForm.getRemaindLastYear(),
 	            bindingResult
 	        );
+	    
+	    boolean duplicate =
+		        employeeService.checkEmployeeDuplicate(employeeForm);
+	    
+	    if (duplicate) {
+	        bindingResult.rejectValue(
+	                "employeeId",
+	                "COM01E011",
+	                new Object[] {
+	                        null,
+	                        "社員番号",
+	                        employeeForm.getEmployeeId(),
+	                        "社員マスタ"
+	                },
+	                null
+	        );
+	    }
+	    
 		
 		if(bindingResult.hasErrors()) {
 			

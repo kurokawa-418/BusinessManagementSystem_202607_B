@@ -1,6 +1,7 @@
 package com.nexus.whc.repository;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +96,9 @@ public class EmployeeRepository {
 
 		Object[] param = {
 				Integer.valueOf(employeeForm.getEmployeeId()),
-				null,
-				null,
-				null,
+				LocalDate.of(LocalDate.now().getYear(), 4, 1),
+				Double.valueOf(employeeForm.getRemaindThisYear()),
+				Double.valueOf(employeeForm.getRemaindLastYear()),
 				0,
 				new java.sql.Timestamp(System.currentTimeMillis()),
 				employeeForm.getCreatedUser(),
