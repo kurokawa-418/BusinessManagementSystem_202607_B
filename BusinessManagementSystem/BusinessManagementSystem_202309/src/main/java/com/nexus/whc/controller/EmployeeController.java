@@ -108,6 +108,7 @@ public class EmployeeController {
 
 		// 顧客選択ダイアログ用
 		List<Map<String, Object>> clientList = employeeService.getClient();
+
 		model.addAttribute("client_list", clientList);
 
 		// 社員検索
@@ -119,6 +120,13 @@ public class EmployeeController {
 
 		model.addAttribute("employeeList", employeeList);
 
+		// 検索結果が0件の場合
+		if (employeeList.isEmpty()) {
+			model.addAttribute(
+					"message",
+					"社員一覧の検索結果は0件です。条件を変更し、再度検索してください。");
+		}
+
 		return "SMSEM001";
 	}
 
@@ -126,14 +134,16 @@ public class EmployeeController {
 	@GetMapping("/input")
 	public String employeeInput(Model model, HttpSession session) {
 
-		EmployeeForm employeeForm = new EmployeeForm();
+		EmployeeForm employeeForm = (EmployeeForm) session.getAttribute("employeeForm");
 
-		employeeForm.setDeleteFlg("0");
+		if (employeeForm == null) {
+			employeeForm = new EmployeeForm();
+			employeeForm.setDeleteFlg("0");
+		}
 
 		model.addAttribute("employeeForm", employeeForm);
 
 		List<Map<String, Object>> clientList = employeeService.getClient();
-
 		model.addAttribute("client_list", clientList);
 
 		session.setAttribute("employeeMode", "new");
@@ -192,6 +202,69 @@ public class EmployeeController {
 		}
 
 		return "redirect:/employee/list";
+	}
+
+	@PostMapping("/registNext")
+	public String registNext(
+			@ModelAttribute EmployeeForm employeeForm,
+			BindingResult bindingResult,
+			HttpSession session) {
+
+		// 3. 必須チェック
+		checkRequired(
+				employeeForm.getEmployeeId(),
+				employeeForm.getEmployeeName(),
+				employeeForm.getPaidHolidayStd(),
+				employeeForm.getRemaindThisYear(),
+				employeeForm.getRemaindLastYear(),
+				bindingResult);
+
+		// 必須エラーがある場合は、重複チェックをしない
+		if (bindingResult.hasErrors()) {
+			return "SMSEM002";
+		}
+
+		// 4. フォーマットチェック
+		// ※現在はJavaScriptのcheckAllFormat()で実施している場合、
+		//    ここではサーバー側のチェックはまだありません
+
+		// 5. マスタ重複チェック
+		boolean duplicate = employeeService.checkEmployeeDuplicate(employeeForm);
+
+		if (duplicate) {
+			bindingResult.rejectValue(
+					"employeeId",
+					"COM01E011",
+					new Object[] {
+							null,
+							"社員番号",
+							employeeForm.getEmployeeId(),
+							"社員マスタ"
+					},
+					null);
+
+			return "SMSEM002";
+		}
+
+		// 新規登録用の値
+		employeeForm.setDeleteFlg("0");
+
+		if (employeeForm.getHourlyWage() == null) {
+			employeeForm.setHourlyWage("0");
+		}
+
+		// DB登録
+		int result = employeeService.registEmployee(employeeForm);
+
+		if (result > 0) {
+			employeeService.registPaidVacation(employeeForm);
+		}
+
+		// セッションに保存していた入力内容を削除
+		session.removeAttribute("employeeForm");
+
+		// 入力欄を空にしてSMSEM002を再表示
+		return "redirect:/employee/input";
 	}
 
 	//社員マスタ閲覧画面

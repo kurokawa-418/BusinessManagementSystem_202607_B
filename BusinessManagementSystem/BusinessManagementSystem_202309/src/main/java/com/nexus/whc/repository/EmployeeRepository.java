@@ -3,6 +3,7 @@ package com.nexus.whc.repository;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,20 +155,32 @@ public class EmployeeRepository {
 				+ "AND t_work_leave_application.holiday_date "
 				+ "BETWEEN DATE_SUB(m_employee.paid_holiday_std, INTERVAL 1 YEAR) "
 				+ "AND DATE_ADD(m_employee.paid_holiday_std, INTERVAL 1 YEAR) "
-				+ "WHERE m_employee.delete_flg = 0 "
-				+ "AND m_employee.employee_id = ? "
-				+ "AND m_employee.employee_name LIKE ? "
-				+ "AND m_employee.client_id = ? "
-				+ "AND m_client.client_name LIKE ?";
+				+ "WHERE m_employee.delete_flg = 0 ";
+		List<Object> params = new ArrayList<>();
 
-		Object[] param = {
-				Integer.valueOf(employeeId),
-				"%" + employeeName + "%",
-				Integer.valueOf(clientId),
-				"%" + clientName + "%"
-		};
+		if (employeeId != null && !employeeId.isEmpty()) {
+			sql += "AND m_employee.employee_id = ? ";
+			params.add(Integer.valueOf(employeeId));
+		}
 
-		return jdbcTemplate.queryForList(sql, param);
+		if (employeeName != null && !employeeName.isEmpty()) {
+			sql += "AND m_employee.employee_name LIKE ? ";
+			params.add("%" + employeeName + "%");
+		}
+
+		if (clientId != null && !clientId.isEmpty()) {
+			sql += "AND m_employee.client_id = ? ";
+			params.add(Integer.valueOf(clientId));
+		}
+
+		if (clientName != null && !clientName.isEmpty()) {
+			sql += "AND m_client.client_name LIKE ? ";
+			params.add("%" + clientName + "%");
+		}
+
+		sql += "ORDER BY m_employee.employee_id ASC";
+
+		return jdbcTemplate.queryForList(sql, params.toArray());
 	}
 
 	public Map<String, Object> searchEmployeeById(String employeeId) {
@@ -187,7 +200,8 @@ public class EmployeeRepository {
 				+ "LEFT JOIN m_employee_paid_vacation "
 				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
 				+ "WHERE m_employee.employee_id = ? "
-				+ "AND m_employee.delete_flg = 0";
+				+ "AND m_employee.delete_flg = 0 "
+				+ "ORDER BY m_employee.employee_id ASC";
 
 		Object[] param = { Integer.valueOf(employeeId) };
 
@@ -210,7 +224,8 @@ public class EmployeeRepository {
 				+ "ON m_employee.client_id = m_client.client_id "
 				+ "LEFT JOIN m_employee_paid_vacation "
 				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "AND m_employee.delete_flg = 0";
+				+ "AND m_employee.delete_flg = 0 "
+				+ "ORDER BY m_employee.employee_id ASC";
 
 		return jdbcTemplate.queryForList(sql);
 	}
@@ -292,5 +307,3 @@ public class EmployeeRepository {
 		return jdbcTemplate.update(sql, param);
 	}
 }
-
-

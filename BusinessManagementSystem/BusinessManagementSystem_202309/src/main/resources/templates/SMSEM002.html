@@ -121,7 +121,7 @@
 					</div>
 						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録</button>
 						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録して次へ</button>
+						<button id="btn-regist" type="submit" formaction="/employee/registNext" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録して次へ</button>
 						</form>
 						<form method="post" action="/employee/delete">
 							<!-- ★追加：社員番号を削除処理へ渡す -->

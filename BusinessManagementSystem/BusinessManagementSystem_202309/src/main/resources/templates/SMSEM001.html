@@ -165,7 +165,10 @@
 					</form>
 				</div>
 
-
+				<!-- 検索結果0件メッセージ -->
+				<div th:if="${message}" class="alert alert-warning mx-2 my-2">
+					<span th:text="${message}"></span>
+				</div>
 
 				<!-- 登録、削除ボタン -->
 				<div class="card-body p-2" style="display: flex">
