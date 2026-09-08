@@ -1,9 +1,13 @@
 package com.nexus.whc.controller;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,58 +35,33 @@ import com.nexus.whc.services.UserService;
 @RequestMapping("/user")
 public class UserController {
 	private UserService userService;
+	private MessageSource messageSource;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public UserController(UserService userService, MessageSource messageSource) {
 		this.userService = userService;
+		this.messageSource = messageSource;
+
 	}
 
 	/*ユーザ情報入力画面Get用*/
 	@GetMapping("/input")
-	public String getUser() {
+	public String getUser(Model model, HttpSession session) {
+		UserForm userForm = new UserForm();
 
-		/*ユーザー情報入力画面に遷移*/
-		return "userInput";
-	}
-
-	/*ユーザー情報入力画面Post用*/
-	@PostMapping("/input")
-	public String postUser() {
-		return "userInput";
-	}
-
-	/*ユーザー一覧*/
-	@GetMapping("/list")
-	public String userList(
-			@RequestParam(name = "user_id", defaultValue = "") String userId,
-			@RequestParam(name = "user_name", defaultValue = "") String userName,
-			@RequestParam(name = "permission", defaultValue = "") String authId,
-			@RequestParam(name = "mail_address", defaultValue = "") String mailAddress,
-			Model model) {
-
-		/*DB検索*/
-		List<Map<String, Object>> userlist = userService.searchList(userId, userName, authId, mailAddress);
-		if (userlist.isEmpty()) {
-			model.addAttribute("message", "{COM01W001}");
-		}
-		/*リクエストスコープに保存*/
-		model.addAttribute("userList", userlist);
-		model.addAttribute("userId", userId);
-		model.addAttribute("userName", userName);
-		model.addAttribute("authId", authId);
-		model.addAttribute("mailAddress", mailAddress);
-		/*ユーザーマスタ一覧画面に遷移*/
-		return "SMSUS001";
+		model.addAttribute("userForm", userForm);
+		session.setAttribute("userMode", "new");
+		return "SMSUS002";
 	}
 
 	/*ユーザー登録(新規追加モード）*/
 	@PostMapping("/regist")
 	public String userRegist(@Validated @ModelAttribute UserForm userForm,
 			BindingResult bindingResult,
-			RedirectAttributes attr) {
+			RedirectAttributes attr,
+			HttpSession session) {
 		//未入力チェック
 		if (bindingResult.hasErrors()) {
-			//入力画面に遷移する
 			return "SMSUS002";
 		}
 		// 登録結果
@@ -98,6 +77,33 @@ public class UserController {
 			//ユーザー一覧画面に遷移
 			return "redirect:/user/list";
 		}
+	}
+
+	/*ユーザー一覧*/
+	@GetMapping("/list")
+	public String userList(
+			@RequestParam(name = "user_id", defaultValue = "") String userId,
+			@RequestParam(name = "user_name", defaultValue = "") String userName,
+			@RequestParam(name = "permission", defaultValue = "") String authId,
+			@RequestParam(name = "mail_address", defaultValue = "") String mailAddress,
+			Model model) {
+
+		/*DB検索*/
+		List<Map<String, Object>> userlist = userService.searchList(userId, userName, authId, mailAddress);
+		if (userlist.isEmpty()) {
+			String message = messageSource.getMessage("COM01W001",
+					new Object[] { "ユーザ" },
+					Locale.JAPAN);
+			model.addAttribute("message", message);
+		}
+		/*リクエストスコープに保存*/
+		model.addAttribute("userList", userlist);
+		model.addAttribute("userId", userId);
+		model.addAttribute("userName", userName);
+		model.addAttribute("authId", authId);
+		model.addAttribute("mailAddress", mailAddress);
+		/*ユーザーマスタ一覧画面に遷移*/
+		return "SMSUS001";
 	}
 
 	/*削除*/

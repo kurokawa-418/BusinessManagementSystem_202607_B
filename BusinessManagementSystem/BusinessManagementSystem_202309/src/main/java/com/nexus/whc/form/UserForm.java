@@ -18,6 +18,8 @@ public class UserForm {
 	@Email(message = "{COM01E003}")
 	private String mailAddress;
 
+	private String password;
+
 	public String getUserId() {
 		return userId;
 	}
@@ -48,5 +50,13 @@ public class UserForm {
 
 	public void setMailAddress(String mailAddress) {
 		this.mailAddress = mailAddress;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

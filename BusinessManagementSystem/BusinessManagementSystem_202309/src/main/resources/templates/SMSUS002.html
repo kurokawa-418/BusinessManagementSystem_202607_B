@@ -52,38 +52,49 @@
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
 				<form method="post" action="/user/regist" th:object="${userForm}">
 
-					<div th:if="${#fields.hasErrors('*')}" th:errors="*{*}" style="color:red">
-					</div>
+					<!--					<div th:if="${#fields.hasErrors('*')}" th:errors="*{*}" style="color:red">-->
+					<!--					</div>-->
 
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">ユーザID</span>
-						<input type="text" name="user_id" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" name="userId" aria-label="emNo" class="form-control" style="width: 150px">
 						<span class="input-group-text">ユーザ名</span>
-						<input type="text" name="user_name" class="form-control" style="width: 150px">
+						<input type="text" name="userName" class="form-control" style="width: 150px">
 					</div>
 					<div class="input-group mb-3" style="width: 300px">
 						<span class="input-group-text">権限</span>
-						<select name="permission" id="permission-select">
-							<option value="admin">管理者</option>
-							<option value="user">一般</option>
+						<select name="authId" id="permission-select">
+							<option value="0">管理者</option>
+							<option value="1">一般</option>
 						</select>
 					</div>
 
 					<div class="input-group mb-3" style="width: 500px">
 						<span class="input-group-text">メールアドレス</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" name="mailAddress" aria-label="emNo" class="form-control"
+							style="width: 150px">
 					</div>
 
-					<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">登録</button>
-					<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">更新</button>
-					<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">登録して次へ</button>
-					<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">削除</button>
-					<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;">キャンセル</button>
+					<!-- 新規登録モード -->
+					<div th:if="${session.userMode == 'new'}">
+
+						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">登録</button>
+						<button id="btn-registNext" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">登録して次へ</button>
+						<button id="btn-cancel" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">キャンセル</button>
+					</div>
+
+					<!-- 更新モード -->
+					<div th:if="${session.userMode == 'update'}">
+						<button id="btn-update" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">更新</button>
+						<button id="btn-delete" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">削除</button>
+						<button id="btn-cancel" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">キャンセル</button>
+					</div>
 				</form>
 			</div>
 		</main>

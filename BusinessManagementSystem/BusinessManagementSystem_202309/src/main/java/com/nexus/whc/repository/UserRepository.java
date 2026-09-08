@@ -36,8 +36,10 @@ public class UserRepository {
 			String userName,
 			String authId,
 			String mailAddress) {
-		StringBuilder sql = new StringBuilder("SELECT * "
+		StringBuilder sql = new StringBuilder("SELECT m_user.*, m_authority.auth_status "
 				+ "FROM m_user "
+				+ "LEFT JOIN m_authority "
+				+ "ON m_user.auth_id = m_authority.auth_id "
 				+ "WHERE delete_flg = 0");
 		List<Object> param = new ArrayList<>();
 
@@ -65,13 +67,14 @@ public class UserRepository {
 
 	/*登録*/
 	public int registUser(UserForm userForm) {
-		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address)"
-				+ "VALUES(?,?,?,?)";
+		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address, password)"
+				+ "VALUES(?,?,?,?,?)";
 		Object[] param = {
 				userForm.getUserId(),
 				userForm.getUserName(),
 				userForm.getAuthId(),
-				userForm.getMailAddress() };
+				userForm.getMailAddress(),
+				userForm.getPassword() };
 		return jdbcTemplate.update(sql, param);
 	}
 

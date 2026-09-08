@@ -52,7 +52,13 @@
 			<div class="container bg-white border py-3 my-3">
 				<div class="card shadow bg-light">
 
+
 					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
+					<!--エラーメッセージ表示-->
+					<div th:if="${message}" style="color: red;">
+						<span th:text="${message}"></span>
+					</div>
+
 					<div class="accordion">
 						<form method="get" action="/user/list">
 							<div class="card-body p-2" style="display: flex">
@@ -70,9 +76,9 @@
 								<div class="input-group mb-2 mx-2" style="width: 300px">
 									<span class="input-group-text">権限</span>
 									<select name="permission" id="permission-select">
-										<option value="all">全て</option>
-										<option value="admin">管理者</option>
-										<option value="user">一般</option>
+										<option value="">全て</option>
+										<option value="0">管理者</option>
+										<option value="1">一般</option>
 									</select>
 
 								</div>
@@ -117,9 +123,10 @@
 									</th>
 									<th th:text="${user['user_id']}"></th>
 									<td>
-										<a href="SMSTCD00X5.html" th:text="${user['user_name']}"></a>
+										<a th:href="@{/user/input(seq_id=${user['seq_id']})}"
+											th:text="${user['user_name']}"></a>
 									</td>
-									<td class="text-center" th:text="${user['auth_id']}"></td>
+									<td class="text-center" th:text="${user['auth_status']}"></td>
 									<th th:text="${user['mail_address']}"></th>
 								</tr>
 							</tbody>

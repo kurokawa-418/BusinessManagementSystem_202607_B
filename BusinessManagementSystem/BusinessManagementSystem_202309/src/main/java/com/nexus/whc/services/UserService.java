@@ -1,5 +1,6 @@
 package com.nexus.whc.services;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,31 @@ public class UserService {
 
 	/*ユーザー登録*/
 	public int registUser(UserForm userForm) {
+		// パスワードを自動生成
+		String password = generatePassword();
+
+		// UserFormにパスワードを設定
+		userForm.setPassword(password);
+
 		return userRepository.registUser(userForm);
+	}
+
+	/*パスワード自動生成メソッド*/
+	private String generatePassword() {
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				+ "abcdefghijklmnopqrstuvwxyz"
+				+ "0123456789"
+				+ "!@#$%^&*";
+
+		StringBuilder password = new StringBuilder();
+		SecureRandom random = new SecureRandom();
+
+		for (int i = 0; i < 20; i++) {
+			int index = random.nextInt(chars.length());
+			password.append(chars.charAt(index));
+		}
+
+		return password.toString();
 	}
 
 	/*ユーザー削除*/
