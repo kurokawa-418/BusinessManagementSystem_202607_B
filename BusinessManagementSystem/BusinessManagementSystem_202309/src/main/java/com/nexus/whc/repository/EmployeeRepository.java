@@ -3,6 +3,7 @@ package com.nexus.whc.repository;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +150,7 @@ public class EmployeeRepository {
 				+ "ON m_employee.client_id = m_client.client_id "
 				+ "LEFT JOIN m_employee_paid_vacation "
 				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "AND m_employee_paid_vacation.year = YEAR(CURDATE()) "
+				+ "AND m_employee_paid_vacation.year = '2026-04-01' "
 				+ "LEFT JOIN t_work_leave_application "
 				+ "ON m_employee.employee_id = t_work_leave_application.employee_id "
 				+ "AND t_work_leave_application.holiday_date "
@@ -231,6 +232,9 @@ public class EmployeeRepository {
 	}
 
 	public int updateEmployee(EmployeeForm employeeForm) {
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd"); 
+		LocalDate date = LocalDate.parse(employeeForm.getPaidHolidayStd(), formatter);
 
 		String sql = "UPDATE m_employee SET "
 				+ "client_id = ?, "
@@ -238,14 +242,16 @@ public class EmployeeRepository {
 				+ "paid_holiday_std = ?, "
 				+ "updated_at = ?, "
 				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
+				+ "WHERE employee_id = ? "
 				+ "AND delete_flg = false";
+		
+		boolean hourlyWage =
+	            "1".equals(employeeForm.getHourlyWage());
 
 		Object[] param = {
-				employeeForm.getEmployeeName(),
 				Integer.valueOf(employeeForm.getClientId()),
-				employeeForm.getHourlyWage(),
-				Date.valueOf(employeeForm.getPaidHolidayStd()),
+				hourlyWage,
+				java.sql.Date.valueOf(date),
 				LocalDateTime.now(),
 				employeeForm.getUpdatedUser(),
 				Integer.valueOf(employeeForm.getEmployeeId()) };
@@ -263,8 +269,8 @@ public class EmployeeRepository {
 				+ "AND delete_flg = 0";
 
 		Object[] param = {
-				null,
-				null,
+				employeeForm.getRemaindThisYear(),
+		        employeeForm.getRemaindLastYear(),
 				LocalDateTime.now(),
 				employeeForm.getUpdatedUser(),
 				Integer.valueOf(employeeForm.getEmployeeId())
@@ -278,7 +284,7 @@ public class EmployeeRepository {
 				+ "delete_flg = 1, "
 				+ "updated_at = ?, "
 				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
+				+ "WHERE employee_id = ? "
 				+ "AND delete_flg = 0";
 
 		Object[] param = {
@@ -294,8 +300,8 @@ public class EmployeeRepository {
 				+ "delete_flg = 1, "
 				+ "updated_at = ?, "
 				+ "updated_user = ? "
-				+ "WHERE employee_id = ?"
-				+ "AND year = ?"
+				+ "WHERE employee_id = ? "
+				+ "AND year = ? "
 				+ "AND delete_flg = 0";
 
 		Object[] param = {

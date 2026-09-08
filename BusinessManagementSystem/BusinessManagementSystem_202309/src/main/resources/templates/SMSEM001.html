@@ -218,7 +218,9 @@
 								</td>
 
 								<!-- 社員氏名 -->
-								<td th:text="${employee.employee_name}">
+								<td>
+									<a th:href="@{/employee/detail(employeeId=${employee.employee_id})}"
+										th:text="${employee.employee_name}">
 								</td>
 
 								<!-- 担当顧客番号 -->
@@ -243,11 +245,11 @@
 								</td>
 
 								<!-- 有給残日数（当年度分） -->
-								<td th:text="${employee.remaind_this_year}">
+								<td th:text="${#numbers.formatDecimal(employee.remaind_this_year, 1, 1)}">
 								</td>
 
 								<!-- 有給残日数（前年度分） -->
-								<td th:text="${employee.remaind_last_year}">
+								<td th:text="${#numbers.formatDecimal(employee.remaind_last_year, 1, 1)}">
 								</td>
 
 								<!-- 有給取得日数 -->

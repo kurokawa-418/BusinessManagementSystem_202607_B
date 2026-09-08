@@ -62,9 +62,9 @@
 
 					<div class="input-group mb-3" style="width: 800px">
 						<span class="input-group-text">担当顧客番号</span>
-						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px" id="customerNumberField">
+						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px" id="customerNumberField" th:field="*{clientId}">
 						<span class="input-group-text">担当顧客名</span>
-						<input type="text" class="form-control" style="width: 150px" id="customerNumberField">
+						<input type="text" class="form-control" style="width: 150px" id="customerNameField" th:field="*{clientName}">
 						<button type="button" name="clientName" class="btn btn-success border border-dark mb-2 mx-2" style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
 					</div>
 
@@ -86,7 +86,7 @@
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
-						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage">
+						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage" th:field="*{hourlyWage}">
 						<label class="form-check-label" for="inlineCheckbox1">時給</label>
 					</div>
 
@@ -94,17 +94,17 @@
 						<span class="input-group-text">有給基準日</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
 							id="paidHolidayStd" name="paidHolidayStd"
-							th:value="*{paidHolidayStd}" onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
+							th:field="*{paidHolidayStd}" onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
 							<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text"style="width: 90px">有給残日数</span>
 						<span class="input-group-text">当年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindThisYear" name="remaindThisYear" onblur="checkRemaindThisYear()">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindThisYear" name="remaindThisYear" th:field="*{remaindThisYear}" onblur="checkRemaindThisYear()">
 						<div id="remaindThisYearError" style="color: red;" hidden>有休残日数-当年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text">前年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindLastYear" name="remaindLastYear" onblur="checkRemaindLastYear()">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindLastYear" name="remaindLastYear" th:field="*{remaindLastYear}" onblur="checkRemaindLastYear()">
 						<div id="remaindLastYearError" style="color: red;" hidden>有休残日数-前年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text" style="width: 40px">日</span>
 					</div>
@@ -120,7 +120,7 @@
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
 					</div>
 						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録</button>
-						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
+						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}">更新</button>
 						<button id="btn-regist" type="submit" formaction="/employee/registNext" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録して次へ</button>
 						</form>
 						<form method="post" action="/employee/delete">

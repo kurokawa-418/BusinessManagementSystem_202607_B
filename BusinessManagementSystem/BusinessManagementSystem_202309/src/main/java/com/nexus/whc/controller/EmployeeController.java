@@ -1,5 +1,7 @@
 package com.nexus.whc.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -280,20 +282,56 @@ public class EmployeeController {
 
 		employeeForm.setEmployeeId(
 				String.valueOf(employee.get("employee_id")));
+
 		employeeForm.setEmployeeName(
 				String.valueOf(employee.get("employee_name")));
+
 		employeeForm.setClientId(
 				String.valueOf(employee.get("client_id")));
+
 		employeeForm.setClientName(
 				String.valueOf(employee.get("client_name")));
-		employeeForm.setHourlyWage(
-				String.valueOf(employee.get("hourly_wage")));
+
+		// hourly_wage（BIT(1)）
+		Object hourlyWageValue = employee.get("hourly_wage");
+
+		if (hourlyWageValue instanceof byte[]) {
+
+			byte[] bytes = (byte[]) hourlyWageValue;
+
+			if (bytes.length > 0 && bytes[0] == 1) {
+				employeeForm.setHourlyWage("1");
+			} else {
+				employeeForm.setHourlyWage("0");
+			}
+
+		} else {
+
+			employeeForm.setHourlyWage(
+					String.valueOf(hourlyWageValue));
+		}
+
+		// 有給基準日 yyyy-MM-dd → yyyy/MM/dd
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+		LocalDate paidHolidayStd = ((java.sql.Date) employee.get("paid_holiday_std"))
+				.toLocalDate();
+
 		employeeForm.setPaidHolidayStd(
-				String.valueOf(employee.get("paid_holiday_std")));
+				paidHolidayStd.format(dateFormatter));
+
+		// 有給残日数：小数1桁で表示
 		employeeForm.setRemaindThisYear(
-				String.valueOf(employee.get("remaind_this_year")));
+				String.format("%.1f",
+						Double.valueOf(
+								String.valueOf(
+										employee.get("remaind_this_year")))));
+
 		employeeForm.setRemaindLastYear(
-				String.valueOf(employee.get("remaind_last_year")));
+				String.format("%.1f",
+						Double.valueOf(
+								String.valueOf(
+										employee.get("remaind_last_year")))));
 
 		model.addAttribute("employeeForm", employeeForm);
 
