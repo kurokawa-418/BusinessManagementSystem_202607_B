@@ -2,6 +2,7 @@ package com.nexus.whc.form;
 
 public class EmployeeForm {
 
+	//フォーム
 	private String employeeId;
 
 	private String employeeName;
