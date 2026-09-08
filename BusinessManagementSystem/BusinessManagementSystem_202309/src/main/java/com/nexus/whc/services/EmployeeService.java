@@ -78,11 +78,11 @@ public class EmployeeService {
 	}
 
 	// 削除
-	public int deleteEmployee(String employeeId, String updatedUser) {
-		return employeeRepository.deleteEmployee(employeeId, updatedUser);
+	public int deleteEmployee(EmployeeForm employeeForm) {
+		return employeeRepository.deleteEmployee(employeeForm);
 	}
 
-	public int deletePaidVacation(String employeeId, String updatedUser) {
-		return employeeRepository.deletePaidVacation(employeeId, updatedUser);
+	public int deletePaidVacation(EmployeeForm employeeForm) {
+		return employeeRepository.deletePaidVacation(employeeForm);
 	}
 }

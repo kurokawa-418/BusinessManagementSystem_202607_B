@@ -225,7 +225,7 @@ public class EmployeeRepository {
 				+ "ON m_employee.client_id = m_client.client_id "
 				+ "LEFT JOIN m_employee_paid_vacation "
 				+ "ON m_employee.employee_id = m_employee_paid_vacation.employee_id "
-				+ "AND m_employee.delete_flg = 0 "
+				+ "WHERE m_employee.delete_flg = 0 "
 				+ "ORDER BY m_employee.employee_id ASC";
 
 		return jdbcTemplate.queryForList(sql);
@@ -278,38 +278,41 @@ public class EmployeeRepository {
 		return jdbcTemplate.update(sql, param);
 	}
 
-	public int deleteEmployee(String employeeId, String updatedUser) {
+	public int deleteEmployee(EmployeeForm employeeForm) {
 
-		String sql = "UPDATE m_employee SET "
-				+ "delete_flg = 1, "
-				+ "updated_at = ?, "
-				+ "updated_user = ? "
-				+ "WHERE employee_id = ? "
-				+ "AND delete_flg = 0";
+	    String sql = "UPDATE m_employee SET "
+	            + "delete_flg = 1, "
+	            + "updated_at = ?, "
+	            + "updated_user = ? "
+	            + "WHERE employee_id = ? "
+	            + "AND delete_flg = 0";
 
-		Object[] param = {
-				LocalDateTime.now(),
-				updatedUser,
-				Integer.valueOf(employeeId) };
-		return jdbcTemplate.update(sql, param);
+	    Object[] param = {
+	            LocalDateTime.now(),
+	            employeeForm.getUpdatedUser(),
+	            Integer.valueOf(employeeForm.getEmployeeId())
+	    };
+
+	    return jdbcTemplate.update(sql, param);
 	}
 
-	public int deletePaidVacation(String employeeId, String updatedUser) {
+	public int deletePaidVacation(EmployeeForm employeeForm) {
 
-		String sql = "UPDATE m_employee_paid_vacation SET "
-				+ "delete_flg = 1, "
-				+ "updated_at = ?, "
-				+ "updated_user = ? "
-				+ "WHERE employee_id = ? "
-				+ "AND year = ? "
-				+ "AND delete_flg = 0";
+	    String sql = "UPDATE m_employee_paid_vacation SET "
+	            + "delete_flg = 1, "
+	            + "updated_at = ?, "
+	            + "updated_user = ? "
+	            + "WHERE employee_id = ? "
+	            + "AND year = ? "
+	            + "AND delete_flg = 0";
 
-		Object[] param = {
-				LocalDateTime.now(),
-				updatedUser,
-				Integer.valueOf(employeeId),
-				null
-		};
-		return jdbcTemplate.update(sql, param);
+	    Object[] param = {
+	            LocalDateTime.now(),
+	            employeeForm.getUpdatedUser(),
+	            Integer.valueOf(employeeForm.getEmployeeId()),
+	            Date.valueOf("2026-04-01")
+	    };
+
+	    return jdbcTemplate.update(sql, param);
 	}
 }

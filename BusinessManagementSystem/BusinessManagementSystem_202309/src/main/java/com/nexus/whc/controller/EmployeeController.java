@@ -136,16 +136,18 @@ public class EmployeeController {
 	@GetMapping("/input")
 	public String employeeInput(Model model, HttpSession session) {
 
-		EmployeeForm employeeForm = (EmployeeForm) session.getAttribute("employeeForm");
+		// 以前のフォーム情報を削除
+		session.removeAttribute("employeeForm");
 
-		if (employeeForm == null) {
-			employeeForm = new EmployeeForm();
-			employeeForm.setDeleteFlg("0");
-		}
+		// 新しい空のフォームを作成
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		employeeForm.setDeleteFlg("0");
 
 		model.addAttribute("employeeForm", employeeForm);
 
 		List<Map<String, Object>> clientList = employeeService.getClient();
+
 		model.addAttribute("client_list", clientList);
 
 		session.setAttribute("employeeMode", "new");
@@ -348,9 +350,26 @@ public class EmployeeController {
 	//社員マスタ更新処理
 	@PostMapping("/update")
 	public String updateEmployee(
-			EmployeeForm employeeForm) {
+			EmployeeForm employeeForm,
+			BindingResult bindingResult) {
 
+		// 必須チェック
+		checkRequired(
+				employeeForm.getEmployeeId(),
+				employeeForm.getEmployeeName(),
+				employeeForm.getPaidHolidayStd(),
+				employeeForm.getRemaindThisYear(),
+				employeeForm.getRemaindLastYear(),
+				bindingResult);
+
+		// エラーがあれば更新せず、入力画面に戻る
+		if (bindingResult.hasErrors()) {
+			return "SMSEM002";
+		}
+
+		// エラーがなければ更新
 		employeeService.updateEmployee(employeeForm);
+
 		employeeService.updatePaidVacation(employeeForm);
 
 		return "redirect:/employee/list";
@@ -359,15 +378,19 @@ public class EmployeeController {
 	//社員マスタ削除処理
 	@PostMapping("/delete")
 	public String deleteEmployee(
-			@RequestParam("employeeId") String employeeId,
-			@RequestParam("updatedUser") String updatedUser) {
+			@ModelAttribute EmployeeForm employeeForm,
+			HttpSession session) {
 
-		employeeService.deleteEmployee(
-				employeeId,
-				updatedUser);
-		employeeService.deletePaidVacation(
-				employeeId,
-				updatedUser);
+		System.out.println("employeeId = [" + employeeForm.getEmployeeId() + "]");
+
+		// セッション管理
+		session.setAttribute("employeeForm", employeeForm);
+
+		// 社員マスタ削除
+		employeeService.deleteEmployee(employeeForm);
+
+		// 有給残日数のレコードを論理削除
+		employeeService.deletePaidVacation(employeeForm);
 
 		return "redirect:/employee/list";
 	}
