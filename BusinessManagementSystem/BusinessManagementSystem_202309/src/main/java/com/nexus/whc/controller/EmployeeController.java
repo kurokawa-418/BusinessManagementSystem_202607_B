@@ -1,5 +1,7 @@
 package com.nexus.whc.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +110,7 @@ public class EmployeeController {
 
 		// 顧客選択ダイアログ用
 		List<Map<String, Object>> clientList = employeeService.getClient();
+
 		model.addAttribute("client_list", clientList);
 
 		// 社員検索
@@ -119,6 +122,13 @@ public class EmployeeController {
 
 		model.addAttribute("employeeList", employeeList);
 
+		// 検索結果が0件の場合
+		if (employeeList.isEmpty()) {
+			model.addAttribute(
+					"message",
+					"社員一覧の検索結果は0件です。条件を変更し、再度検索してください。");
+		}
+
 		return "SMSEM001";
 	}
 
@@ -126,6 +136,10 @@ public class EmployeeController {
 	@GetMapping("/input")
 	public String employeeInput(Model model, HttpSession session) {
 
+		// 以前のフォーム情報を削除
+		session.removeAttribute("employeeForm");
+
+		// 新しい空のフォームを作成
 		EmployeeForm employeeForm = new EmployeeForm();
 
 		employeeForm.setDeleteFlg("0");
@@ -194,6 +208,69 @@ public class EmployeeController {
 		return "redirect:/employee/list";
 	}
 
+	@PostMapping("/registNext")
+	public String registNext(
+			@ModelAttribute EmployeeForm employeeForm,
+			BindingResult bindingResult,
+			HttpSession session) {
+
+		// 3. 必須チェック
+		checkRequired(
+				employeeForm.getEmployeeId(),
+				employeeForm.getEmployeeName(),
+				employeeForm.getPaidHolidayStd(),
+				employeeForm.getRemaindThisYear(),
+				employeeForm.getRemaindLastYear(),
+				bindingResult);
+
+		// 必須エラーがある場合は、重複チェックをしない
+		if (bindingResult.hasErrors()) {
+			return "SMSEM002";
+		}
+
+		// 4. フォーマットチェック
+		// ※現在はJavaScriptのcheckAllFormat()で実施している場合、
+		//    ここではサーバー側のチェックはまだありません
+
+		// 5. マスタ重複チェック
+		boolean duplicate = employeeService.checkEmployeeDuplicate(employeeForm);
+
+		if (duplicate) {
+			bindingResult.rejectValue(
+					"employeeId",
+					"COM01E011",
+					new Object[] {
+							null,
+							"社員番号",
+							employeeForm.getEmployeeId(),
+							"社員マスタ"
+					},
+					null);
+
+			return "SMSEM002";
+		}
+
+		// 新規登録用の値
+		employeeForm.setDeleteFlg("0");
+
+		if (employeeForm.getHourlyWage() == null) {
+			employeeForm.setHourlyWage("0");
+		}
+
+		// DB登録
+		int result = employeeService.registEmployee(employeeForm);
+
+		if (result > 0) {
+			employeeService.registPaidVacation(employeeForm);
+		}
+
+		// セッションに保存していた入力内容を削除
+		session.removeAttribute("employeeForm");
+
+		// 入力欄を空にしてSMSEM002を再表示
+		return "redirect:/employee/input";
+	}
+
 	//社員マスタ閲覧画面
 	@GetMapping("/detail")
 	public String employeeDetail(
@@ -207,20 +284,56 @@ public class EmployeeController {
 
 		employeeForm.setEmployeeId(
 				String.valueOf(employee.get("employee_id")));
+
 		employeeForm.setEmployeeName(
 				String.valueOf(employee.get("employee_name")));
+
 		employeeForm.setClientId(
 				String.valueOf(employee.get("client_id")));
+
 		employeeForm.setClientName(
 				String.valueOf(employee.get("client_name")));
-		employeeForm.setHourlyWage(
-				String.valueOf(employee.get("hourly_wage")));
+
+		// hourly_wage（BIT(1)）
+		Object hourlyWageValue = employee.get("hourly_wage");
+
+		if (hourlyWageValue instanceof byte[]) {
+
+			byte[] bytes = (byte[]) hourlyWageValue;
+
+			if (bytes.length > 0 && bytes[0] == 1) {
+				employeeForm.setHourlyWage("1");
+			} else {
+				employeeForm.setHourlyWage("0");
+			}
+
+		} else {
+
+			employeeForm.setHourlyWage(
+					String.valueOf(hourlyWageValue));
+		}
+
+		// 有給基準日 yyyy-MM-dd → yyyy/MM/dd
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+		LocalDate paidHolidayStd = ((java.sql.Date) employee.get("paid_holiday_std"))
+				.toLocalDate();
+
 		employeeForm.setPaidHolidayStd(
-				String.valueOf(employee.get("paid_holiday_std")));
+				paidHolidayStd.format(dateFormatter));
+
+		// 有給残日数：小数1桁で表示
 		employeeForm.setRemaindThisYear(
-				String.valueOf(employee.get("remaind_this_year")));
+				String.format("%.1f",
+						Double.valueOf(
+								String.valueOf(
+										employee.get("remaind_this_year")))));
+
 		employeeForm.setRemaindLastYear(
-				String.valueOf(employee.get("remaind_last_year")));
+				String.format("%.1f",
+						Double.valueOf(
+								String.valueOf(
+										employee.get("remaind_last_year")))));
 
 		model.addAttribute("employeeForm", employeeForm);
 
@@ -237,9 +350,26 @@ public class EmployeeController {
 	//社員マスタ更新処理
 	@PostMapping("/update")
 	public String updateEmployee(
-			EmployeeForm employeeForm) {
+			EmployeeForm employeeForm,
+			BindingResult bindingResult) {
 
+		// 必須チェック
+		checkRequired(
+				employeeForm.getEmployeeId(),
+				employeeForm.getEmployeeName(),
+				employeeForm.getPaidHolidayStd(),
+				employeeForm.getRemaindThisYear(),
+				employeeForm.getRemaindLastYear(),
+				bindingResult);
+
+		// エラーがあれば更新せず、入力画面に戻る
+		if (bindingResult.hasErrors()) {
+			return "SMSEM002";
+		}
+
+		// エラーがなければ更新
 		employeeService.updateEmployee(employeeForm);
+
 		employeeService.updatePaidVacation(employeeForm);
 
 		return "redirect:/employee/list";
@@ -248,15 +378,19 @@ public class EmployeeController {
 	//社員マスタ削除処理
 	@PostMapping("/delete")
 	public String deleteEmployee(
-			@RequestParam("employeeId") String employeeId,
-			@RequestParam("updatedUser") String updatedUser) {
+			@ModelAttribute EmployeeForm employeeForm,
+			HttpSession session) {
 
-		employeeService.deleteEmployee(
-				employeeId,
-				updatedUser);
-		employeeService.deletePaidVacation(
-				employeeId,
-				updatedUser);
+		System.out.println("employeeId = [" + employeeForm.getEmployeeId() + "]");
+
+		// セッション管理
+		session.setAttribute("employeeForm", employeeForm);
+
+		// 社員マスタ削除
+		employeeService.deleteEmployee(employeeForm);
+
+		// 有給残日数のレコードを論理削除
+		employeeService.deletePaidVacation(employeeForm);
 
 		return "redirect:/employee/list";
 	}

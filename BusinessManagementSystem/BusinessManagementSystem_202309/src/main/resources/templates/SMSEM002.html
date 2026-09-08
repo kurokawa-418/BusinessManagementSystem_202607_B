@@ -2,34 +2,39 @@
 <html lang="ja">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="../static/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="../css/SMSEM001.css" rel="stylesheet" type="text/css">
-<link href="../static/css/index.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link th:href="@{../static/css/menu.css}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
-<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp|Material+Icons+Two+Tone" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="../static/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="../css/SMSEM001.css" rel="stylesheet" type="text/css">
+	<link href="../static/css/index.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link th:href="@{../static/css/menu.css}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+	<link
+		href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp|Material+Icons+Two+Tone"
+		rel="stylesheet">
 
 
-<title>WHC:社員マスタ登録</title>
+	<title>WHC:社員マスタ登録</title>
 </head>
 
 <body>
 	<header>
-<!--		ヘッダー部分は、Tymeleafで共通化すること-->
+		<!--		ヘッダー部分は、Tymeleafで共通化すること-->
 		<nav class="navbar navbar-expand-lg navbar-light border-bottom shadow-sm" style="background-color: #f36304">
-			<a class="navbar-brand" href="ML010.html"> <span class="ml-1" style="color: white; font-size: 1.0em; font-weight: bold;"> 労働時間計算システム </span> </a>
+			<a class="navbar-brand" href="ML010.html"> <span class="ml-1"
+					style="color: white; font-size: 1.0em; font-weight: bold;"> 労働時間計算システム </span> </a>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto"></ul>
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white"> [Acount Name]
-					<span class="visually-hidden">(current)</span></a>
-						<div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="background-color: #f36304">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+							data-bs-toggle="dropdown" aria-expanded="false" style="color: white"> [Acount Name]
+							<span class="visually-hidden">(current)</span></a>
+						<div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+							style="background-color: #f36304">
 							<a class="dropdown-item" href="LF020.html" style="color: white">パスワード変更</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="LF010.html" style="color: white">ログアウト</a>
@@ -44,28 +49,34 @@
 		<!-- メニュー表示 -->
 		<object data="menu.html" type="text/html"></object>
 
-			<main class="w-100 h-100 bg-light">
-				<div class="container bg-white border py-3 my-3" style="width: 850px">
-					<form method="post" action="/employee/regist" th:object="${employeeForm}" onsubmit="return checkAllFormat();">
-						<div class="error" th:errors="*{employeeId}"></div>
-						<div class="error" th:errors="*{employeeName}"></div>
-						<div class="error" th:errors="*{paidHolidayStd}"></div>
-						<div class="error" th:errors="*{remaindThisYear}"></div>
-						<div class="error" th:errors="*{remaindLastYear}"></div>
+		<main class="w-100 h-100 bg-light">
+			<div class="container bg-white border py-3 my-3" style="width: 850px">
+				<form method="post" action="/employee/regist" th:object="${employeeForm}"
+					onsubmit="return checkAllFormat();">
+					<div class="error" th:errors="*{employeeId}"></div>
+					<div class="error" th:errors="*{employeeName}"></div>
+					<div class="error" th:errors="*{paidHolidayStd}"></div>
+					<div class="error" th:errors="*{remaindThisYear}"></div>
+					<div class="error" th:errors="*{remaindLastYear}"></div>
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">社員番号</span>
-						<input type="text" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px" th:field="*{employeeId}" th:readonly="${session.employeeMode == 'update'}">
+						<input type="text" id="employeeId" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px"
+							th:field="*{employeeId}" th:readonly="${session.employeeMode == 'update'}">
 						<span class="input-group-text">社員氏名</span>
-						<input type="text" name="employeeName" class="form-control" style="width: 150px" th:field="*{employeeName}" th:readonly="${session.employeeMode == 'update'}">
+						<input type="text" id="employeeName" name="employeeName" class="form-control" style="width: 150px"
+							th:field="*{employeeName}" th:readonly="${session.employeeMode == 'update'}">
 					</div>
 
 
 					<div class="input-group mb-3" style="width: 800px">
 						<span class="input-group-text">担当顧客番号</span>
-						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px" id="customerNumberField">
+						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px"
+							id="customerNumberField" th:field="*{clientId}">
 						<span class="input-group-text">担当顧客名</span>
-						<input type="text" class="form-control" style="width: 150px" id="customerNumberField">
-						<button type="button" name="clientName" class="btn btn-success border border-dark mb-2 mx-2" style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
+						<input type="text" class="form-control" style="width: 150px" id="customerNameField"
+							th:field="*{clientName}">
+						<button type="button" name="clientName" class="btn btn-success border border-dark mb-2 mx-2"
+							style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
 					</div>
 
 					<!-- ダイアログ -->
@@ -79,32 +90,37 @@
 										<th>担当顧客名</th>
 									</tr>
 								</thead>
-								<tbody>	
+								<tbody>
 								</tbody>
 							</table>
 						</div>
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
-						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage">
+						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage"
+							th:field="*{hourlyWage}">
 						<label class="form-check-label" for="inlineCheckbox1">時給</label>
 					</div>
 
 					<div class="input-group mb-3" style="width: 300px">
 						<span class="input-group-text">有給基準日</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
-							id="paidHolidayStd" name="paidHolidayStd"
-							th:value="*{paidHolidayStd}" onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
-							<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
+							id="paidHolidayStd" name="paidHolidayStd" th:field="*{paidHolidayStd}"
+							onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
+						<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
 					</div>
 
 					<div class="input-group mb-3" style="width: 600px">
-						<span class="input-group-text"style="width: 90px">有給残日数</span>
+						<span class="input-group-text" style="width: 90px">有給残日数</span>
 						<span class="input-group-text">当年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindThisYear" name="remaindThisYear" onblur="checkRemaindThisYear()">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
+							id="remaindThisYear" name="remaindThisYear" th:field="*{remaindThisYear}"
+							onblur="checkRemaindThisYear()">
 						<div id="remaindThisYearError" style="color: red;" hidden>有休残日数-当年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text">前年度分</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px" id="remaindLastYear" name="remaindLastYear" onblur="checkRemaindLastYear()">
+						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
+							id="remaindLastYear" name="remaindLastYear" th:field="*{remaindLastYear}"
+							onblur="checkRemaindLastYear()">
 						<div id="remaindLastYearError" style="color: red;" hidden>有休残日数-前年度分(00.0など)で入力してください。</div>
 						<span class="input-group-text" style="width: 40px">日</span>
 					</div>
@@ -119,21 +135,34 @@
 						<span class="input-group-text">ステータス</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
 					</div>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録</button>
-						<button id="btn-regist" type="submit" formaction="/employee/update" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">更新</button>
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}">登録して次へ</button>
-						</form>
-						<form method="post" action="/employee/delete">
-							<!-- ★追加：社員番号を削除処理へ渡す -->
-						<input type="hidden" name="employeeId" th:value="${employee != null ? employee.employee_id : ''}">
-							<!-- ★追加：更新ユーザーを渡す -->
-						<input type="hidden" name="updatedUser" value="">
-						<button id="btn-regist" type="button" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}">削除</button>
-						</form>
-						
-						<a href="/employee/list" class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;">キャンセル</a>
-				</div>
-			</main>
+					<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}"
+						onclick="return confirm('登録してもよろしいですか？');">登録</button>
+					<button id="btn-regist" type="submit" formaction="/employee/update"
+						class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;"
+						th:if="${session.employeeMode == 'update'}"
+						onclick="return confirm('更新してもよろしいですか？');">更新</button>
+					<button id="btn-regist" type="submit" formaction="/employee/registNext"
+						class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;"
+						th:if="${session.employeeMode == 'new'}"
+						onclick="return confirm('登録してもよろしいですか？');">登録して次へ</button>
+				</form>
+				<form method="post" action="/employee/delete">
+
+					<input type="hidden" name="employeeId" th:value="${employeeForm.employeeId}">
+
+					<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
+						style="color: white; background-color: cornflowerblue;"
+						th:if="${session.employeeMode == 'update'}" onclick="return confirm('削除してもよろしいですか？');">
+						削除
+					</button>
+
+				</form>
+
+				<a href="/employee/list" class="btn border border-dark mb-3 my-3"
+					style="color: white; background-color: cornflowerblue;">キャンセル</a>
+			</div>
+		</main>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -147,4 +176,5 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/index.js"></script>
 
 </body>
+
 </html>

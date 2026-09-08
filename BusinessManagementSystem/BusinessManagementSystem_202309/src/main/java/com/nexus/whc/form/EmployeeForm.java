@@ -19,11 +19,11 @@ public class EmployeeForm {
 
 	private String createdAt;
 
-	private String createdUser;
+	private String createdUser = "nexus001";
 
 	private String updatedAt;
 
-	private String updatedUser;
+	private String updatedUser = "nexus001";
 
 	private String year;
 

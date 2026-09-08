@@ -149,6 +149,7 @@ function determinePaidLeaveStatus(paidHolidayStd, currentDate, usedPaidLeave) {
 
 	return status;
 }
+
 function checkAllFormat() {
 
 	var paidHolidayStdResult = checkPaidHolidayStd();
