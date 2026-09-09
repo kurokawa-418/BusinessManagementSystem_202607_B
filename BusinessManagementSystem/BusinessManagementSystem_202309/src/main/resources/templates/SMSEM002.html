@@ -1,93 +1,171 @@
 <!DOCTYPE html>
-<html lang="ja">
+
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="../static/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="../css/SMSEM001.css" rel="stylesheet" type="text/css">
-	<link href="../static/css/index.css" rel="stylesheet" type="text/css">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<!-- 画面CSS -->
+	<link rel="stylesheet" th:href="@{/css/SMSEM001.css}">
+	<!-- 共通CSS -->
+	<link rel="stylesheet" th:href="@{/css/index.css}">
+	<!-- メニューCSS -->
+	<link rel="stylesheet" th:href="@{/css/menu.css}">
+	<!-- Flatpickr -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-	<link th:href="@{../static/css/menu.css}" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/style.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+	<!-- Material Icons -->
 	<link
 		href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp|Material+Icons+Two+Tone"
 		rel="stylesheet">
-
-
 	<title>WHC:社員マスタ登録</title>
 </head>
 
 <body>
+	<!-- ==================================================
+		 ヘッダー
+		 一覧画面と同じ
+	================================================== -->
 	<header>
-		<!--		ヘッダー部分は、Tymeleafで共通化すること-->
 		<nav class="navbar navbar-expand-lg navbar-light border-bottom shadow-sm" style="background-color: #f36304">
-			<a class="navbar-brand" href="ML010.html"> <span class="ml-1"
-					style="color: white; font-size: 1.0em; font-weight: bold;"> 労働時間計算システム </span> </a>
+			<!-- システム名 -->
+			<a class="navbar-brand" href="ML010.html">
+				<span class="ml-1" style="color: white;
+							 font-size: 1.0em;
+							 font-weight: bold;">
+					労働時間計算システム
+				</span>
+			</a>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto"></ul>
+				<!-- 左側の空き -->
+				<ul class="navbar-nav me-auto">
+				</ul>
+				<!-- アカウント -->
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-							data-bs-toggle="dropdown" aria-expanded="false" style="color: white"> [Acount Name]
-							<span class="visually-hidden">(current)</span></a>
+							data-bs-toggle="dropdown" aria-expanded="false" style="color: white">
+							[Acount Name]
+							<span class="visually-hidden">
+								(current)
+							</span>
+						</a>
+
 						<div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
 							style="background-color: #f36304">
-							<a class="dropdown-item" href="LF020.html" style="color: white">パスワード変更</a>
+							<a class="dropdown-item" href="LF020.html" style="color: white">
+								パスワード変更
+							</a>
+
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="LF010.html" style="color: white">ログアウト</a>
+							<a class="dropdown-item" href="LF010.html" style="color: white">
+								ログアウト
+							</a>
 						</div>
 					</li>
 				</ul>
 			</div>
 		</nav>
 	</header>
-
+	<!-- ==================================================
+		 ヘッダー下
+	================================================== -->
 	<div class="d-flex flex-row" style="height: 1000px">
-		<!-- メニュー表示 -->
-		<object data="menu.html" type="text/html"></object>
-
-		<main class="w-100 h-100 bg-light">
-			<div class="container bg-white border py-3 my-3" style="width: 850px">
-				<form method="post" action="/employee/regist" th:object="${employeeForm}"
+		<!-- ==================================================
+			 左メニュー
+			 一覧画面と同じ
+		================================================== -->
+		<div th:replace="~{menu::menu}">
+		</div>
+		<!-- ==================================================
+			 右側メイン
+		================================================== -->
+		<main class="w-100 bg-light">
+			<!-- ==================================================
+				 入力フォーム
+			================================================== -->
+			<div class="container bg-white border py-3 my-3">
+				<form id="employeeForm" method="post" action="/employee/regist" th:object="${employeeForm}"
 					onsubmit="return checkAllFormat();">
+					<!-- ==================================================
+						 エラーメッセージ
+					================================================== -->
+					<div id="formatErrorArea" style="color: red; margin-bottom: 10px;">
+						<div id="paidHolidayStdError" hidden>
+							有給基準日(yyyy/MM/ddなど)で入力してください。
+						</div>
+						<div id="remaindThisYearError" hidden>
+							有休残日数-当年度分(00.0など)で入力してください。
+						</div>
+						<div id="remaindLastYearError" hidden>
+							有休残日数-前年度分(00.0など)で入力してください。
+						</div>
+					</div>
+					
 					<div class="error" th:errors="*{employeeId}"></div>
 					<div class="error" th:errors="*{employeeName}"></div>
 					<div class="error" th:errors="*{paidHolidayStd}"></div>
 					<div class="error" th:errors="*{remaindThisYear}"></div>
 					<div class="error" th:errors="*{remaindLastYear}"></div>
+
+					<!-- ==================================================
+						 社員番号・社員氏名
+					================================================== -->
 					<div class="input-group mb-3" style="width: 600px">
-						<span class="input-group-text">社員番号</span>
-						<input type="text" id="employeeId" name="employeeId" aria-label="emNo" class="form-control" style="width: 150px"
-							th:field="*{employeeId}" th:readonly="${session.employeeMode == 'update'}">
-						<span class="input-group-text">社員氏名</span>
-						<input type="text" id="employeeName" name="employeeName" class="form-control" style="width: 150px"
-							th:field="*{employeeName}" th:readonly="${session.employeeMode == 'update'}">
+						<span class="input-group-text">
+							社員番号
+						</span>
+						<input type="text" id="employeeId" name="employeeId" aria-label="emNo" class="form-control"
+							style="width: 150px" th:field="*{employeeId}"
+							th:readonly="${session.employeeMode == 'update'}">
+						<span class="input-group-text">
+							社員氏名
+						</span>
+						<input type="text" id="employeeName" name="employeeName" class="form-control"
+							style="width: 150px" th:field="*{employeeName}"
+							th:readonly="${session.employeeMode == 'update'}">
+					</div>
+					<!-- ==================================================
+						 担当顧客
+					================================================== -->
+					<div class="input-group mb-3" style="width: 1000px">
+						<span class="input-group-text">
+							担当顧客番号
+						</span>
+						<input type="text" name="clientId" aria-label="clientNo" class="form-control"
+							style="width: 150px" id="customerNumberField" th:field="*{clientId}" onblur="searchClientById()">
+						<span class="input-group-text">
+							担当顧客名
+						</span>
+						<input type="text" name="clientName" class="form-control" style="width: 350px"
+							id="customerNameField" th:field="*{clientName}" onblur="searchClientByName()">
+						<button type="button" name="clientName" class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" id="showDialogButton">
+							顧客選択
+						</button>
 					</div>
 
-
-					<div class="input-group mb-3" style="width: 800px">
-						<span class="input-group-text">担当顧客番号</span>
-						<input type="text" name="clientId" aria-label="emNo" class="form-control" style="width: 150px"
-							id="customerNumberField" th:field="*{clientId}">
-						<span class="input-group-text">担当顧客名</span>
-						<input type="text" class="form-control" style="width: 150px" id="customerNameField"
-							th:field="*{clientName}">
-						<button type="button" name="clientName" class="btn btn-success border border-dark mb-2 mx-2"
-							style="color: white; background-color: cornflowerblue" id="showDialogButton">顧客選択</button>
-					</div>
-
-					<!-- ダイアログ -->
+					<!-- ==================================================
+						 顧客選択ダイアログ
+					================================================== -->
 					<div id="customerDialog" class="modal">
 						<div class="modal-content">
-							<span class="close" id="closeCustomerDialog">&times;</span>
+							<span class="close" id="closeCustomerDialog">
+								&times;
+							</span>
 							<table>
 								<thead>
 									<tr>
-										<th>担当顧客番号</th>
-										<th>担当顧客名</th>
+										<th>
+											担当顧客番号
+										</th>
+										<th>
+											担当顧客名
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -95,86 +173,145 @@
 							</table>
 						</div>
 					</div>
-
+					<!-- ==================================================
+						 時給
+					================================================== -->
 					<div class="input-group mb-3" style="width: 600px">
 						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage"
 							th:field="*{hourlyWage}">
-						<label class="form-check-label" for="inlineCheckbox1">時給</label>
+						<label class="form-check-label" for="inlineCheckbox1">
+							時給
+						</label>
 					</div>
 
-					<div class="input-group mb-3" style="width: 300px">
-						<span class="input-group-text">有給基準日</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
+					<!-- ==================================================
+						 有給基準日
+					================================================== -->
+					<div class="input-group mb-3" style="width: 430px">
+						<span class="input-group-text">
+							有給基準日
+						</span>
+						<input type="text" aria-label="emNo" class="form-control" style="width: 200px"
 							id="paidHolidayStd" name="paidHolidayStd" th:field="*{paidHolidayStd}"
 							onchange="calculatePaidLeave()" onblur="checkPaidHolidayStd()">
-						<div id="paidHolidayStdError" style="color: red;" hidden>有給基準日(yyyy/MM/ddなど)で入力してください。</div>
 					</div>
 
-					<div class="input-group mb-3" style="width: 600px">
-						<span class="input-group-text" style="width: 90px">有給残日数</span>
-						<span class="input-group-text">当年度分</span>
+					<!-- ==================================================
+						 有給残日数
+					================================================== -->
+					<div class="input-group mb-3" style="width: 850px">
+						<span class="input-group-text" style="width: 110px">
+							有給残日数
+						</span>
+						<span class="input-group-text">
+							当年度分
+						</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
 							id="remaindThisYear" name="remaindThisYear" th:field="*{remaindThisYear}"
 							onblur="checkRemaindThisYear()">
-						<div id="remaindThisYearError" style="color: red;" hidden>有休残日数-当年度分(00.0など)で入力してください。</div>
-						<span class="input-group-text">前年度分</span>
+						<span class="input-group-text">
+							日
+						</span>
+						<span class="input-group-text">
+							前年度分
+						</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px"
 							id="remaindLastYear" name="remaindLastYear" th:field="*{remaindLastYear}"
 							onblur="checkRemaindLastYear()">
-						<div id="remaindLastYearError" style="color: red;" hidden>有休残日数-前年度分(00.0など)で入力してください。</div>
-						<span class="input-group-text" style="width: 40px">日</span>
+						<span class="input-group-text" style="width: 40px">
+							日
+						</span>
 					</div>
 
-					<div class="input-group mb-3" style="width: 350px">
-						<span class="input-group-text">有給取得日数</span>
+					<!-- ==================================================
+						 有給取得日数
+					================================================== -->
+					<div class="input-group mb-3" style="width: 400px">
+						<span class="input-group-text">
+							有給取得日数
+						</span>
 						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
-						<span class="input-group-text" style="width: 40px">日</span>
+						<span class="input-group-text" style="width: 40px">
+							日
+						</span>
 					</div>
 
-					<div class="input-group mb-3" style="width: 350px">
-						<span class="input-group-text">ステータス</span>
-						<input type="text" aria-label="emNo" class="form-control" style="width: 150px">
+					<!-- ==================================================
+						 ステータス
+					================================================== -->
+					<div class="input-group mb-3" style="width: 500px">
+						<span class="input-group-text">
+							ステータス
+						</span>
+						<input type="text" aria-label="emNo" class="form-control" style="width: 250px">
 					</div>
-					<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}"
-						onclick="return confirm('登録してもよろしいですか？');">登録</button>
-					<button id="btn-regist" type="submit" formaction="/employee/update"
-						class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;"
-						th:if="${session.employeeMode == 'update'}"
-						onclick="return confirm('更新してもよろしいですか？');">更新</button>
-					<button id="btn-regist" type="submit" formaction="/employee/registNext"
-						class="btn border border-dark mb-3 my-3" style="color: white; background-color: cornflowerblue;"
-						th:if="${session.employeeMode == 'new'}"
-						onclick="return confirm('登録してもよろしいですか？');">登録して次へ</button>
 				</form>
-				<form method="post" action="/employee/delete">
-
-					<input type="hidden" name="employeeId" th:value="${employeeForm.employeeId}">
-
-					<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
-						style="color: white; background-color: cornflowerblue;"
-						th:if="${session.employeeMode == 'update'}" onclick="return confirm('削除してもよろしいですか？');">
-						削除
+				<!-- ==================================================
+						 ボタン
+					================================================== -->
+				<div style="display: flex;
+								align-items: center;
+								gap: 8px;
+								margin-top: 20px;">
+					<!-- 登録 -->
+					<button id="btn-regist" type="submit" form="employeeForm" formaction="/employee/regist"
+						class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}"
+						onclick="return confirm('登録してもよろしいですか？');">
+						登録
 					</button>
 
-				</form>
+					<!-- 登録して次へ -->
+					<button id="btn-regist-next" type="submit" form="employeeForm" formaction="/employee/registNext"
+						class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" th:if="${session.employeeMode == 'new'}"
+						onclick="return confirm('登録してもよろしいですか？');">
+						登録して次へ
+					</button>
 
-				<a href="/employee/list" class="btn border border-dark mb-3 my-3"
-					style="color: white; background-color: cornflowerblue;">キャンセル</a>
+					<!-- 更新 -->
+					<button id="btn-update" type="submit" form="employeeForm" formaction="/employee/update"
+						class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}"
+						onclick="return confirm('更新してもよろしいですか？');">
+						更新
+					</button>
+
+					<!-- 削除 -->
+					<form method="post" action="/employee/delete" style="margin: 0;"
+						th:if="${session.employeeMode == 'update'}">
+						<input type="hidden" name="employeeId" th:value="${employeeForm.employeeId}">
+						<button id="btn-delete" type="submit" formaction="/employee/delete"
+							class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}"
+							onclick="return confirm('削除してもよろしいですか？');">
+							削除
+						</button>
+					</form>
+					<!-- キャンセル -->
+					<form method="post" action="/employee/cancel" style="margin: 0;">
+						<button id="btn-cancel" type="submit" formaction="/employee/cancel"
+							class="btn border border-dark" style="color: white;
+									   background-color: cornflowerblue;" onclick="return confirm('入力内容を破棄してもよろしいですか？');">
+							キャンセル
+						</button>
+					</form>
+				</div>
 			</div>
 		</main>
 	</div>
 
+	<!-- ==================================================
+		 JavaScript
+	================================================== -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 	<script th:src="@{/js/SMSEM002.js}"></script>
-	<script src="../static/js/bootstrap.bundle.min.js"></script>
-	<script src="../static/js/index.js"></script>
-	<script src="../static/js/menu.js"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/index.js}"></script>
+	<script th:src="@{/js/menu.js}"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/index.js"></script>
-
 </body>
 
 </html>

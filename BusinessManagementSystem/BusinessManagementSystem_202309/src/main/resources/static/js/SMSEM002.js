@@ -1,3 +1,56 @@
+// 担当顧客番号から顧客名を取得
+function searchClientById() {
+
+	var clientId = document.getElementById("customerNumberField").value.trim();
+
+	// 空欄なら何もしない
+	if (clientId === "") {
+		return;
+	}
+
+	fetch("/employee/searchClientById?clientId=" + encodeURIComponent(clientId))
+		.then(response => response.json())
+		.then(data => {
+
+			if (data !== null) {
+				document.getElementById("customerNameField").value = data.clientName;
+			} else {
+				document.getElementById("customerNameField").value = "";
+			}
+
+		})
+		.catch(error => {
+			console.error("顧客検索エラー:", error);
+		});
+}
+
+
+// 担当顧客名から顧客番号を取得
+function searchClientByName() {
+
+	var clientName = document.getElementById("customerNameField").value.trim();
+
+	// 空欄なら何もしない
+	if (clientName === "") {
+		return;
+	}
+
+	fetch("/employee/searchClientByName?clientName=" + encodeURIComponent(clientName))
+		.then(response => response.json())
+		.then(data => {
+
+			if (data !== null) {
+				document.getElementById("customerNumberField").value = data.clientId;
+			} else {
+				document.getElementById("customerNumberField").value = "";
+			}
+
+		})
+		.catch(error => {
+			console.error("顧客検索エラー:", error);
+		});
+}
+
 function checkPaidHolidayStd() {
 
 	var input = document.getElementById("paidHolidayStd");

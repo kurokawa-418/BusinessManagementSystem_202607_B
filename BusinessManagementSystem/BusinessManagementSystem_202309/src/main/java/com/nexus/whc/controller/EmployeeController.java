@@ -385,8 +385,6 @@ public class EmployeeController {
 			@ModelAttribute EmployeeForm employeeForm,
 			HttpSession session) {
 
-		System.out.println("employeeId = [" + employeeForm.getEmployeeId() + "]");
-
 		// セッション管理
 		session.setAttribute("employeeForm", employeeForm);
 
@@ -397,5 +395,19 @@ public class EmployeeController {
 		employeeService.deletePaidVacation(employeeForm);
 
 		return "redirect:/employee/list";
+	}
+	
+	//キャンセルボタン押下処理
+	@PostMapping("/cancel")
+	public String cancelEmployee(HttpSession session) {
+
+	    // 入力内容をセッションから破棄
+	    session.removeAttribute("employeeForm");
+	    
+	    // 共通排他チェック（編集済み）は
+	    // まだ未実装なので現時点では何もしない
+
+	    // 社員マスタ一覧画面へ
+	    return "redirect:/employee/list";
 	}
 }
