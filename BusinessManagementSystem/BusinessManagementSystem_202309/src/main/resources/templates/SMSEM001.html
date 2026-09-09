@@ -214,7 +214,7 @@
 								</td>
 
 								<!-- 社員番号 -->
-								<td th:text="${employee.employee_id}">
+								<td th:text="${#numbers.formatInteger(employee.employee_id, 4)}">
 								</td>
 
 								<!-- 社員氏名 -->
@@ -224,7 +224,7 @@
 								</td>
 
 								<!-- 担当顧客番号 -->
-								<td th:text="${employee.client_id}">
+								<td th:text="${#numbers.formatInteger(employee.client_id, 3)}">
 								</td>
 
 								<!-- 担当顧客名 -->

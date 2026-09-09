@@ -283,13 +283,17 @@ public class EmployeeController {
 		EmployeeForm employeeForm = new EmployeeForm();
 
 		employeeForm.setEmployeeId(
-				String.valueOf(employee.get("employee_id")));
+		        String.format("%04d",
+		                Integer.valueOf(
+		                        String.valueOf(employee.get("employee_id")))));
 
 		employeeForm.setEmployeeName(
 				String.valueOf(employee.get("employee_name")));
 
 		employeeForm.setClientId(
-				String.valueOf(employee.get("client_id")));
+		        String.format("%03d",
+		                Integer.valueOf(
+		                        String.valueOf(employee.get("client_id")))));
 
 		employeeForm.setClientName(
 				String.valueOf(employee.get("client_name")));
