@@ -86,13 +86,14 @@ public class UserController {
 			@RequestParam(name = "user_name", defaultValue = "") String userName,
 			@RequestParam(name = "permission", defaultValue = "") String authId,
 			@RequestParam(name = "mail_address", defaultValue = "") String mailAddress,
+			@RequestParam(name = "search", defaultValue = "false") boolean search,
 			Model model) {
 
 		/*DB検索*/
 		List<Map<String, Object>> userlist = userService.searchList(userId, userName, authId, mailAddress);
-		if (userlist.isEmpty()) {
+		if (search && userlist.isEmpty()) {
 			String message = messageSource.getMessage("COM01W001",
-					new Object[] { "ユーザ" },
+					new Object[] { "", "ユーザ" },
 					Locale.JAPAN);
 			model.addAttribute("message", message);
 		}

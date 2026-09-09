@@ -59,6 +59,7 @@ public class UserRepository {
 			sql.append(" AND mail_address LIKE ?");
 			param.add("%" + mailAddress + "%");
 		}
+
 		/*SQLを実行して、複数行の検索結果を取得する*/
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql.toString(), param.toArray());
 		/*Serviceに返す*/
@@ -67,14 +68,15 @@ public class UserRepository {
 
 	/*登録*/
 	public int registUser(UserForm userForm) {
-		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address, password)"
-				+ "VALUES(?,?,?,?,?)";
+		String sql = "INSERT INTO m_user (user_id, user_name, auth_id, mail_address, password,delete_flg)"
+				+ "VALUES(?,?,?,?,?,?)";
 		Object[] param = {
 				userForm.getUserId(),
 				userForm.getUserName(),
 				userForm.getAuthId(),
 				userForm.getMailAddress(),
-				userForm.getPassword() };
+				userForm.getPassword(),
+				0 };
 		return jdbcTemplate.update(sql, param);
 	}
 
