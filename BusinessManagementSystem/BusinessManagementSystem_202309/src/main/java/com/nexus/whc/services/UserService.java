@@ -52,8 +52,7 @@ public class UserService {
 	private String generatePassword() {
 		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 				+ "abcdefghijklmnopqrstuvwxyz"
-				+ "0123456789"
-				+ "!@#$%^&*";
+				+ "0123456789";
 
 		StringBuilder password = new StringBuilder();
 		SecureRandom random = new SecureRandom();
@@ -62,8 +61,17 @@ public class UserService {
 			int index = random.nextInt(chars.length());
 			password.append(chars.charAt(index));
 		}
-
 		return password.toString();
+	}
+
+	/*更新するユーザ情報を取得*/
+	public Map<String, Object> findUserBySeqId(int seqId) {
+		return userRepository.findUserBySeqId(seqId);
+	}
+
+	/*ユーザ情報を更新*/
+	public int updateUser(UserForm userForm) {
+		return userRepository.updateUser(userForm);
 	}
 
 	/*ユーザー削除*/

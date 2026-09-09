@@ -44,9 +44,9 @@ public class UserController {
 
 	}
 
-	/*ユーザ情報入力画面Get用*/
+	/*ユーザ情報入力画面(新規登録)*/
 	@GetMapping("/input")
-	public String getUser(Model model, HttpSession session) {
+	public String inputUser(Model model, HttpSession session) {
 		UserForm userForm = new UserForm();
 
 		model.addAttribute("userForm", userForm);
@@ -54,7 +54,7 @@ public class UserController {
 		return "SMSUS002";
 	}
 
-	/*ユーザー登録(新規追加モード）*/
+	/*ユーザー登録(新規登録）*/
 	@PostMapping("/regist")
 	public String userRegist(@Validated @ModelAttribute UserForm userForm,
 			BindingResult bindingResult,
@@ -71,6 +71,53 @@ public class UserController {
 		if (0 == result) {
 			// エラーメッセージをフラッシュスコープに保存
 			attr.addFlashAttribute("message", "登録エラーが発生しました");
+			// エラー画面に遷移
+			return "redirect:/user/error";
+		} else {
+			//ユーザー一覧画面に遷移
+			return "redirect:/user/list";
+		}
+	}
+
+	/*ユーザ情報入力画面(更新)*/
+	@GetMapping("/update")
+	public String updateUser(
+			@RequestParam("seq_id") Integer seqId,
+			Model model, HttpSession session) {
+		/*DBから取り出した値をMapのuserに格納*/
+		Map<String, Object> user = userService.findUserBySeqId(seqId);
+
+		UserForm userForm = new UserForm();
+		/*DBから取得したユーザ情報の内、user_idをString型にしてからUserFormのuserIdに設定*/
+		/*UserFormにコピーしてる*/
+		userForm.setUserId((String) user.get("user_id"));
+
+		userForm.setUserName((String) user.get("user_name"));
+		userForm.setAuthId(String.valueOf(user.get("auth_id")));
+		userForm.setMailAddress((String) user.get("mail_address"));
+		userForm.setSeqId(seqId);
+		/*コピーした値を画面に渡す*/
+		model.addAttribute("userForm", userForm);
+		session.setAttribute("userMode", "update");
+		return "SMSUS002";
+	}
+
+	@PostMapping("/update")
+	public String updateUser(@Validated @ModelAttribute UserForm userForm,
+			BindingResult bindingResult,
+			RedirectAttributes attr,
+			HttpSession session) {
+		//未入力チェック
+		if (bindingResult.hasErrors()) {
+			return "SMSUS002";
+		}
+		// 登録結果
+		/*宣言＋初期値の設定＋Serviceの呼び出し*/
+		int result = userService.updateUser(userForm);
+
+		if (0 == result) {
+			// エラーメッセージをフラッシュスコープに保存
+			attr.addFlashAttribute("message", "更新エラーが発生しました");
 			// エラー画面に遷移
 			return "redirect:/user/error";
 		} else {

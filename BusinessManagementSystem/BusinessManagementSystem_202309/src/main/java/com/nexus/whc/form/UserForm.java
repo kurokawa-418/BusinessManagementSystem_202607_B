@@ -20,6 +20,8 @@ public class UserForm {
 
 	private String password;
 
+	private Integer seqId;
+
 	public String getUserId() {
 		return userId;
 	}
@@ -58,5 +60,13 @@ public class UserForm {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Integer getSeqId() {
+		return seqId;
+	}
+
+	public void setSeqId(Integer seqId) {
+		this.seqId = seqId;
 	}
 }

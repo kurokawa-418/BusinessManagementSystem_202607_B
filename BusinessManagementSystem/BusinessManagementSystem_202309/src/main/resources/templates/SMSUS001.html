@@ -124,7 +124,8 @@
 									</th>
 									<th th:text="${user['user_id']}"></th>
 									<td>
-										<a th:href="@{/user/input(seq_id=${user['seq_id']})}"
+										<!--ユーザ名リンク部分-->
+										<a th:href="@{/user/update(seq_id=${user['seq_id']})}"
 											th:text="${user['user_name']}"></a>
 									</td>
 									<td class="text-center" th:text="${user['auth_status']}"></td>

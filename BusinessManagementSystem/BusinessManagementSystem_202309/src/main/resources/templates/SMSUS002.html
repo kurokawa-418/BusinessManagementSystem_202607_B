@@ -52,18 +52,18 @@
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
 				<form method="post" action="/user/regist" th:object="${userForm}">
 
-					<!--					<div th:if="${#fields.hasErrors('*')}" th:errors="*{*}" style="color:red">-->
-					<!--					</div>-->
-
+					<!--ユーザ情報入力欄-->
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">ユーザID</span>
-						<input type="text" name="userId" aria-label="emNo" class="form-control" style="width: 150px">
+						<input type="text" th:field="*{userId}" aria-label="emNo" class="form-control"
+							style="width: 150px">
 						<span class="input-group-text">ユーザ名</span>
-						<input type="text" name="userName" class="form-control" style="width: 150px">
+						<input type="text" th:field="*{userName}" class="form-control" style="width: 150px">
+						<input type="hidden" th:field="*{seqId}">
 					</div>
 					<div class="input-group mb-3" style="width: 300px">
 						<span class="input-group-text">権限</span>
-						<select name="authId" id="permission-select">
+						<select th:field="*{authId}" id="permission-select">
 							<option value="0">管理者</option>
 							<option value="1">一般</option>
 						</select>
@@ -71,7 +71,7 @@
 
 					<div class="input-group mb-3" style="width: 500px">
 						<span class="input-group-text">メールアドレス</span>
-						<input type="text" name="mailAddress" aria-label="emNo" class="form-control"
+						<input type="text" th:field="*{mailAddress}" aria-label="emNo" class="form-control"
 							style="width: 150px">
 					</div>
 
@@ -88,7 +88,8 @@
 
 					<!-- 更新モード -->
 					<div th:if="${session.userMode == 'update'}">
-						<button id="btn-update" type="button" class="btn border border-dark mb-3 my-3"
+						<button id="btn-update" type="submit" formaction="/user/update"
+							class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">更新</button>
 						<button id="btn-delete" type="button" class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">削除</button>

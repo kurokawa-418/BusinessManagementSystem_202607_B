@@ -80,6 +80,35 @@ public class UserRepository {
 		return jdbcTemplate.update(sql, param);
 	}
 
+	/*更新するユーザ情報を取得*/
+	public Map<String, Object> findUserBySeqId(int seqId) {
+
+		String sql = "SELECT * "
+				+ "FROM m_user "
+				+ "WHERE seq_id = ? "
+				+ "AND delete_flg = 0";
+
+		Object[] param = { seqId };
+
+		return jdbcTemplate.queryForMap(sql, param);
+	}
+
+	/*更新*/
+	public int updateUser(UserForm userForm) {
+		String sql = "UPDATE m_user SET "
+				+ "user_name = ?, "
+				+ "auth_id = ?, "
+				+ "mail_address = ? "
+				+ "WHERE seq_id = ?";
+		Object[] param = {
+				userForm.getUserName(),
+				userForm.getAuthId(),
+				userForm.getMailAddress(),
+				userForm.getSeqId(),
+		};
+		return jdbcTemplate.update(sql, param);
+	}
+
 	/*一覧から削除*/
 	public void deleteUser(int seqId) {
 
