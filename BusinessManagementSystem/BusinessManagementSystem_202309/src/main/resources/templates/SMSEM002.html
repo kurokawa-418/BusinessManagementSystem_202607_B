@@ -95,17 +95,14 @@
 						 エラーメッセージ
 					================================================== -->
 					<div id="formatErrorArea" style="color: red; margin-bottom: 10px;">
-						<div id="paidHolidayStdError" hidden>
-							有給基準日(yyyy/MM/ddなど)で入力してください。
+						<div id="paidHolidayStdError" hidden th:text="#{COM01E003('', '有給基準日', 'yyyy/MM/dd')}">
 						</div>
-						<div id="remaindThisYearError" hidden>
-							有休残日数-当年度分(00.0など)で入力してください。
+						<div id="remaindThisYearError" hidden th:text="#{COM01E003('', '有休残日数-当年度分', '00.0')}">
 						</div>
-						<div id="remaindLastYearError" hidden>
-							有休残日数-前年度分(00.0など)で入力してください。
+						<div id="remaindLastYearError" hidden th:text="#{COM01E003('','有休残日数-前年度分', '00.0')}">
 						</div>
 					</div>
-					
+
 					<div class="error" th:errors="*{employeeId}"></div>
 					<div class="error" th:errors="*{employeeName}"></div>
 					<div class="error" th:errors="*{clientId}"></div>
@@ -138,7 +135,8 @@
 							担当顧客番号
 						</span>
 						<input type="text" name="clientId" aria-label="clientNo" class="form-control"
-							style="width: 150px" id="customerNumberField" th:field="*{clientId}" onblur="searchClientById()">
+							style="width: 150px" id="customerNumberField" th:field="*{clientId}"
+							onblur="searchClientById()">
 						<span class="input-group-text">
 							担当顧客名
 						</span>
@@ -179,7 +177,7 @@
 					================================================== -->
 					<div class="input-group mb-3" style="width: 600px">
 						<input type="checkbox" id="inlineCheckbox1" value="1" name="hourlyWage"
-							th:field="*{hourlyWage}">
+							th:checked="${employeeForm.hourlyWage == '1'}">
 						<label class="form-check-label" for="inlineCheckbox1">
 							時給
 						</label>

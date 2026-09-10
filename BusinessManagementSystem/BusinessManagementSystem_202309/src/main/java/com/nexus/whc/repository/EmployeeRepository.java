@@ -192,7 +192,7 @@ public class EmployeeRepository {
 				+ "m_employee.employee_name, "
 				+ "m_employee.client_id, "
 				+ "m_client.client_name, "
-				+ "m_employee.hourly_wage, "
+				+ "CAST(m_employee.hourly_wage AS UNSIGNED) AS hourly_wage, "
 				+ "m_employee.paid_holiday_std, "
 				+ "m_employee_paid_vacation.remaind_this_year, "
 				+ "m_employee_paid_vacation.remaind_last_year "

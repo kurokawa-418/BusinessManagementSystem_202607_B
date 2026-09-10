@@ -333,21 +333,8 @@ public class EmployeeController {
 		// hourly_wage（BIT(1)）
 		Object hourlyWageValue = employee.get("hourly_wage");
 
-		if (hourlyWageValue instanceof byte[]) {
-
-			byte[] bytes = (byte[]) hourlyWageValue;
-
-			if (bytes.length > 0 && bytes[0] == 1) {
-				employeeForm.setHourlyWage("1");
-			} else {
-				employeeForm.setHourlyWage("0");
-			}
-
-		} else {
-
-			employeeForm.setHourlyWage(
-					String.valueOf(hourlyWageValue));
-		}
+		employeeForm.setHourlyWage(
+		        String.valueOf(hourlyWageValue));
 
 		// 有給基準日 yyyy-MM-dd → yyyy/MM/dd
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -433,6 +420,11 @@ public class EmployeeController {
 	    // 顧客番号エラーがあれば更新しない
 	    if (bindingResult.hasErrors()) {
 	        return "SMSEM002";
+	    }
+	    
+	    // 時給チェックなしの場合は0
+	    if (employeeForm.getHourlyWage() == null) {
+	        employeeForm.setHourlyWage("0");
 	    }
 
 	    // エラーがなければ更新

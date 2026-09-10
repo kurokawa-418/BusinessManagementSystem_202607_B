@@ -34,3 +34,15 @@ info::before{
 .class{
 	color: red;
 }
+
+#listLimit {
+    max-height: 460px;
+    overflow-y: auto;
+}
+
+#listLimit thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: royalblue;
+}
