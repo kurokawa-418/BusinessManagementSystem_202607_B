@@ -1,3 +1,97 @@
+// 担当顧客番号から顧客名を取得
+function searchClientById() {
+
+	var clientId =
+		document.getElementById("customerNumberField").value.trim();
+
+	if (clientId === "") {
+		document.getElementById("customerNameField").value = "";
+		return;
+	}
+
+	fetch("/employee/searchClientById?clientId="
+		+ encodeURIComponent(clientId))
+		.then(response => {
+
+			if (!response.ok) {
+				throw new Error("顧客検索に失敗しました");
+			}
+
+			return response.json();
+
+		})
+		.then(data => {
+
+			console.log("顧客番号検索結果:", data);
+
+			if (data && data.clientName != null) {
+
+				document.getElementById("customerNameField").value =
+					data.clientName;
+
+			} else {
+
+				document.getElementById("customerNameField").value = "";
+
+			}
+
+		})
+		.catch(error => {
+
+			console.error(error);
+
+			document.getElementById("customerNameField").value = "";
+
+		});
+}
+
+// 担当顧客名から顧客番号を取得
+function searchClientByName() {
+
+	var clientName =
+		document.getElementById("customerNameField").value.trim();
+
+	if (clientName === "") {
+		document.getElementById("customerNumberField").value = "";
+		return;
+	}
+
+	fetch("/employee/searchClientByName?clientName="
+		+ encodeURIComponent(clientName))
+		.then(response => {
+
+			if (!response.ok) {
+				throw new Error("顧客検索に失敗しました");
+			}
+
+			return response.json();
+
+		})
+		.then(data => {
+
+			console.log("顧客名検索結果:", data);
+
+			if (data && data.clientId != null) {
+
+				document.getElementById("customerNumberField").value =
+					String(data.clientId).padStart(3, "0");
+
+			} else {
+
+				document.getElementById("customerNumberField").value = "";
+
+			}
+
+		})
+		.catch(error => {
+
+			console.error(error);
+
+			document.getElementById("customerNumberField").value = "";
+
+		});
+}
+
 function checkPaidHolidayStd() {
 
 	var input = document.getElementById("paidHolidayStd");
@@ -88,39 +182,106 @@ function checkRemaindLastYear() {
 	return true;
 }
 function calculatePaidLeave() {
-	// 基準日の入力値を取得
-	var paidHolidayStd = new Date(document.getElementById("paidHolidayStd").value);
 
-	// 現在日付を取得
-	var currentDate = new Date();
+    var value = document.getElementById("paidHolidayStd").value.trim();
 
-	// 基準日からの年数を計算
-	var yearsSinceStd = calculateYearsSinceStd(paidHolidayStd, currentDate);
+    // 未入力なら計算しない
+    if (value === "") {
+        document.getElementById("remaindThisYear").value = "";
+        return;
+    }
 
-	// 年数に応じて有休日数を計算
-	var paidLeaveDays = calculatePaidLeaveDays(yearsSinceStd);
+    // yyyy/MM/dd の形式以外なら計算しない
+    var pattern = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
 
-	// 有休日数をフォームに表示
-	document.getElementById("paidLeaveDays").value = paidLeaveDays;
+    if (!pattern.test(value)) {
+        document.getElementById("remaindThisYear").value = "";
+        return;
+    }
+
+    // yyyy/MM/dd を分解
+    var parts = value.split("/");
+
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    var day = Number(parts[2]);
+
+    var paidHolidayStd = new Date(year, month - 1, day);
+
+    // 実在する日付かチェック
+    if (
+        paidHolidayStd.getFullYear() !== year ||
+        paidHolidayStd.getMonth() !== month - 1 ||
+        paidHolidayStd.getDate() !== day
+    ) {
+        document.getElementById("remaindThisYear").value = "";
+        return;
+    }
+
+    var currentDate = new Date();
+
+    var yearsSinceStd =
+        calculateYearsSinceStd(paidHolidayStd, currentDate);
+
+    var paidLeaveDays =
+        calculatePaidLeaveDays(yearsSinceStd);
+
+    document.getElementById("remaindThisYear").value =
+        paidLeaveDays.toFixed(1);
 }
 
 function calculateYearsSinceStd(paidHolidayStd, currentDate) {
-	var timeDiff = currentDate - paidHolidayStd;
-	var daysSinceStd = timeDiff / (1000 * 60 * 60 * 24);
-	var yearsSinceStd = Math.floor(daysSinceStd / 365);
-	return yearsSinceStd;
+	
+    // 基準日より前
+    if (currentDate < paidHolidayStd) {
+        return -1;
+    }
+
+    var years =
+        currentDate.getFullYear()
+        - paidHolidayStd.getFullYear();
+
+    // 今年の基準日をまだ迎えていない場合は1年減らす
+    var anniversary =
+        new Date(
+            currentDate.getFullYear(),
+            paidHolidayStd.getMonth(),
+            paidHolidayStd.getDate()
+        );
+
+    if (currentDate < anniversary) {
+        years--;
+    }
+
+    return years;
 }
 
 function calculatePaidLeaveDays(yearsSinceStd) {
-	if (yearsSinceStd <= 0) {
-		return 0.0;
-	} else if (yearsSinceStd == 1) {
-		return 10.0;
-	} else if (yearsSinceStd <= 6) {
-		return 10.0 + (yearsSinceStd - 1) * 1.0;
-	} else {
-		return 20.0;
-	}
+	
+    if (yearsSinceStd < 0) {
+        return 0.0;
+
+    } else if (yearsSinceStd === 0) {
+        return 10.0;
+
+    } else if (yearsSinceStd === 1) {
+        return 11.0;
+
+    } else if (yearsSinceStd === 2) {
+        return 12.0;
+
+    } else if (yearsSinceStd === 3) {
+        return 14.0;
+
+    } else if (yearsSinceStd === 4) {
+        return 16.0;
+
+    } else if (yearsSinceStd === 5) {
+        return 18.0;
+
+    } else {
+        return 20.0;
+    }
 }
 //警告
 function determinePaidLeaveStatus(paidHolidayStd, currentDate, usedPaidLeave) {

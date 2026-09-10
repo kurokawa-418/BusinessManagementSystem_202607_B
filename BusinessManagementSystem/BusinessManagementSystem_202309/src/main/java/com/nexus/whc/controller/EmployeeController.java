@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nexus.whc.form.EmployeeForm;
 import com.nexus.whc.services.EmployeeService;
@@ -158,117 +159,148 @@ public class EmployeeController {
 	//社員マスタ登録処理
 	@PostMapping("/regist")
 	public String registEmployee(
-			@ModelAttribute EmployeeForm employeeForm,
-			BindingResult bindingResult,
-			HttpSession session) {
+	        @ModelAttribute EmployeeForm employeeForm,
+	        BindingResult bindingResult,
+	        HttpSession session) {
 
-		checkRequired(
-				employeeForm.getEmployeeId(),
-				employeeForm.getEmployeeName(),
-				employeeForm.getPaidHolidayStd(),
-				employeeForm.getRemaindThisYear(),
-				employeeForm.getRemaindLastYear(),
-				bindingResult);
+	    // 必須チェック
+	    checkRequired(
+	            employeeForm.getEmployeeId(),
+	            employeeForm.getEmployeeName(),
+	            employeeForm.getPaidHolidayStd(),
+	            employeeForm.getRemaindThisYear(),
+	            employeeForm.getRemaindLastYear(),
+	            bindingResult);
 
-		if (!bindingResult.hasErrors()) {
+	    // 必須エラーがなければチェック
+	    if (!bindingResult.hasErrors()) {
 
-			boolean duplicate = employeeService.checkEmployeeDuplicate(employeeForm);
+	        // 顧客番号存在チェック
+	        boolean clientExists =
+	                employeeService.existsClient(employeeForm.getClientId());
 
-			if (duplicate) {
-				bindingResult.rejectValue(
-						"employeeId",
-						"COM01E011",
-						new Object[] {
-								null,
-								"社員番号",
-								employeeForm.getEmployeeId(),
-								"社員マスタ"
-						},
-						null);
-			}
-		}
+	        if (!clientExists) {
+	            bindingResult.rejectValue(
+	                    "clientId",
+	                    "",
+	                    "存在しない顧客情報です");
+	        }
+	    }
 
-		if (bindingResult.hasErrors()) {
-			return "SMSEM002";
-		}
+	    // 顧客番号エラーがなければ重複チェック
+	    if (!bindingResult.hasErrors()) {
+	        boolean duplicate =
+	                employeeService.checkEmployeeDuplicate(employeeForm);
 
-		employeeForm.setDeleteFlg("0");
+	        if (duplicate) {
+	            bindingResult.rejectValue(
+	                    "employeeId",
+	                    "COM01E011",
+	                    new Object[] {
+	                            null,
+	                            "社員番号",
+	                            employeeForm.getEmployeeId(),
+	                            "社員マスタ"
+	                    },
+	                    null);
+	        }
+	    }
 
-		if (employeeForm.getHourlyWage() == null) {
-			employeeForm.setHourlyWage("0");
-		}
+	    // エラーがあれば登録しない
+	    if (bindingResult.hasErrors()) {
+	        return "SMSEM002";
+	    }
 
-		int result = employeeService.registEmployee(employeeForm);
+	    employeeForm.setDeleteFlg("0");
 
-		if (result > 0) {
+	    if (employeeForm.getHourlyWage() == null) {
+	        employeeForm.setHourlyWage("0");
+	    }
 
-			employeeService.registPaidVacation(employeeForm);
-		}
+	    // DB登録
+	    int result = employeeService.registEmployee(employeeForm);
 
-		return "redirect:/employee/list";
+	    if (result > 0) {
+	        employeeService.registPaidVacation(employeeForm);
+	    }
+
+	    return "redirect:/employee/list";
 	}
 
 	@PostMapping("/registNext")
 	public String registNext(
-			@ModelAttribute EmployeeForm employeeForm,
-			BindingResult bindingResult,
-			HttpSession session) {
+	        @ModelAttribute EmployeeForm employeeForm,
+	        BindingResult bindingResult,
+	        HttpSession session) {
 
-		// 3. 必須チェック
-		checkRequired(
-				employeeForm.getEmployeeId(),
-				employeeForm.getEmployeeName(),
-				employeeForm.getPaidHolidayStd(),
-				employeeForm.getRemaindThisYear(),
-				employeeForm.getRemaindLastYear(),
-				bindingResult);
+	    // 必須チェック
+	    checkRequired(
+	            employeeForm.getEmployeeId(),
+	            employeeForm.getEmployeeName(),
+	            employeeForm.getPaidHolidayStd(),
+	            employeeForm.getRemaindThisYear(),
+	            employeeForm.getRemaindLastYear(),
+	            bindingResult);
 
-		// 必須エラーがある場合は、重複チェックをしない
-		if (bindingResult.hasErrors()) {
-			return "SMSEM002";
-		}
+	    // 必須エラーがあれば以降のチェックをしない
+	    if (bindingResult.hasErrors()) {
+	        return "SMSEM002";
+	    }
 
-		// 4. フォーマットチェック
-		// ※現在はJavaScriptのcheckAllFormat()で実施している場合、
-		//    ここではサーバー側のチェックはまだありません
+	    // 顧客番号存在チェック
+	    boolean clientExists =
+	            employeeService.existsClient(employeeForm.getClientId());
 
-		// 5. マスタ重複チェック
-		boolean duplicate = employeeService.checkEmployeeDuplicate(employeeForm);
+	    if (!clientExists) {
+	        bindingResult.rejectValue(
+	                "clientId",
+	                "",
+	                "存在しない顧客情報です");
+	    }
 
-		if (duplicate) {
-			bindingResult.rejectValue(
-					"employeeId",
-					"COM01E011",
-					new Object[] {
-							null,
-							"社員番号",
-							employeeForm.getEmployeeId(),
-							"社員マスタ"
-					},
-					null);
+	    // 顧客番号エラーがあれば重複チェック・登録をしない
+	    if (bindingResult.hasErrors()) {
+	        return "SMSEM002";
+	    }
 
-			return "SMSEM002";
-		}
+	    // 社員重複チェック
+	    boolean duplicate =
+	            employeeService.checkEmployeeDuplicate(employeeForm);
 
-		// 新規登録用の値
-		employeeForm.setDeleteFlg("0");
+	    if (duplicate) {
+	        bindingResult.rejectValue(
+	                "employeeId",
+	                "COM01E011",
+	                new Object[] {
+	                        null,
+	                        "社員番号",
+	                        employeeForm.getEmployeeId(),
+	                        "社員マスタ"
+	                },
+	                null);
 
-		if (employeeForm.getHourlyWage() == null) {
-			employeeForm.setHourlyWage("0");
-		}
+	        return "SMSEM002";
+	    }
 
-		// DB登録
-		int result = employeeService.registEmployee(employeeForm);
+	    // 新規登録用の値
+	    employeeForm.setDeleteFlg("0");
 
-		if (result > 0) {
-			employeeService.registPaidVacation(employeeForm);
-		}
+	    if (employeeForm.getHourlyWage() == null) {
+	        employeeForm.setHourlyWage("0");
+	    }
 
-		// セッションに保存していた入力内容を削除
-		session.removeAttribute("employeeForm");
+	    // DB登録
+	    int result = employeeService.registEmployee(employeeForm);
 
-		// 入力欄を空にしてSMSEM002を再表示
-		return "redirect:/employee/input";
+	    if (result > 0) {
+	        employeeService.registPaidVacation(employeeForm);
+	    }
+
+	    // セッションに保存していた入力内容を削除
+	    session.removeAttribute("employeeForm");
+
+	    // 入力欄を空にしてSMSEM002を再表示
+	    return "redirect:/employee/input";
 	}
 
 	//社員マスタ閲覧画面
@@ -283,17 +315,17 @@ public class EmployeeController {
 		EmployeeForm employeeForm = new EmployeeForm();
 
 		employeeForm.setEmployeeId(
-		        String.format("%04d",
-		                Integer.valueOf(
-		                        String.valueOf(employee.get("employee_id")))));
+				String.format("%04d",
+						Integer.valueOf(
+								String.valueOf(employee.get("employee_id")))));
 
 		employeeForm.setEmployeeName(
 				String.valueOf(employee.get("employee_name")));
 
 		employeeForm.setClientId(
-		        String.format("%03d",
-		                Integer.valueOf(
-		                        String.valueOf(employee.get("client_id")))));
+				String.format("%03d",
+						Integer.valueOf(
+								String.valueOf(employee.get("client_id")))));
 
 		employeeForm.setClientName(
 				String.valueOf(employee.get("client_name")));
@@ -351,32 +383,63 @@ public class EmployeeController {
 		return "SMSEM002";
 	}
 
+	@GetMapping("/searchClientById")
+	@ResponseBody
+	public Map<String, Object> searchClientById(
+			@RequestParam("clientId") String clientId) {
+
+		return employeeService.searchClientById(clientId);
+	}
+
+	@GetMapping("/searchClientByName")
+	@ResponseBody
+	public Map<String, Object> searchClientByName(
+			@RequestParam("clientName") String clientName) {
+
+		return employeeService.searchClientByName(clientName);
+	}
+
 	//社員マスタ更新処理
 	@PostMapping("/update")
 	public String updateEmployee(
-			EmployeeForm employeeForm,
-			BindingResult bindingResult) {
+	        EmployeeForm employeeForm,
+	        BindingResult bindingResult) {
 
-		// 必須チェック
-		checkRequired(
-				employeeForm.getEmployeeId(),
-				employeeForm.getEmployeeName(),
-				employeeForm.getPaidHolidayStd(),
-				employeeForm.getRemaindThisYear(),
-				employeeForm.getRemaindLastYear(),
-				bindingResult);
+	    // 必須チェック
+	    checkRequired(
+	            employeeForm.getEmployeeId(),
+	            employeeForm.getEmployeeName(),
+	            employeeForm.getPaidHolidayStd(),
+	            employeeForm.getRemaindThisYear(),
+	            employeeForm.getRemaindLastYear(),
+	            bindingResult);
 
-		// エラーがあれば更新せず、入力画面に戻る
-		if (bindingResult.hasErrors()) {
-			return "SMSEM002";
-		}
+	    // 必須エラーがあれば更新しない
+	    if (bindingResult.hasErrors()) {
+	        return "SMSEM002";
+	    }
 
-		// エラーがなければ更新
-		employeeService.updateEmployee(employeeForm);
+	    // 顧客番号存在チェック
+	    boolean clientExists =
+	            employeeService.existsClient(employeeForm.getClientId());
 
-		employeeService.updatePaidVacation(employeeForm);
+	    if (!clientExists) {
+	        bindingResult.rejectValue(
+	                "clientId",
+	                "",
+	                "存在しない顧客情報です");
+	    }
 
-		return "redirect:/employee/list";
+	    // 顧客番号エラーがあれば更新しない
+	    if (bindingResult.hasErrors()) {
+	        return "SMSEM002";
+	    }
+
+	    // エラーがなければ更新
+	    employeeService.updateEmployee(employeeForm);
+	    employeeService.updatePaidVacation(employeeForm);
+
+	    return "redirect:/employee/list";
 	}
 
 	//社員マスタ削除処理
@@ -384,8 +447,6 @@ public class EmployeeController {
 	public String deleteEmployee(
 			@ModelAttribute EmployeeForm employeeForm,
 			HttpSession session) {
-
-		System.out.println("employeeId = [" + employeeForm.getEmployeeId() + "]");
 
 		// セッション管理
 		session.setAttribute("employeeForm", employeeForm);
@@ -396,6 +457,20 @@ public class EmployeeController {
 		// 有給残日数のレコードを論理削除
 		employeeService.deletePaidVacation(employeeForm);
 
+		return "redirect:/employee/list";
+	}
+
+	//キャンセルボタン押下処理
+	@PostMapping("/cancel")
+	public String cancelEmployee(HttpSession session) {
+
+		// 入力内容をセッションから破棄
+		session.removeAttribute("employeeForm");
+
+		// 共通排他チェック（編集済み）は
+		// まだ未実装なので現時点では何もしない
+
+		// 社員マスタ一覧画面へ
 		return "redirect:/employee/list";
 	}
 }
