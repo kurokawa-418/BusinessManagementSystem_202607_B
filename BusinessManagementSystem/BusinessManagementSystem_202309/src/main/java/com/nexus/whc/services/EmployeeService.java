@@ -67,7 +67,19 @@ public class EmployeeService {
 	public List<Map<String, Object>> searchEmployeeList() {
 		return employeeRepository.searchEmployeeList();
 	}
+	
+	public boolean existsClient(String clientId) {
+	    return employeeRepository.existsClient(clientId);
+	}
+	
+	public Map<String, Object> searchClientById(String clientId) {
+	    return employeeRepository.searchClientById(clientId);
+	}
 
+	public Map<String, Object> searchClientByName(String clientName) {
+	    return employeeRepository.searchClientByName(clientName);
+	}
+	
 	// 更新
 	public int updateEmployee(EmployeeForm employeeForm) {
 		return employeeRepository.updateEmployee(employeeForm);
