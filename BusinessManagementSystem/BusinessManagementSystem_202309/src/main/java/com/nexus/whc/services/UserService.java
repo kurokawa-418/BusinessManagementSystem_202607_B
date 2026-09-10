@@ -28,9 +28,27 @@ public class UserService {
 			String userId,
 			String userName,
 			String authId,
-			String mailAddress) {
+			String mailAddress,
+			int page,
+			int pageSize) {
 
 		return userRepository.searchList(
+				userId,
+				userName,
+				authId,
+				mailAddress,
+				page,
+				pageSize);
+	}
+
+	/*件数取得*/
+	public int countUser(
+			String userId,
+			String userName,
+			String authId,
+			String mailAddress) {
+
+		return userRepository.countUser(
 				userId,
 				userName,
 				authId,
@@ -44,6 +62,15 @@ public class UserService {
 
 		// UserFormにパスワードを設定
 		userForm.setPassword(password);
+
+		// 最大seq_idを取得
+		int maxSeqId = userRepository.getMaxSeqId();
+
+		// 最大seq_id + 1
+		int seqId = maxSeqId + 1;
+
+		// UserFormに設定
+		userForm.setSeqId(seqId);
 
 		return userRepository.registUser(userForm);
 	}
@@ -77,5 +104,17 @@ public class UserService {
 	/*ユーザー削除*/
 	public void deleteUser(int seqId) {
 		userRepository.deleteUser(seqId);
+	}
+
+	/*マスタ存在チェック*/
+	public boolean existsUser(
+			String userId,
+			String userName,
+			String mailAddress) {
+
+		return userRepository.existsUser(
+				userId,
+				userName,
+				mailAddress);
 	}
 }
