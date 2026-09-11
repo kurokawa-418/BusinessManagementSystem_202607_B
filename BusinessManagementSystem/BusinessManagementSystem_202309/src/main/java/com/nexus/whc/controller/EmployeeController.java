@@ -3,11 +3,13 @@ package com.nexus.whc.controller;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +39,8 @@ public class EmployeeController {
 	/* EmployeeServiceクラス*/
 	@Autowired
 	EmployeeService employeeService;
+	@Autowired
+	private MessageSource messageSource;
 
 	private void checkRequired(
 			String employeeId,
@@ -125,9 +129,12 @@ public class EmployeeController {
 
 		// 検索結果が0件の場合
 		if (employeeList.isEmpty()) {
-			model.addAttribute(
-					"message",
-					"社員一覧の検索結果は0件です。条件を変更し、再度検索してください。");
+			String message = messageSource.getMessage(
+			        "COM01W001",
+			        new Object[] {null,"社員一覧"},
+			        Locale.JAPANESE);
+
+			model.addAttribute("message", message);
 		}
 
 		return "SMSEM001";

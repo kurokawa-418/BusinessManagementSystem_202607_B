@@ -35,14 +35,16 @@ info::before{
 	color: red;
 }
 
-#listLimit {
-    max-height: 460px;
-    overflow-y: auto;
-}
-
 #listLimit thead th {
     position: sticky;
     top: 0;
     z-index: 2;
     background-color: royalblue;
+}
+
+#pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0 !important;
 }
