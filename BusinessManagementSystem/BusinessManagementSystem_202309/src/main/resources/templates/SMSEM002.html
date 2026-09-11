@@ -289,7 +289,8 @@
 					</form>
 					<!-- キャンセル -->
 					<form method="post" action="/employee/cancel" style="margin: 0;">
-						<button id="btn-cancel" type="submit" formaction="/employee/cancel"
+						<input type="hidden" name="employeeId" th:value="${employeeForm.employeeId}">
+						<button id="btn-cancel" type="submit" 
 							class="btn border border-dark" style="color: white;
 									   background-color: cornflowerblue;" onclick="return confirm('入力内容を破棄してもよろしいですか？');">
 							キャンセル

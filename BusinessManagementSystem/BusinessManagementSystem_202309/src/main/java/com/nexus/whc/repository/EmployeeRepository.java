@@ -210,6 +210,21 @@ public class EmployeeRepository {
 		return jdbcTemplate.queryForMap(sql, param);
 	}
 
+	public boolean existsEmployee(String employeeId) {
+
+		String sql = "SELECT COUNT(*) "
+				+ "FROM m_employee "
+				+ "WHERE employee_id = ? "
+				+ "AND delete_flg = 0";
+
+		Integer count = jdbcTemplate.queryForObject(
+				sql,
+				Integer.class,
+				Integer.valueOf(employeeId));
+
+		return count != null && count > 0;
+	}
+
 	public List<Map<String, Object>> searchEmployeeList() {
 
 		String sql = "SELECT "
@@ -231,51 +246,51 @@ public class EmployeeRepository {
 
 		return jdbcTemplate.queryForList(sql);
 	}
-	
+
 	public boolean existsClient(String clientId) {
 
-	    String sql = "SELECT COUNT(*) "
-	               + "FROM m_client "
-	               + "WHERE client_id = ? "
-	               + "AND delete_flg = 0";
+		String sql = "SELECT COUNT(*) "
+				+ "FROM m_client "
+				+ "WHERE client_id = ? "
+				+ "AND delete_flg = 0";
 
-	    Integer count = jdbcTemplate.queryForObject(sql, Integer.class, clientId);
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, clientId);
 
-	    return count != null && count > 0;
+		return count != null && count > 0;
 	}
 
 	public Map<String, Object> searchClientById(String clientId) {
 
-	    String sql = "SELECT client_id AS clientId, "
-	               + "client_name AS clientName "
-	               + "FROM m_client "
-	               + "WHERE client_id = ? "
-	               + "AND delete_flg = 0";
+		String sql = "SELECT client_id AS clientId, "
+				+ "client_name AS clientName "
+				+ "FROM m_client "
+				+ "WHERE client_id = ? "
+				+ "AND delete_flg = 0";
 
-	    List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, clientId);
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, clientId);
 
-	    if (result.isEmpty()) {
-	        return new HashMap<String, Object>();
-	    }
+		if (result.isEmpty()) {
+			return new HashMap<String, Object>();
+		}
 
-	    return result.get(0);
+		return result.get(0);
 	}
 
 	public Map<String, Object> searchClientByName(String clientName) {
 
-	    String sql = "SELECT client_id AS clientId, "
-	               + "client_name AS clientName "
-	               + "FROM m_client "
-	               + "WHERE client_name = ? "
-	               + "AND delete_flg = 0";
+		String sql = "SELECT client_id AS clientId, "
+				+ "client_name AS clientName "
+				+ "FROM m_client "
+				+ "WHERE client_name = ? "
+				+ "AND delete_flg = 0";
 
-	    List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, clientName);
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, clientName);
 
-	    if (result.isEmpty()) {
-	        return new HashMap<String, Object>();
-	    }
+		if (result.isEmpty()) {
+			return new HashMap<String, Object>();
+		}
 
-	    return result.get(0);
+		return result.get(0);
 	}
 
 	public int updateEmployee(EmployeeForm employeeForm) {
