@@ -37,8 +37,10 @@ import com.nexus.whc.services.UserService;
 @RequestMapping("/user")
 public class UserController {
 	private final LockService lockService;
-	private UserService userService;
-	private MessageSource messageSource;
+	private final UserService userService;
+	private final MessageSource messageSource;
+	private static final String LOCK_TABLE_NAME = "m_user";
+	private static final String SESSION_USER_ID = "userId";
 
 	@Autowired
 	public UserController(UserService userService, MessageSource messageSource, LockService lockService) {
@@ -140,6 +142,18 @@ public class UserController {
 			@RequestParam("seq_id") Integer seqId,
 			Model model,
 			HttpSession session) {
+
+		// 排他チェック（削除済）
+		if (!userService.existsActiveUser(seqId)) {
+
+			model.addAttribute("isUpdateMode", true);
+			model.addAttribute(
+					"message",
+					"対象のデータは削除されています。");
+
+			return "SMSUS002";
+		}
+		String userId = getUserId(session);
 		/*DBから取り出した値をMapのuserに格納*/
 		Map<String, Object> user = userService.findUserBySeqId(seqId);
 
@@ -154,6 +168,26 @@ public class UserController {
 		userForm.setSeqId(seqId);
 		/*コピーした値を画面に渡す*/
 		model.addAttribute("userForm", userForm);
+
+		// 排他チェック（編集中）
+		if (lockService.isLockedByOtherUser(
+				LOCK_TABLE_NAME,
+				seqId,
+				userId)) {
+			model.addAttribute("isUpdateMode", true);
+			model.addAttribute(
+					"message",
+					"対象のデータは他のユーザーが編集中です。");
+
+			return "SMSUS002";
+		}
+
+		/* 編集ロックを登録*/
+		lockService.insertLock(
+				LOCK_TABLE_NAME,
+				seqId,
+				userId);
+
 		session.setAttribute("userMode", "update");
 		return "SMSUS002";
 	}
@@ -162,11 +196,40 @@ public class UserController {
 	public String updateUser(@Validated @ModelAttribute UserForm userForm,
 			BindingResult bindingResult,
 			RedirectAttributes attr,
-			HttpSession session) {
+			HttpSession session,
+			Model model) {
+
 		//未入力チェック
 		if (bindingResult.hasErrors()) {
 			return "SMSUS002";
 		}
+
+		String userId = getUserId(session);
+		// 排他チェック（削除済）
+		if (!userService.existsActiveUser(userForm.getSeqId())) {
+
+			model.addAttribute("isUpdateMode", true);
+			model.addAttribute(
+					"message",
+					"対象のデータは削除されています。");
+
+			return "SMSUS002";
+		}
+
+		// 排他チェック（編集中）
+		if (lockService.isLockedByOtherUser(
+				LOCK_TABLE_NAME,
+				userForm.getSeqId(),
+				userId)) {
+
+			model.addAttribute("isUpdateMode", true);
+			model.addAttribute(
+					"message",
+					"対象のデータは他のユーザーが編集中です。");
+
+			return "SMSUS002";
+		}
+
 		// 登録結果
 		/*宣言＋初期値の設定＋Serviceの呼び出し*/
 		int result = userService.updateUser(userForm);
@@ -177,6 +240,12 @@ public class UserController {
 			// エラー画面に遷移
 			return "redirect:/user/error";
 		} else {
+
+			/*編集ロック解除*/
+			lockService.deleteLock(
+					LOCK_TABLE_NAME,
+					userForm.getSeqId(),
+					userId);
 			//ユーザー一覧画面に遷移
 			return "redirect:/user/list";
 		}
@@ -292,25 +361,68 @@ public class UserController {
 
 	/*削除*/
 	@PostMapping("/delete")
-	public String deleteUser(@RequestParam(required = false) List<Integer> sequenceId, RedirectAttributes attr) {
+	public String deleteUser(
+			@RequestParam(required = false) List<Integer> sequenceId,
+			RedirectAttributes attr,
+			HttpSession session) {
 		if (sequenceId == null || sequenceId.isEmpty()) {
 			attr.addFlashAttribute("message", "COM01W003");
 			return "redirect:/user/list";
 		}
+		/*削除する前に排他チェック*/
+		String userId = getUserId(session);
 
 		for (Integer seqId : sequenceId) {
-			/*排他チェックメソッド呼び出し（削除、編集中）*/
+			// 排他チェック（削除済）
+			if (!userService.existsActiveUser(seqId)) {
+
+				attr.addFlashAttribute("message", "対象のデータは削除されています。");
+
+				return "redirect:/user/list";
+			}
+
+			// 排他チェック（編集中）
+			if (lockService.isLockedByOtherUser(
+					LOCK_TABLE_NAME,
+					seqId,
+					userId)) {
+
+				attr.addFlashAttribute("message",
+						"対象のデータは他のユーザーが編集中です。");
+				return "redirect:/user/list";
+			}
 			userService.deleteUser(seqId);
 		}
-
 		return "redirect:/user/list";
 	}
 
 	/*キャンセル処理*/
 	@PostMapping("/cancel")
 	public String cancelUser(
-			@RequestParam("seqId") Integer seqId) {
+			@RequestParam("seqId") Integer seqId,
+			HttpSession session) {
+
+		String userId = getUserId(session);
+
+		/* 編集ロック解除 */
+		lockService.deleteLock(
+				LOCK_TABLE_NAME,
+				seqId,
+				userId);
+
 		return "redirect:/user/list";
+	}
+
+	private String getUserId(HttpSession session) {
+		/*現在のユーザーIDをセッションから取得*/
+		String userId = (String) session.getAttribute(SESSION_USER_ID);
+
+		if (userId == null) {
+			userId = "nexus@001";
+			session.setAttribute(SESSION_USER_ID, userId);
+		}
+
+		return userId;
 	}
 
 }

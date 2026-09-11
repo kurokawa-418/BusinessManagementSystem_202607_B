@@ -211,4 +211,20 @@ public class UserRepository {
 		return count > 0;
 	}
 
+	/*排他チェック（削除済）*/
+	public boolean existsActiveUser(Integer seqId) {
+
+		String sql = "SELECT COUNT(*) "
+				+ "FROM m_user "
+				+ "WHERE seq_id = ? "
+				+ "AND delete_flg = 0";
+
+		Integer count = jdbcTemplate.queryForObject(
+				sql,
+				Integer.class,
+				seqId);
+
+		return count != null && count > 0;
+	}
+
 }

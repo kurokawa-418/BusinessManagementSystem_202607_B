@@ -106,7 +106,7 @@ public class UserService {
 		userRepository.deleteUser(seqId);
 	}
 
-	/*マスタ存在チェック*/
+	/*マスタ存在チェック（既に使われてない？）*/
 	public boolean existsUser(
 			String userId,
 			String userName,
@@ -116,5 +116,11 @@ public class UserService {
 				userId,
 				userName,
 				mailAddress);
+	}
+
+	/*排他チェック(削除済)*/
+	public boolean existsActiveUser(Integer seqId) {
+
+		return userRepository.existsActiveUser(seqId);
 	}
 }
