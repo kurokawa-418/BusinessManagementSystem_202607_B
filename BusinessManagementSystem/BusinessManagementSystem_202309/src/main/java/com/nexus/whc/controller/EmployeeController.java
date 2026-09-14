@@ -343,8 +343,13 @@ public class EmployeeController {
 				userId);
 
 		if (lockedByOtherUser) {
-
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId }, Locale.JAPANESE); 
+			
+		    String lockingUserId =
+		            employeeService.getEmployeeLockingUserId(
+		                    employeeId,
+		                    userId);
+			
+			String message = messageSource.getMessage( "COM01E006", new Object[] { null, lockingUserId }, Locale.JAPANESE); 
 			redirectAttributes.addFlashAttribute( "message", message);
 
 			return "redirect:/employee/list";
@@ -514,8 +519,13 @@ public class EmployeeController {
 				userId);
 
 		if (lockedByOtherUser) {
+			
+		    String lockingUserId =
+		            employeeService.getEmployeeLockingUserId(
+		                    employeeForm.getEmployeeId(),
+		                    userId);
 
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId}, Locale.JAPANESE); 
+			String message = messageSource.getMessage( "COM01E006", new Object[] { null, lockingUserId}, Locale.JAPANESE); 
 			redirectAttributes.addFlashAttribute( "message", message);
 
 			return "redirect:/employee/list";
@@ -588,8 +598,13 @@ public class EmployeeController {
 				userId);
 
 		if (lockedByOtherUser) {
+			
+		    String lockingUserId =
+		            employeeService.getEmployeeLockingUserId(
+		                    employeeId,
+		                    userId);
 
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId }, Locale.JAPANESE); 
+			String message = messageSource.getMessage( "COM01E006", new Object[] { null, lockingUserId }, Locale.JAPANESE); 
 			redirectAttributes.addFlashAttribute( "message", message);
 			return "redirect:/employee/list";
 		}

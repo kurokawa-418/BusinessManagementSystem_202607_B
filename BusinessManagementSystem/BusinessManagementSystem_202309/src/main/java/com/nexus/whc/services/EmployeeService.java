@@ -142,4 +142,14 @@ public class EmployeeService {
 				Integer.valueOf(employeeId),
 				userId);
 	}
+	
+	public String getEmployeeLockingUserId(
+	        String employeeId,
+	        String userId) {
+
+	    return lockService.getLockingUserId(
+	            "m_employee",
+	            Integer.valueOf(employeeId),
+	            userId);
+	}
 }
