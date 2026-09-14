@@ -212,6 +212,24 @@ public class EmployeeController {
 			}
 		}
 
+		// 社員氏名重複チェック
+		boolean duplicateName = employeeService.existsEmployeeName(
+				employeeForm.getEmployeeName());
+
+		if (duplicateName) {
+
+			bindingResult.rejectValue(
+					"employeeName",
+					"COM01E011",
+					new Object[] {
+							null,
+							"社員氏名",
+							employeeForm.getEmployeeName(),
+							"社員マスタ"
+					},
+					null);
+		}
+
 		// エラーがあれば登録しない
 		if (bindingResult.hasErrors()) {
 			return "SMSEM002";
@@ -282,8 +300,29 @@ public class EmployeeController {
 							"社員マスタ"
 					},
 					null);
+		}
 
-			return "SMSEM002";
+		// 社員氏名重複チェック
+		boolean duplicateName = employeeService.existsEmployeeName(
+				employeeForm.getEmployeeName());
+
+		if (duplicateName) {
+
+			bindingResult.rejectValue(
+					"employeeName",
+					"COM01E011",
+					new Object[] {
+							null,
+							"社員氏名",
+							employeeForm.getEmployeeName(),
+							"社員マスタ"
+					},
+					null);
+		}
+		
+		// 重複エラーがあれば登録しない
+		if (bindingResult.hasErrors()) {
+		    return "SMSEM002";
 		}
 
 		// 新規登録用の値
@@ -329,8 +368,8 @@ public class EmployeeController {
 
 		if (!employeeExists) {
 
-			String message = messageSource.getMessage( "COM01E005", new Object[] { null }, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String message = messageSource.getMessage("COM01E005", new Object[] { null }, Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 
 			return "redirect:/employee/list";
 		}
@@ -344,8 +383,13 @@ public class EmployeeController {
 
 		if (lockedByOtherUser) {
 
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId }, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String lockingUserId = employeeService.getEmployeeLockingUserId(
+					employeeId,
+					userId);
+
+			String message = messageSource.getMessage("COM01E006", new Object[] { null, lockingUserId },
+					Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 
 			return "redirect:/employee/list";
 		}
@@ -500,8 +544,8 @@ public class EmployeeController {
 
 		if (!employeeExists) {
 
-			String message = messageSource.getMessage( "COM01E005", new Object[] { null }, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String message = messageSource.getMessage("COM01E005", new Object[] { null }, Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 
 			return "redirect:/employee/list";
 		}
@@ -515,8 +559,13 @@ public class EmployeeController {
 
 		if (lockedByOtherUser) {
 
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId}, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String lockingUserId = employeeService.getEmployeeLockingUserId(
+					employeeForm.getEmployeeId(),
+					userId);
+
+			String message = messageSource.getMessage("COM01E006", new Object[] { null, lockingUserId },
+					Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 
 			return "redirect:/employee/list";
 		}
@@ -574,8 +623,8 @@ public class EmployeeController {
 
 		if (!employeeExists) {
 
-			String message = messageSource.getMessage( "COM01E005", new Object[] { null }, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String message = messageSource.getMessage("COM01E005", new Object[] { null }, Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 
 			return "redirect:/employee/list";
 		}
@@ -589,8 +638,13 @@ public class EmployeeController {
 
 		if (lockedByOtherUser) {
 
-			String message = messageSource.getMessage( "COM01E006", new Object[] { null, userId }, Locale.JAPANESE); 
-			redirectAttributes.addFlashAttribute( "message", message);
+			String lockingUserId = employeeService.getEmployeeLockingUserId(
+					employeeId,
+					userId);
+
+			String message = messageSource.getMessage("COM01E006", new Object[] { null, lockingUserId },
+					Locale.JAPANESE);
+			redirectAttributes.addFlashAttribute("message", message);
 			return "redirect:/employee/list";
 		}
 
@@ -636,7 +690,7 @@ public class EmployeeController {
 		if (employeeForm.getEmployeeId() != null
 				&& !employeeForm.getEmployeeId().isEmpty()) {
 
-			employeeService.unlockEmployee(employeeForm.getEmployeeId(),userId);
+			employeeService.unlockEmployee(employeeForm.getEmployeeId(), userId);
 		}
 
 		return "redirect:/employee/list";

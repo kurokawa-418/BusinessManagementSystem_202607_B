@@ -283,7 +283,7 @@
 						<button id="btn-delete" type="submit" formaction="/employee/delete"
 							class="btn border border-dark" style="color: white;
 									   background-color: cornflowerblue;" th:if="${session.employeeMode == 'update'}"
-							onclick="return confirm('削除してもよろしいですか？');">
+							th:onclick="|return confirm('#{COM01I010}');|">
 							削除
 						</button>
 					</form>
