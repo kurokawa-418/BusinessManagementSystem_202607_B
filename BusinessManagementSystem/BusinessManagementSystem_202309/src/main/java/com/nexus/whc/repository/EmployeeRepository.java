@@ -82,6 +82,20 @@ public class EmployeeRepository {
 
 		return jdbcTemplate.update(sql, param);
 	}
+	
+	public boolean existsEmployeeName(String employeeName) {
+
+	    String sql = "SELECT COUNT(*) "
+	            + "FROM m_employee "
+	            + "WHERE employee_name = ?";
+
+	    Integer count = jdbcTemplate.queryForObject(
+	            sql,
+	            Integer.class,
+	            employeeName);
+
+	    return count != null && count > 0;
+	}
 
 	public int registPaidVacation(EmployeeForm employeeForm) {
 
@@ -117,13 +131,11 @@ public class EmployeeRepository {
 		String sql = "SELECT "
 				+ "employee_id "
 				+ "FROM m_employee "
-				+ "WHERE employee_id = ? "
-				+ "AND employee_name = ? "
-				+ "AND delete_flg = 0";
+				+ "WHERE employee_id = ?";
 
 		Object[] param = {
 				Integer.valueOf(employeeForm.getEmployeeId()),
-				employeeForm.getEmployeeName() };
+		};
 
 		return jdbcTemplate.queryForList(
 				sql, param);

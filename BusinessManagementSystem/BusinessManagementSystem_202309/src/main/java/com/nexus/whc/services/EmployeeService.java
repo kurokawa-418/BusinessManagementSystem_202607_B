@@ -39,6 +39,10 @@ public class EmployeeService {
 	public int registEmployee(EmployeeForm employeeForm) {
 		return employeeRepository.registEmployee(employeeForm);
 	}
+	
+	public boolean existsEmployeeName(String employeeName) {
+	    return employeeRepository.existsEmployeeName(employeeName);
+	}
 
 	public int registPaidVacation(EmployeeForm employeeForm) {
 		return employeeRepository.registPaidVacation(employeeForm);
