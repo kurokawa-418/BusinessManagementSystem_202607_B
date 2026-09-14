@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nexus.whc.form.UserForm;
@@ -35,6 +34,7 @@ import com.nexus.whc.services.UserService;
 /*
  * Controllerクラス
  */
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -72,7 +72,7 @@ public class UserController {
 			RedirectAttributes attr,
 			HttpSession session,
 			Model model) {
-		//未入力チェック
+		/*未入力チェック*/
 		if (bindingResult.hasErrors()) {
 			for (FieldError error : bindingResult.getFieldErrors()) {
 			}
@@ -83,17 +83,17 @@ public class UserController {
 			return "SMSUS002";
 		}
 
-		// 登録結果
+		/* 登録結果*/
 		/*宣言＋初期値の設定＋Serviceの呼び出し*/
 		int result = userService.registUser(userForm);
 
 		if (0 == result) {
-			// エラーメッセージをフラッシュスコープに保存
+			/* エラーメッセージをフラッシュスコープに保存*/
 			attr.addFlashAttribute("message", "登録エラーが発生しました");
-			// エラー画面に遷移
+			/* エラー画面に遷移*/
 			return "redirect:/user/error";
 		} else {
-			//ユーザー一覧画面に遷移
+			/*ユーザー一覧画面に遷移*/
 			return "redirect:/user/list";
 		}
 	}
@@ -141,7 +141,7 @@ public class UserController {
 			Model model,
 			HttpSession session) {
 
-		// 排他チェック（削除済）
+		/* 排他チェック（削除済）*/
 		if (!userService.existsActiveUser(seqId)) {
 			UserForm userForm = new UserForm();
 			userForm.setSeqId(seqId);
@@ -169,7 +169,7 @@ public class UserController {
 		/*コピーした値を画面に渡す*/
 		model.addAttribute("userForm", userForm);
 
-		// 排他チェック（編集中）
+		/* 排他チェック（編集中）*/
 		if (lockService.isLockedByOtherUser(
 				LOCK_TABLE_NAME,
 				seqId,
@@ -205,7 +205,7 @@ public class UserController {
 			HttpSession session,
 			Model model) {
 
-		//未入力チェック
+		/*未入力チェック*/
 		if (bindingResult.hasErrors()) {
 			return "SMSUS002";
 		}
@@ -242,7 +242,6 @@ public class UserController {
 		}
 
 		/* 登録結果*/
-		/*宣言＋初期値の設定＋Serviceの呼び出し*/
 		int result = userService.updateUser(userForm);
 
 		if (0 == result) {
@@ -278,22 +277,22 @@ public class UserController {
 		if (page < 1) {
 			page = 1;
 		}
-		// 全件数を取得
+		/* 全件数を取得*/
 		int totalCount = userService.countUser(
 				userId,
 				userName,
 				authId,
 				mailAddress);
 
-		// 全ページ数を計算
+		/* 全ページ数を計算*/
 		int totalPages = (totalCount + pageSize - 1) / pageSize;
 
-		// ページが存在しない場合
+		/* ページが存在しない場合*/
 		if (totalPages > 0 && page > totalPages) {
 			page = totalPages;
 		}
 
-		// ページ番号を作成
+		/* ページ番号を作成*/
 		List<Integer> pageNumbers = new ArrayList<>();
 
 		if (totalPages <= 5) {
@@ -390,7 +389,7 @@ public class UserController {
 		String userId = getUserId(session);
 
 		for (Integer seqId : sequenceId) {
-			// 排他チェック（削除済）
+			/* 排他チェック（削除済）*/
 			if (!userService.existsActiveUser(seqId)) {
 
 				String message = messageSource.getMessage(
@@ -401,7 +400,7 @@ public class UserController {
 				return "redirect:/user/list";
 			}
 
-			// 排他チェック（編集中）
+			/* 排他チェック（編集中）*/
 			if (lockService.isLockedByOtherUser(
 					LOCK_TABLE_NAME,
 					seqId,
@@ -491,17 +490,6 @@ public class UserController {
 			userId = "nexus@001";
 			session.setAttribute(SESSION_USER_ID, userId);
 		}
-
 		return userId;
-	}
-
-	@GetMapping("/testUser002")
-	@ResponseBody
-	public String testUser002(HttpSession session) {
-
-		session.setAttribute("userId", "nexus@002");
-
-		return "ユーザー002として設定しました";
-
 	}
 }

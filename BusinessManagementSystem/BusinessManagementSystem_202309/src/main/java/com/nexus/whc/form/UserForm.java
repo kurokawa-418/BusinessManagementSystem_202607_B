@@ -3,10 +3,16 @@ package com.nexus.whc.form;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-/* UserForm.java
-* 
-* UserFormクラス
-*/
+/*
+ * UserForm.java
+ * 
+ * UserFormクラス
+ */
+
+/*
+ * Formクラス
+ */
+
 public class UserForm {
 	@NotBlank(message = "ユーザIDは必ず入力してください。")
 	private String userId;

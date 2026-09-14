@@ -10,10 +10,15 @@ import org.springframework.stereotype.Service;
 import com.nexus.whc.form.UserForm;
 import com.nexus.whc.repository.UserRepository;
 
-/* UserService.java
-* 
-* UserServiceクラス
-*/
+/*
+ * UserService.java
+ * 
+ * UserServiceクラス
+ */
+
+/*
+ * Serviceクラス
+ */
 @Service
 public class UserService {
 	private final UserRepository userRepository;

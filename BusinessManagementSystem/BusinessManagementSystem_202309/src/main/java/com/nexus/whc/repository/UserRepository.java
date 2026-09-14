@@ -11,13 +11,14 @@ import org.springframework.stereotype.Repository;
 import com.nexus.whc.form.UserForm;
 
 /*
-*UserRepository.java
-*
-**UserRepositoryクラス*/
+ * UserRepository.java
+ * 
+ * UserRepositoryクラス
+ */
 
 /*
-* Repositoryクラス
-*/
+ * Repositoryクラス
+ */
 @Repository
 public class UserRepository {
 	/* JdbcTemplate */
