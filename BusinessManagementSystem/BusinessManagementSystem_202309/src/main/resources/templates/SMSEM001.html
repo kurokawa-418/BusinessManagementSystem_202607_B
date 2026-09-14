@@ -141,16 +141,16 @@
 								<span class="input-group-text mb-3 mx-2">ステータス</span>
 								<button type="button" id="toggleButton"
 									style="border-radius: 40%; width: 20px; height: 20px; font-size: 10px;">i</button>
-								<span class="input-group-text mb-3 mx-1">有給残日数なし</span>
+								<span class="input-group-text mb-3 mx-1">有休残日数なし</span>
 								<input class="form-check-input mt-2 mx-3" type="checkbox" value=""
 									aria-label="Checkbox for following text input">
-								<span class="input-group-text mb-3 mx-1">有給取得日数不足(通知)</span>
+								<span class="input-group-text mb-3 mx-1">有休取得日数不足(通知)</span>
 								<input class="form-check-input mt-2 mx-3" type="checkbox" value=""
 									aria-label="Checkbox for following text input">
-								<span class="input-group-text mb-3 mx-1">有給取得日数不足(注意)</span>
+								<span class="input-group-text mb-3 mx-1">有休取得日数不足(注意)</span>
 								<input class="form-check-input mt-2 mx-3" type="checkbox" value=""
 									aria-label="Checkbox for following text input">
-								<span class="input-group-text mb-3 mx-1">有給取得日数不足(警告)</span>
+								<span class="input-group-text mb-3 mx-1">有休取得日数不足(警告)</span>
 								<input class="form-check-input mt-2 mx-3" type="checkbox" value=""
 									aria-label="Checkbox for following text input">
 							</div>
@@ -192,11 +192,11 @@
 								<th scope="col" style="width: 100px">担当顧客名</th>
 								<th scope="col" style="width: 45px">時給</th>
 								<th scope="col" style="width: 170px">ステータス</th>
-								<th scope="col" style="width: 100px">有給基準日</th>
-								<th scope="col" style="width: 100px">有給残日数(当年度分)</th>
-								<th scope="col" style="width: 100px">有給残日数(前年度分)</th>
-								<th scope="col" style="width: 100px">有給取得日数</th>
-								<th scope="col" style="width: 60px">有給詳細</th>
+								<th scope="col" style="width: 100px">有休基準日</th>
+								<th scope="col" style="width: 100px">有休残日数(当年度分)</th>
+								<th scope="col" style="width: 100px">有休残日数(前年度分)</th>
+								<th scope="col" style="width: 100px">有休取得日数</th>
+								<th scope="col" style="width: 60px">有休詳細</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -240,23 +240,23 @@
 								<td>
 								</td>
 
-								<!-- 有給基準日 -->
+								<!-- 有休基準日 -->
 								<td th:text="${#dates.format(employee.paid_holiday_std, 'yyyy/MM/dd')}">
 								</td>
 
-								<!-- 有給残日数（当年度分） -->
+								<!-- 有休残日数（当年度分） -->
 								<td th:text="${#strings.replace(employee.remaind_this_year.toString(), '.0', '') + '日'}">
 								</td>
 
-								<!-- 有給残日数（前年度分） -->
+								<!-- 有休残日数（前年度分） -->
 								<td th:text="${#strings.replace(employee.remaind_last_year.toString(), '.0', '') + '日'}">
 								</td>
 
-								<!-- 有給取得日数 -->
+								<!-- 有休取得日数 -->
 								<td>
 								</td>
 
-								<!-- 有給詳細 -->
+								<!-- 有休詳細 -->
 								<th scope="col" style="width: 60px">開く</th>
 
 							</tr>

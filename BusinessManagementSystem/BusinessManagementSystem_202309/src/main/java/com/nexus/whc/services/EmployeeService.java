@@ -16,11 +16,14 @@ import com.nexus.whc.repository.EmployeeRepository;
 public class EmployeeService {
 	/* EmployeeRepositoryクラス */
 	private final EmployeeRepository employeeRepository;
+	private final LockService lockService;
 
 	/* EmployeeServiceクラス */
 	@Autowired
-	public EmployeeService(EmployeeRepository employeeRepository) {
+	public EmployeeService(EmployeeRepository employeeRepository,
+			LockService lockService) {
 		this.employeeRepository = employeeRepository;
+		this.lockService = lockService;
 	}
 
 	/**
@@ -43,10 +46,9 @@ public class EmployeeService {
 
 	public boolean checkEmployeeDuplicate(EmployeeForm employeeForm) {
 
-	    List<Map<String, Object>> result =
-	            employeeRepository.checkEmployeeDuplicate(employeeForm);
+		List<Map<String, Object>> result = employeeRepository.checkEmployeeDuplicate(employeeForm);
 
-	    return !result.isEmpty();
+		return !result.isEmpty();
 	}
 
 	public List<Map<String, Object>> searchEmployee(
@@ -64,22 +66,31 @@ public class EmployeeService {
 		return employeeRepository.searchEmployeeById(employeeId);
 	}
 
+	public boolean isEmployeeLocked(
+			String employeeId,
+			String userId) {
+
+		return lockService.isLocked(
+				"m_employee",
+				Integer.valueOf(employeeId));
+	}
+
 	public List<Map<String, Object>> searchEmployeeList() {
 		return employeeRepository.searchEmployeeList();
 	}
-	
+
 	public boolean existsClient(String clientId) {
-	    return employeeRepository.existsClient(clientId);
+		return employeeRepository.existsClient(clientId);
 	}
-	
+
 	public Map<String, Object> searchClientById(String clientId) {
-	    return employeeRepository.searchClientById(clientId);
+		return employeeRepository.searchClientById(clientId);
 	}
 
 	public Map<String, Object> searchClientByName(String clientName) {
-	    return employeeRepository.searchClientByName(clientName);
+		return employeeRepository.searchClientByName(clientName);
 	}
-	
+
 	// 更新
 	public int updateEmployee(EmployeeForm employeeForm) {
 		return employeeRepository.updateEmployee(employeeForm);
@@ -96,5 +107,39 @@ public class EmployeeService {
 
 	public int deletePaidVacation(EmployeeForm employeeForm) {
 		return employeeRepository.deletePaidVacation(employeeForm);
+	}
+	
+	public boolean existsEmployee(String employeeId) {
+		return employeeRepository.existsEmployee(employeeId);
+	}
+
+	public boolean isEmployeeLockedByOtherUser(
+			String employeeId,
+			String userId) {
+
+		return lockService.isLockedByOtherUser(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId);
+	}
+
+	public int lockEmployee(
+			String employeeId,
+			String userId) {
+
+		return lockService.insertLock(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId);
+	}
+
+	public int unlockEmployee(
+			String employeeId,
+			String userId) {
+
+		return lockService.deleteLock(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId);
 	}
 }

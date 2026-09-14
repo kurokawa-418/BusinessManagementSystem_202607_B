@@ -1,3 +1,35 @@
+// dialog.js
+// ページの読み込みが完了したら実行
+document.addEventListener("DOMContentLoaded", function() {
+	// ダイアログを非表示に初期化
+	document.getElementById("customerDialog").style.display = "none";
+
+	// ボタンクリック時にダイアログを表示
+	document.getElementById("showDialogButton").addEventListener("click", function() {
+		// ダイアログを表示
+		document.getElementById("customerDialog").style.display = "block";
+	});
+
+	// ダイアログ内の顧客を選択したときの処理
+	var customerRows = document.querySelectorAll("#customerDialog tbody tr");
+	customerRows.forEach(function(row) {
+		row.addEventListener("click", function() {
+			// 顧客番号と顧客名を取得
+			var customerId = row.querySelector("td:first-child").textContent;
+			var customerName = row.querySelector("td:last-child").textContent;
+
+			// 顧客番号をフィールドに自動入力
+			document.getElementById("customerNumberField").value = customerId;
+
+			// 担当顧客名をフィールドに自動入力
+			document.getElementById("customerNameField").value = customerName;
+
+			// ダイアログを非表示にする
+			document.getElementById("customerDialog").style.display = "none";
+		});
+	});
+})
+
 document.addEventListener("DOMContentLoaded", function() {
 
 	// ==============================
@@ -171,29 +203,48 @@ document.addEventListener("DOMContentLoaded", function() {
 	// 1ページ目を表示
 	displayPage(1);
 
+});
 
-	// ==============================
-	// 検索条件の折りたたみ
-	// ==============================
-	var folding = document.getElementById("folding");
-	var searchCondition = document.getElementById("employeeSearchCondition");
+document.addEventListener("DOMContentLoaded", function() {
 
-	if (folding && searchCondition) {
+	var accordion = document.querySelector(".accordion");
+	var listLimit = document.getElementById("listLimit");
 
-		folding.addEventListener("click", function(event) {
-
-			event.preventDefault();
-
-			if (searchCondition.classList.contains("d-none")) {
-				searchCondition.classList.remove("d-none");
-			} else {
-				searchCondition.classList.add("d-none");
-			}
-
-		});
-
+	if (!accordion || !listLimit) {
+		return;
 	}
 
+	function changeListHeight() {
+
+		var accordionStyle = window.getComputedStyle(accordion);
+
+		// 検索条件が閉じている場合
+		if (accordionStyle.display === "none"
+			|| accordion.offsetHeight === 0) {
+
+			listLimit.style.maxHeight = "none";
+			listLimit.style.overflowY = "visible";
+
+		} else {
+
+			// 検索条件が開いている場合
+			listLimit.style.maxHeight = "calc(33px * 12)";
+			listLimit.style.overflowY = "scroll";
+		}
+	}
+
+	// 初期状態
+	changeListHeight();
+
+	// index.jsによる開閉を監視
+	var observer = new MutationObserver(function() {
+		changeListHeight();
+	});
+
+	observer.observe(accordion, {
+		attributes: true,
+		attributeFilter: ["style", "class"]
+	});
 });
 
 
