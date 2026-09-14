@@ -105,7 +105,8 @@
 				<div class="card-body p-2" style="display: flex">
 					<a href="/user/input?seq_id=0" class="btn btn-success border border-dark mb-2 mx-2"
 						style="color: white; background-color: cornflowerblue;">新規登録</a>
-					<button type="submit" class="btn btn-success border border-dark mb-2 mx-2"
+					<button type="submit" onclick="return confirm('選択したデータを削除します。よろしいですか。');" form="deleteForm"
+						class="btn btn-success border border-dark mb-2 mx-2"
 						style="color: white; background-color: cornflowerblue;">選択行削除</button>
 				</div>
 				<form method="post" action="/user/delete" id="deleteForm">

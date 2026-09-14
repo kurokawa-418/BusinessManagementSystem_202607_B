@@ -8,14 +8,14 @@ import javax.validation.constraints.NotBlank;
 * UserFormクラス
 */
 public class UserForm {
-	@NotBlank(message = "{COM01E001}")
+	@NotBlank(message = "ユーザIDは必ず入力してください。")
 	private String userId;
-	@NotBlank(message = "{COM01E001}")
+	@NotBlank(message = "ユーザ名は必ず入力してください。")
 	private String userName;
-	@NotBlank(message = "{COM01E001}")
+	@NotBlank(message = "権限は必ず入力してください。")
 	private String authId;
-	@NotBlank(message = "{COM01E001}")
-	@Email(message = "{COM01E003}")
+	@NotBlank(message = "メールアドレスは必ず入力してください。")
+	@Email(message = "メールアドレス(xxx@example.comなど)で入力してください。")
 	private String mailAddress;
 
 	private String password;

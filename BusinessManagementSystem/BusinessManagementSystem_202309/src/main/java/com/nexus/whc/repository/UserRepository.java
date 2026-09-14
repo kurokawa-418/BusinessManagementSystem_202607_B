@@ -202,13 +202,48 @@ public class UserRepository {
 				userName,
 				mailAddress
 		};
-
 		int count = jdbcTemplate.queryForObject(
 				sql,
 				Integer.class,
 				param);
 
 		return count > 0;
+	}
+
+	/*重複した項目名取得*/
+	public List<String> findDuplicateUser(
+			String userId,
+			String userName,
+			String mailAddress) {
+
+		String sql = "SELECT user_id, user_name, mail_address "
+				+ "FROM m_user "
+				+ "WHERE user_id = ? "
+				+ "OR user_name = ? "
+				+ "OR mail_address = ? ";
+
+		Object[] param = {
+				userId,
+				userName,
+				mailAddress
+		};
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(
+				sql,
+				param);
+		List<String> items = new ArrayList<>();
+		for (Map<String, Object> row : result) {
+			if (userId.equals(row.get("user_id"))) {
+				items.add("ユーザID");
+			}
+			if (userName.equals(row.get("user_name"))) {
+				items.add("ユーザ名");
+			}
+			if (mailAddress.equals(row.get("mail_address"))) {
+				items.add("メールアドレス");
+			}
+		}
+		return items;
+
 	}
 
 	/*排他チェック（削除済）*/

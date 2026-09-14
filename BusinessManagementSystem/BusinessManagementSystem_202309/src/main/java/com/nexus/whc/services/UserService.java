@@ -118,6 +118,16 @@ public class UserService {
 				mailAddress);
 	}
 
+	public List<String> findDuplicateUser(
+			String userId,
+			String userName,
+			String mailAddress) {
+		return userRepository.findDuplicateUser(
+				userId,
+				userName,
+				mailAddress);
+	}
+
 	/*排他チェック(削除済)*/
 	public boolean existsActiveUser(Integer seqId) {
 

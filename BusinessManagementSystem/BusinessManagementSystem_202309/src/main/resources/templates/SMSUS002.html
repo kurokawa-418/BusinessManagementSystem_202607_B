@@ -51,12 +51,18 @@
 		<main class="w-100 h-100 bg-light">
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
 				<form method="post" action="/user/regist" th:object="${userForm}">
-
+					<div th:if="${messages}" style="color: red;">
+						<p th:each="message : ${messages}" th:text="${message}"></p>
+					</div>
 					<!--ユーザ情報入力欄-->
+					<div th:if="${#fields.hasErrors('*')}" style="color: red;">
+						<p th:each="error : ${#fields.errors('*')}" th:text="${error}">
+						</p>
+					</div>
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">ユーザID</span>
-						<input type="text" th:field="*{userId}" aria-label="emNo" class="form-control"
-							style="width: 150px">
+						<input type="text" th:field="*{userId}" th:readonly="${session.userMode == 'update'}"
+							aria-label="emNo" class="form-control" style="width: 150px">
 						<span class="input-group-text">ユーザ名</span>
 						<input type="text" th:field="*{userName}" class="form-control" style="width: 150px">
 						<input type="hidden" th:field="*{seqId}">
@@ -78,9 +84,11 @@
 					<!-- 新規登録モード -->
 					<div th:if="${session.userMode == 'new'}">
 
-						<button id="btn-regist" type="submit" class="btn border border-dark mb-3 my-3"
+						<button id="btn-regist" type="submit" onclick="return confirm('入力内容で登録します。よろしいですか？');"
+							class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">登録</button>
-						<button id="btn-registNext" type="submit" formaction="/user/registNext"
+						<button id="btn-registNext" type="submit"
+							onclick="return confirm('入力内容で登録し、引き続き新規登録を行います。よろしいですか？');" formaction="/user/registNext"
 							class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">登録して次へ</button>
 						<button id="btn-cancel" type="submit" formaction="/user/cancel"
@@ -90,10 +98,11 @@
 
 					<!-- 更新モード -->
 					<div th:if="${session.userMode == 'update'}">
-						<button id="btn-update" type="submit" formaction="/user/update"
-							class="btn border border-dark mb-3 my-3"
+						<button id="btn-update" type="submit" onclick="return confirm('現在の内容で更新します。よろしいですか？');"
+							formaction="/user/update" class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">更新</button>
-						<button id="btn-delete" type="button" class="btn border border-dark mb-3 my-3"
+						<button id="btn-delete" type="button" onclick="return confirm('選択したデータを削除します。よろしいですか。');"
+							class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">削除</button>
 						<button id="btn-cancel" type="submit" formaction="/user/cancel"
 							onclick="return confirm('入力内容を破棄します。よろしいですか？');" class="btn border border-dark mb-3 my-3"
