@@ -73,4 +73,23 @@ public class LockRepository {
 
 		return count != null && count > 0;
 	}
+
+	public String getLockingUserId(
+			String tableName,
+			Integer recordId,
+			String userId) {
+
+		String sql = "SELECT locking_user_id "
+				+ "FROM s_lock "
+				+ "WHERE locking_table_name = ? "
+				+ "AND locking_record_id = ? "
+				+ "AND locking_user_id <> ?";
+
+		return jdbcTemplate.queryForObject(
+				sql,
+				String.class,
+				tableName,
+				recordId,
+				userId);
+	}
 }
