@@ -307,37 +307,6 @@ public class ClientController {
 			return "SMSCL002";
 		}
 
-		if (!clientService.existsActiveClient(clientForm.getClientId())) {
-
-			model.addAttribute("isUpdateMode", true);
-			model.addAttribute(
-					"message",
-					getMessage("COM01E005"));
-
-			return "SMSCL002";
-		}
-
-		if (lockService.isLockedByOtherUser(
-				LOCK_TABLE_NAME,
-				clientForm.getClientId(),
-				userId)) {
-
-			String lockingUserId = lockService.getLockingUserId(
-					LOCK_TABLE_NAME,
-					clientForm.getClientId(),
-					userId);
-
-			model.addAttribute("isUpdateMode", true);
-			model.addAttribute(
-					"message",
-					getMessage(
-							"COM01E006",
-							null,
-							lockingUserId));
-
-			return "SMSCL002";
-		}
-
 		clientService.updateClient(clientForm);
 
 		lockService.deleteLock(
