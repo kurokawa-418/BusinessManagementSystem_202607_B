@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,21 +33,24 @@ import com.nexus.whc.services.LockService;
  * Controllerクラス
  */
 @Controller
-
 @RequestMapping("/client")
 public class ClientController {
 
 	private final ClientService clientService;
+
 	private final LockService lockService;
+
+	private final MessageSource messageSource;
 
 	@Autowired
 	public ClientController(
 			ClientService clientService,
-			LockService lockService) {
+			LockService lockService,
+			MessageSource messageSource) {
 
 		this.clientService = clientService;
 		this.lockService = lockService;
-
+		this.messageSource = messageSource;
 	}
 
 	private static final String LOCK_TABLE_NAME = "m_client";
@@ -71,12 +75,12 @@ public class ClientController {
 			@RequestParam(name = "clientName", defaultValue = "") String clientName,
 			@RequestParam(name = "search", defaultValue = "false") boolean search,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-
 			Model model) {
 
 		List<Map<String, Object>> clientList = clientService.searchClients(clientId, clientName, page);
 
 		int totalCount = clientService.countClients(clientId, clientName);
+
 		int totalPages = (int) Math.ceil(totalCount / 20.0);
 
 		List<Integer> pageNumbers = createPageNumbers(page, totalPages);
@@ -84,7 +88,7 @@ public class ClientController {
 		if (search && clientList.isEmpty()) {
 			model.addAttribute(
 					"message",
-					"顧客の検索結果は0件です。条件を変更し、再度検索してください。");
+					getMessage("COM01W001", null, "顧客"));
 		}
 
 		model.addAttribute("pageNumbers", pageNumbers);
@@ -114,15 +118,27 @@ public class ClientController {
 			if (!clientService.existsActiveClient(clientId)) {
 				attr.addFlashAttribute(
 						"message",
-						"対象データは削除されています。");
+						getMessage("COM01E005"));
 				return "redirect:/client/list";
 			}
 
 			// 編集中チェック
 			if (lockService.isLocked(LOCK_TABLE_NAME, clientId)) {
+
+				String userId = getUserId(session);
+
+				String lockingUserId = lockService.getLockingUserId(
+						LOCK_TABLE_NAME,
+						clientId,
+						userId);
+
 				attr.addFlashAttribute(
 						"message",
-						"対象データは編集中です。");
+						getMessage(
+								"COM01E006",
+								null,
+								lockingUserId));
+
 				return "redirect:/client/list";
 			}
 
@@ -151,16 +167,39 @@ public class ClientController {
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("isUpdateMode", false);
-			model.addAttribute("message", "必須項目を入力してください。");
+			model.addAttribute(
+					"message",
+					getMessage("COM01E001", null, "必須項目"));
 			return "SMSCL002";
 		}
 
-		if (clientService.existsClient(
-				clientForm.getClientId(),
-				clientForm.getClientName())) {
+		if (clientService.existsClientId(clientForm.getClientId())) {
 
 			model.addAttribute("isUpdateMode", false);
-			model.addAttribute("message", "顧客番号または顧客名はすでに登録されています。");
+			model.addAttribute(
+					"message",
+					getMessage(
+							"COM01E011",
+							null,
+							"顧客番号",
+							String.valueOf(clientForm.getClientId()),
+							"顧客マスタ"));
+
+			return "SMSCL002";
+		}
+
+		if (clientService.existsClientName(clientForm.getClientName())) {
+
+			model.addAttribute("isUpdateMode", false);
+			model.addAttribute(
+					"message",
+					getMessage(
+							"COM01E011",
+							null,
+							"顧客名",
+							clientForm.getClientName(),
+							"顧客マスタ"));
+
 			return "SMSCL002";
 		}
 
@@ -177,16 +216,39 @@ public class ClientController {
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("isUpdateMode", false);
-			model.addAttribute("message", "必須項目を入力してください。");
+			model.addAttribute(
+					"message",
+					getMessage("COM01E001", null, "必須項目"));
 			return "SMSCL002";
 		}
 
-		if (clientService.existsClient(
-				clientForm.getClientId(),
-				clientForm.getClientName())) {
+		if (clientService.existsClientId(clientForm.getClientId())) {
 
 			model.addAttribute("isUpdateMode", false);
-			model.addAttribute("message", "顧客番号または顧客名はすでに登録されています。");
+			model.addAttribute(
+					"message",
+					getMessage(
+							"COM01E011",
+							null,
+							"顧客番号",
+							String.valueOf(clientForm.getClientId()),
+							"顧客マスタ"));
+
+			return "SMSCL002";
+		}
+
+		if (clientService.existsClientName(clientForm.getClientName())) {
+
+			model.addAttribute("isUpdateMode", false);
+			model.addAttribute(
+					"message",
+					getMessage(
+							"COM01E011",
+							null,
+							"顧客名",
+							clientForm.getClientName(),
+							"顧客マスタ"));
+
 			return "SMSCL002";
 		}
 
@@ -204,7 +266,9 @@ public class ClientController {
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("isUpdateMode", true);
-			model.addAttribute("message", "必須項目を入力してください。");
+			model.addAttribute(
+					"message",
+					getMessage("COM01E001", null, "必須項目"));
 			return "SMSCL002";
 		}
 
@@ -216,7 +280,7 @@ public class ClientController {
 			model.addAttribute("isUpdateMode", true);
 			model.addAttribute(
 					"message",
-					"対象のデータは削除されています。");
+					getMessage("COM01E005"));
 
 			return "SMSCL002";
 		}
@@ -227,10 +291,18 @@ public class ClientController {
 				clientForm.getClientId(),
 				userId)) {
 
+			String lockingUserId = lockService.getLockingUserId(
+					LOCK_TABLE_NAME,
+					clientForm.getClientId(),
+					userId);
+
 			model.addAttribute("isUpdateMode", true);
 			model.addAttribute(
 					"message",
-					"対象のデータは他のユーザーが編集中です。");
+					getMessage(
+							"COM01E006",
+							null,
+							lockingUserId));
 
 			return "SMSCL002";
 		}
@@ -238,7 +310,9 @@ public class ClientController {
 		if (!clientService.existsActiveClient(clientForm.getClientId())) {
 
 			model.addAttribute("isUpdateMode", true);
-			model.addAttribute("message", "対象のデータは削除されています。");
+			model.addAttribute(
+					"message",
+					getMessage("COM01E005"));
 
 			return "SMSCL002";
 		}
@@ -248,10 +322,18 @@ public class ClientController {
 				clientForm.getClientId(),
 				userId)) {
 
+			String lockingUserId = lockService.getLockingUserId(
+					LOCK_TABLE_NAME,
+					clientForm.getClientId(),
+					userId);
+
 			model.addAttribute("isUpdateMode", true);
 			model.addAttribute(
 					"message",
-					"対象のデータは他のユーザーが編集中です。");
+					getMessage(
+							"COM01E006",
+							null,
+							lockingUserId));
 
 			return "SMSCL002";
 		}
@@ -277,7 +359,7 @@ public class ClientController {
 
 			attr.addFlashAttribute(
 					"message",
-					"対象が選択されていません。対象を選択してください。");
+					getMessage("COM01W003"));
 
 			return "redirect:/client/list";
 		}
@@ -291,7 +373,7 @@ public class ClientController {
 
 				attr.addFlashAttribute(
 						"message",
-						"対象のデータは削除されています。");
+						getMessage("COM01E005"));
 
 				return "redirect:/client/list";
 			}
@@ -302,9 +384,18 @@ public class ClientController {
 					userId);
 
 			if (locked) {
+
+				String lockingUserId = lockService.getLockingUserId(
+						LOCK_TABLE_NAME,
+						clientId,
+						userId);
+
 				attr.addFlashAttribute(
 						"message",
-						"対象のデータは編集中です。");
+						getMessage(
+								"COM01E006",
+								null,
+								lockingUserId));
 
 				return "redirect:/client/list";
 			}
@@ -392,5 +483,16 @@ public class ClientController {
 				getUserId(session));
 
 		return "redirect:/client/list";
+	}
+
+	/**
+	 * propertiesからメッセージを取得する
+	 *
+	 * @param code メッセージコード
+	 * @param args メッセージへ埋め込む値
+	 * @return メッセージ
+	 */
+	private String getMessage(String code, Object... args) {
+		return messageSource.getMessage(code, args, null);
 	}
 }

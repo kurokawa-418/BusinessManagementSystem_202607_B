@@ -102,4 +102,12 @@ public class ClientService {
 
 		return clientRepository.existsActiveClient(clientId);
 	}
+
+	public boolean existsClientId(Integer clientId) {
+		return clientRepository.existsClientId(clientId);
+	}
+
+	public boolean existsClientName(String clientName) {
+		return clientRepository.existsClientName(clientName);
+	}
 }
