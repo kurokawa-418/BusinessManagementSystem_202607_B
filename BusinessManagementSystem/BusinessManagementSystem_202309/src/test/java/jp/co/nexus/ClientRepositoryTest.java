@@ -8,6 +8,7 @@ public class ClientRepositoryTest {
 
 	@Test
 	public void test() {
+		//後で削除
 		fail("まだ実装されていません");
 	}
 
