@@ -180,7 +180,7 @@ public class UserRepository {
 	/*一覧から削除*/
 	public void deleteUser(int seqId) {
 
-		String sql = "DELETE FROM m_user WHERE seq_id = ?";
+		String sql = "UPDATE m_user SET delete_flg = 1 WHERE seq_id = ?";
 		Object[] param = { seqId };
 
 		jdbcTemplate.update(sql, param);
