@@ -320,8 +320,7 @@ public class ClientController {
 	@PostMapping("/delete")
 	public String postDelete(
 			@RequestParam(name = "clientIds", required = false) List<Integer> clientIds,
-			RedirectAttributes attr,
-			HttpSession session) {
+			RedirectAttributes attr) {
 
 		// 未選択チェック
 		if (clientIds == null || clientIds.isEmpty()) {
@@ -332,8 +331,6 @@ public class ClientController {
 
 			return "redirect:/client/list";
 		}
-
-		String userId = getUserId(session);
 
 		// 選択された顧客を1件ずつチェック
 		for (Integer clientId : clientIds) {
@@ -347,17 +344,15 @@ public class ClientController {
 				return "redirect:/client/list";
 			}
 
-			boolean locked = lockService.isLockedByOtherUser(
+			boolean locked = lockService.isLocked(
 					LOCK_TABLE_NAME,
-					clientId,
-					userId);
+					clientId);
 
 			if (locked) {
 
 				String lockingUserId = lockService.getLockingUserId(
 						LOCK_TABLE_NAME,
-						clientId,
-						userId);
+						clientId);
 
 				attr.addFlashAttribute(
 						"message",

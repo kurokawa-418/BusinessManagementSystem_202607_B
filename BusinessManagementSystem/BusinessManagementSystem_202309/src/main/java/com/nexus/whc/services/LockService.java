@@ -72,4 +72,13 @@ public class LockService {
 				recordId,
 				userId);
 	}
+
+	public String getLockingUserId(
+			String tableName,
+			Integer recordId) {
+
+		return lockRepository.getLockingUserId(
+				tableName,
+				recordId);
+	}
 }

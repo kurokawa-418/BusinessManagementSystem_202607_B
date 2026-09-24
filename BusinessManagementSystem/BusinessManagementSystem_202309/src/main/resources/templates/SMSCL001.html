@@ -83,7 +83,8 @@
 				</div>
 
 				<!-- 登録、削除ボタン -->
-				<form th:action="@{/client/delete}" method="post" onsubmit="return confirm('選択した顧客を削除します。よろしいですか？');">
+				<form th:action="@{/client/delete}" method="post" th:data-confirm-message="#{COM01I010}"
+					onsubmit="return confirm(this.dataset.confirmMessage);">
 					<div class="card-body p-2" style="display: flex">
 						<a th:href="@{/client/regist}" class="btn btn-success border border-dark mb-2 mx-2"
 							style="color: white; background-color: cornflowerblue;">
