@@ -51,13 +51,11 @@
 		<main class="w-100 bg-light">
 			<div class="container bg-white border py-3 my-3">
 				<div class="card shadow bg-light">
-
-
-					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
 					<!--エラーメッセージ表示-->
 					<div th:if="${message}" style="color: red;">
 						<span th:text="${message}"></span>
 					</div>
+					<h3 class="font-weight-bold p-2" id="folding">検索条件</h3>
 
 					<div class="accordion">
 						<form method="get" action="/user/list">
@@ -228,4 +226,4 @@
 	</script>
 </body>
 
-</html>
+</html>l>

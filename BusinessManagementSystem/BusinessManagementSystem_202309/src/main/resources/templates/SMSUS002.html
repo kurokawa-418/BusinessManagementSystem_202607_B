@@ -4,9 +4,10 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="../static/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="../static/css/index.css" rel="stylesheet" type="text/css">
-	<link th:href="@{../static/css/menu.css}" rel="stylesheet" type="text/css">
+
+	<link th:href="@{../css/bootstrap/bootstrap.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{../css/index.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{../css/menu.css}" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/monthSelect/style.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
@@ -43,10 +44,10 @@
 		</nav>
 	</header>
 
-	<div class="d-flex flex-row" style="height: 1860px">
+	<div class="d-flex flex-row" style="height: 1000px">
 
 		<!-- メニュー表示 -->
-		<object data="menu.html" type="text/html"></object>
+		<div th:replace="~{menu::menu}"></div>
 
 		<main class="w-100 h-100 bg-light">
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
@@ -91,6 +92,8 @@
 							onclick="return confirm('入力内容で登録し、引き続き新規登録を行います。よろしいですか？');" formaction="/user/registNext"
 							class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">登録して次へ</button>
+						<button id="delete" type="button" class="btn border border-dark mb-3 my-3"
+							style="color: white; background-color: cornflowerblue;">削除</button>
 						<button id="btn-cancel" type="submit" formaction="/user/cancel"
 							onclick="return confirm('入力内容を破棄します。よろしいですか？');" class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">キャンセル</button>
@@ -98,7 +101,7 @@
 
 					<!-- 更新モード -->
 					<div th:if="${session.userMode == 'update'}">
-						<button id="btn-update" type="submit" onclick="return confirm('現在の内容で更新します。よろしいですか？');"
+						<button id="btn-update" type="submit" onclick="return confirm('現在の入力内容で更新します。よろしいですか？');"
 							formaction="/user/update" class="btn border border-dark mb-3 my-3"
 							style="color: white; background-color: cornflowerblue;">更新</button>
 						<button id="btn-delete" type="button" onclick="return confirm('選択したデータを削除します。よろしいですか。');"
