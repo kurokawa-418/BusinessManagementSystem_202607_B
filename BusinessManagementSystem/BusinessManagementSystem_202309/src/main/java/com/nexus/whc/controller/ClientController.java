@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -125,12 +126,9 @@ public class ClientController {
 			// 編集中チェック
 			if (lockService.isLocked(LOCK_TABLE_NAME, clientId)) {
 
-				String userId = getUserId(session);
-
 				String lockingUserId = lockService.getLockingUserId(
 						LOCK_TABLE_NAME,
-						clientId,
-						userId);
+						clientId);
 
 				attr.addFlashAttribute(
 						"message",
@@ -166,10 +164,17 @@ public class ClientController {
 			Model model) {
 
 		if (bindingResult.hasErrors()) {
+
+			String fieldName = getRequiredFieldName(bindingResult);
+
 			model.addAttribute("isUpdateMode", false);
 			model.addAttribute(
 					"message",
-					getMessage("COM01E001", null, "必須項目"));
+					getMessage(
+							"COM01E001",
+							null,
+							fieldName));
+
 			return "SMSCL002";
 		}
 
@@ -458,5 +463,36 @@ public class ClientController {
 	 */
 	private String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
+	}
+
+	private String getRequiredFieldName(BindingResult bindingResult) {
+
+		for (FieldError error : bindingResult.getFieldErrors()) {
+
+			if ("NotNull".equals(error.getCode())
+					|| "NotBlank".equals(error.getCode())) {
+
+				switch (error.getField()) {
+				case "clientId":
+					return "顧客番号";
+				case "clientName":
+					return "顧客名";
+				case "openTime":
+					return "始業時刻";
+				case "closeTime":
+					return "終業時刻";
+				case "workingTime":
+					return "作業時間";
+				case "rest1Start":
+					return "休憩1開始時刻";
+				case "rest1End":
+					return "休憩1終了時刻";
+				default:
+					return "必須項目";
+				}
+			}
+		}
+
+		return "必須項目";
 	}
 }
