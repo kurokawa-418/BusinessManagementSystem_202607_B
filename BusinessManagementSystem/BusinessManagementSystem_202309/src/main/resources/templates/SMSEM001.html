@@ -124,19 +124,19 @@
 							<div class="card-body p-2" style="display: flex">
 								<div class="input-group mb-2 mx-2" style="width: 600px">
 									<span class="input-group-text">社員番号</span> <input type="text" name="employeeId"
-										aria-label="emNo" class="form-control" style="width: 150px">
+										th:value="${searchEmployeeId}" aria-label="emNo" class="form-control" style="width: 150px">
 									<span class="input-group-text">社員氏名</span> <input type="text" name="employeeName"
-										class="form-control" style="width: 150px;">
+										th:value="${searchEmployeeName}" class="form-control" style="width: 150px;">
 								</div>
 							</div>
 
 							<div class="card-body p-2" style="display: flex">
 								<div class="input-group mb-2 mx-2" style="width: 800px">
 									<span class="input-group-text">担当顧客番号</span>
-									<input type="text" aria-label="emNo" name="clientId" class="form-control"
+									<input type="text" aria-label="emNo" name="clientId" th:value="${searchClientId}" class="form-control"
 										style="width: 150px" id="customerNumberField">
 									<span class="input-group-text">担当顧客名</span>
-									<input type="text" class="form-control" name="clientName" style="width: 150px;"
+									<input type="text" class="form-control" name="clientName" th:value="${searchClientName}" style="width: 150px;"
 										id="customerNameField">
 									<button type="button" id="openClientModal"
 										class="btn btn-success border border-dark mb-2 mx-2"

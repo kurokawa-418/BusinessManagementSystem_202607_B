@@ -127,6 +127,12 @@ public class EmployeeController {
 				clientName);
 
 		model.addAttribute("employeeList", employeeList);
+		
+	    // 検索条件を画面に保持
+	    model.addAttribute("searchEmployeeId", employeeId);
+	    model.addAttribute("searchEmployeeName", employeeName);
+	    model.addAttribute("searchClientId", clientId);
+	    model.addAttribute("searchClientName", clientName);
 
 		// 検索結果が0件の場合
 		if (employeeList.isEmpty()) {
