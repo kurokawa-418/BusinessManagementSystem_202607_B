@@ -63,6 +63,9 @@
 						<p th:each="error : ${#fields.errors('*')}" th:text="${error}">
 						</p>
 					</div>
+
+					<p id="mailAddressError" style="color: red;"></p>
+
 					<div class="input-group mb-3" style="width: 600px">
 						<span class="input-group-text">ユーザID</span>
 						<input type="text" th:field="*{userId}" th:readonly="${session.userMode == 'update'}"
@@ -85,7 +88,6 @@
 							onblur="checkMailAddress(this)">
 					</div>
 
-					<p id="mailAddressError" style="color: red;"></p>
 
 					<!-- 新規登録モード -->
 					<div th:if="${session.userMode == 'new'}">
