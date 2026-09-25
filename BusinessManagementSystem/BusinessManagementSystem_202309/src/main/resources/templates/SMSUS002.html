@@ -52,6 +52,9 @@
 		<main class="w-100 h-100 bg-light">
 			<div class="container bg-white border py-3 my-3" style="width: 850px">
 				<form method="post" action="/user/regist" th:object="${userForm}">
+					<div th:if="${message}" style="color: red;">
+						<p th:text="${message}"></p>
+					</div>
 					<div th:if="${messages}" style="color: red;">
 						<p th:each="message : ${messages}" th:text="${message}"></p>
 					</div>
@@ -78,9 +81,11 @@
 
 					<div class="input-group mb-3" style="width: 500px">
 						<span class="input-group-text">メールアドレス</span>
-						<input type="text" th:field="*{mailAddress}" aria-label="emNo" class="form-control"
-							style="width: 150px">
+						<input type="text" th:field="*{mailAddress}" class="form-control" style="width: 150px"
+							onblur="checkMailAddress(this)">
 					</div>
+
+					<p id="mailAddressError" style="color: red;"></p>
 
 					<!-- 新規登録モード -->
 					<div th:if="${session.userMode == 'new'}">
@@ -133,6 +138,25 @@
 			]
 		}
 		flatpickr('.flatpickr', config);
+	</script>
+	<script>
+		function checkMailAddress(input) {
+			const error = document.getElementById("mailAddressError");
+			const mailAddress = input.value;
+
+			error.textContent = "";
+
+			if (mailAddress === "") {
+				return;
+			}
+
+			const mailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+			if (!mailPattern.test(mailAddress)) {
+				error.textContent =
+					"メールアドレス（○○@○○.○○など）で入力してください。";
+			}
+		}
 	</script>
 </body>
 

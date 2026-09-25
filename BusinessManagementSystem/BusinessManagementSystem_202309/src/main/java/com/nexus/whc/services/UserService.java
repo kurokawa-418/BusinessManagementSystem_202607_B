@@ -111,26 +111,30 @@ public class UserService {
 		userRepository.deleteUser(seqId);
 	}
 
-	/*マスタ存在チェック（既に使われてない？）*/
-	public boolean existsUser(
+	/*マスタ存在チェック（登録）*/
+	public List<String> findDuplicateUser(
 			String userId,
 			String userName,
 			String mailAddress) {
 
-		return userRepository.existsUser(
+		return userRepository.findDuplicateUser(
 				userId,
 				userName,
 				mailAddress);
 	}
 
-	public List<String> findDuplicateUser(
+	/*マスタ存在チェック（更新）*/
+	public List<String> findDuplicateUserForUpdate(
 			String userId,
 			String userName,
-			String mailAddress) {
-		return userRepository.findDuplicateUser(
+			String mailAddress,
+			Integer seqId) {
+
+		return userRepository.findDuplicateUserForUpdate(
 				userId,
 				userName,
-				mailAddress);
+				mailAddress,
+				seqId);
 	}
 
 	/*排他チェック(削除済)*/

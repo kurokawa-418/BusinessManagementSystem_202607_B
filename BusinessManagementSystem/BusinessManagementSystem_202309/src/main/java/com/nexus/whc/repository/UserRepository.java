@@ -186,7 +186,7 @@ public class UserRepository {
 		jdbcTemplate.update(sql, param);
 	}
 
-	/*マスタ存在チェック*/
+	/*マスタ存在チェック（登録）*/
 	public boolean existsUser(
 			String userId,
 			String userName,
@@ -245,6 +245,56 @@ public class UserRepository {
 		}
 		return items;
 
+	}
+
+	/*マスタ存在チェック（更新）*/
+	public List<String> findDuplicateUserForUpdate(
+			String userId,
+			String userName,
+			String mailAddress,
+			Integer seqId) {
+
+		String sql = "SELECT user_id, user_name, mail_address "
+				+ "FROM m_user "
+				+ "WHERE seq_id <> ? "
+				+ "AND delete_flg = 0 "
+				+ "AND (user_id = ? "
+				+ "OR user_name = ? "
+				+ "OR mail_address = ?)";
+
+		Object[] param = {
+				seqId,
+				userId,
+				userName,
+				mailAddress
+		};
+
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, param);
+
+		List<String> items = new ArrayList<>();
+
+		for (Map<String, Object> row : result) {
+
+			if (userId.equals(row.get("user_id"))) {
+				if (!items.contains("ユーザID")) {
+					items.add("ユーザID");
+				}
+			}
+
+			if (userName.equals(row.get("user_name"))) {
+				if (!items.contains("ユーザ名")) {
+					items.add("ユーザ名");
+				}
+			}
+
+			if (mailAddress.equals(row.get("mail_address"))) {
+				if (!items.contains("メールアドレス")) {
+					items.add("メールアドレス");
+				}
+			}
+		}
+
+		return items;
 	}
 
 	/*排他チェック（削除済）*/

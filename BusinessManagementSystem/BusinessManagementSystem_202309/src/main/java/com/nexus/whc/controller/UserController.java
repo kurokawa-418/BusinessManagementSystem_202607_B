@@ -139,20 +139,17 @@ public class UserController {
 	public String updateUser(
 			@RequestParam("seq_id") Integer seqId,
 			Model model,
-			HttpSession session) {
+			HttpSession session,
+			RedirectAttributes attr) {
 
 		/* 排他チェック（削除済）*/
 		if (!userService.existsActiveUser(seqId)) {
-			UserForm userForm = new UserForm();
-			userForm.setSeqId(seqId);
-
 			String message = messageSource.getMessage(
 					"COM01E005",
 					null,
 					Locale.JAPAN);
-			model.addAttribute("message", message);
-
-			return "SMSUS002";
+			attr.addFlashAttribute("message", message);
+			return "redirect:/user/list";
 		}
 		String userId = getUserId(session);
 		/*DBから取り出した値をMapのuserに格納*/
@@ -184,8 +181,8 @@ public class UserController {
 					"COM01E006",
 					new Object[] { "", lockingUserId },
 					Locale.JAPAN);
-			model.addAttribute("message", message);
-			return "SMSUS002";
+			attr.addFlashAttribute("message", message);
+			return "redirect:/user/list";
 		}
 
 		/* 編集ロックを登録*/
@@ -210,19 +207,23 @@ public class UserController {
 			return "SMSUS002";
 		}
 
-		String userId = getUserId(session);
-		/* 排他チェック（削除済）*/
+		/*マスタ存在チェック*/
 		if (!userService.existsActiveUser(userForm.getSeqId())) {
 
 			String message = messageSource.getMessage(
 					"COM01E005",
 					null,
 					Locale.JAPAN);
-			model.addAttribute("message", message);
+			attr.addFlashAttribute("message", message);
+			return "redirect:/user/list";
+		}
 
+		/*重複チェック*/
+		if (checkDuplicateUserForUpdate(userForm, model)) {
 			return "SMSUS002";
 		}
 
+		String userId = getUserId(session);
 		/*排他チェック（編集中）*/
 		if (lockService.isLockedByOtherUser(
 				LOCK_TABLE_NAME,
@@ -236,9 +237,8 @@ public class UserController {
 					"COM01E006",
 					new Object[] { "", lockingUserId },
 					Locale.JAPAN);
-			model.addAttribute("message", message);
-
-			return "SMSUS002";
+			attr.addFlashAttribute("message", message);
+			return "redirect:/user/list";
 		}
 
 		/* 登録結果*/
@@ -405,12 +405,15 @@ public class UserController {
 					LOCK_TABLE_NAME,
 					seqId,
 					userId)) {
+				String lockingUserId = lockService.getLockingUserId(
+						LOCK_TABLE_NAME,
+						seqId,
+						userId);
 				String message = messageSource.getMessage(
 						"COM01E006",
-						null,
+						new Object[] { "", lockingUserId },
 						Locale.JAPAN);
 				attr.addFlashAttribute("message", message);
-
 				return "redirect:/user/list";
 			}
 			userService.deleteUser(seqId);
@@ -435,7 +438,7 @@ public class UserController {
 		return "redirect:/user/list";
 	}
 
-	/*マスタ存在チェック詳細*/
+	/*マスタ存在チェック詳細（登録）*/
 	private boolean checkDuplicateUser(
 			UserForm userForm,
 			Model model) {
@@ -479,6 +482,57 @@ public class UserController {
 			model.addAttribute("messages", messages);
 			return true;
 		}
+		return false;
+	}
+
+	/*マスタ存在チェック詳細（更新）*/
+	private boolean checkDuplicateUserForUpdate(
+			UserForm userForm,
+			Model model) {
+
+		List<String> duplicateItems = userService.findDuplicateUserForUpdate(
+				userForm.getUserId(),
+				userForm.getUserName(),
+				userForm.getMailAddress(),
+				userForm.getSeqId());
+
+		if (!duplicateItems.isEmpty()) {
+
+			List<String> messages = new ArrayList<>();
+
+			for (String item : duplicateItems) {
+
+				String inputValue = "";
+
+				if (item.equals("ユーザID")) {
+					inputValue = userForm.getUserId();
+				}
+
+				if (item.equals("ユーザ名")) {
+					inputValue = userForm.getUserName();
+				}
+
+				if (item.equals("メールアドレス")) {
+					inputValue = userForm.getMailAddress();
+				}
+
+				String message = messageSource.getMessage(
+						"COM01E011",
+						new Object[] {
+								"",
+								item,
+								inputValue,
+								"ユーザマスタ"
+						},
+						Locale.JAPAN);
+
+				messages.add(message);
+			}
+
+			model.addAttribute("messages", messages);
+			return true;
+		}
+
 		return false;
 	}
 
