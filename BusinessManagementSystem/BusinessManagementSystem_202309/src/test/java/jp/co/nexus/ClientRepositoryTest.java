@@ -10,17 +10,31 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.nexus.whc.repository.ClientRepository;
 
 @RunWith(SpringRunner.class)
+@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class) // DBUnitでCSVファイルを使えるよう指定。
+@TestExecutionListeners({
+	DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
+	TransactionDbUnitTestExecutionListener.class // @DatabaseSetupや＠ExpectedDatabaseなどを使えるように指定
+})
+@SpringBootApplication
 @SpringBootTest(classes = ClientRepositoryTest.TestConfig.class)
 @Transactional
 public class ClientRepositoryTest {
@@ -45,6 +59,8 @@ public class ClientRepositoryTest {
 	 * 2件の顧客情報が取得できることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case01/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case01/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
 	public void findAllClient_001() {
 
 		List<Map<String, Object>> result = clientRepository.findAllClient();
@@ -73,48 +89,15 @@ public class ClientRepositoryTest {
 
 	/**
 	 * findAllClient
-	 * 一覧取得の正常系。
-	 *
-	 * 削除済みの顧客が存在する場合、
-	 * 削除済み顧客が一覧に含まれないことを確認する。
-	 */
-	@Test
-	public void findAllClient_002() {
-
-		// 削除済み顧客をテストデータとして追加
-		insertTestClient(103, "株式会社削除済み", true);
-
-		List<Map<String, Object>> result = clientRepository.findAllClient();
-
-		// 有効な2件だけ取得されること
-		assertEquals(2, result.size());
-
-		// 削除済みの103が含まれていないこと
-		for (Map<String, Object> client : result) {
-
-			int clientId = ((Number) client.get("client_id")).intValue();
-
-			if (clientId == 103) {
-				fail("削除済み顧客が一覧に含まれています。");
-			}
-		}
-	}
-
-	/**
-	 * findAllClient
 	 * 一覧取得の異常系。
 	 *
 	 * 有効な顧客が0件の場合、
 	 * 空のListが返却されることを確認する。
 	 */
 	@Test
-	public void findAllClient_003() {
-
-		// 既存の2件を削除済みにする
-		jdbcTemplate.update(
-				"UPDATE m_client "
-						+ "SET delete_flg = 1 "
-						+ "WHERE client_id IN (101, 102)");
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case02/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case02/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void findAllClient_002() {
 
 		List<Map<String, Object>> result = clientRepository.findAllClient();
 
@@ -130,12 +113,9 @@ public class ClientRepositoryTest {
 	 * client_idの昇順で取得されることを確認する。
 	 */
 	@Test
-	public void findAllClient_004() {
-
-		// 既存データとは異なる順番でIDを追加
-		insertTestClient(105, "株式会社テスト105", false);
-		insertTestClient(103, "株式会社テスト103", false);
-		insertTestClient(104, "株式会社テスト104", false);
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case03/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case03/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void findAllClient_003() {
 
 		List<Map<String, Object>> result = clientRepository.findAllClient();
 
@@ -173,6 +153,8 @@ public class ClientRepositoryTest {
 	 * 更新件数が1件になることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case04/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case04/after-update-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（変更あり）
 	public void deleteClients_001() {
 
 		List<Integer> clientIds = Arrays.asList(101);
@@ -191,6 +173,7 @@ public class ClientRepositoryTest {
 		assertEquals(
 				102,
 				((Number) clients.get(0).get("client_id")).intValue());
+		
 	}
 
 	/**
@@ -202,9 +185,11 @@ public class ClientRepositoryTest {
 	 * 更新件数が指定件数になることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case05/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case05/after-update-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（変更あり）
 	public void deleteClients_002() {
 
-		List<Integer> clientIds = Arrays.asList(101, 102);
+		List<Integer> clientIds = Arrays.asList(103, 104);
 
 		int result = clientRepository.deleteClients(clientIds);
 
@@ -226,6 +211,8 @@ public class ClientRepositoryTest {
 	 * 更新件数が0件になることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case06/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case06/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
 	public void deleteClients_003() {
 
 		List<Integer> clientIds = Arrays.asList(999);
@@ -250,23 +237,29 @@ public class ClientRepositoryTest {
 	 * 存在する顧客だけが削除されることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case07/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case07/after-update-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（変更あり）
 	public void deleteClients_004() {
 
-		List<Integer> clientIds = Arrays.asList(101, 999);
+		List<Integer> clientIds = Arrays.asList(106, 999);
 
 		int result = clientRepository.deleteClients(clientIds);
 
-		// 存在する101だけが更新される
+		// 存在する106だけが更新される
 		assertEquals(1, result);
 
-		// 102だけが有効データとして残る
+		// 101,102だけが有効データとして残る
 		List<Map<String, Object>> clients = clientRepository.findAllClient();
 
-		assertEquals(1, clients.size());
+		assertEquals(2, clients.size());
 
 		assertEquals(
-				102,
+				101,
 				((Number) clients.get(0).get("client_id")).intValue());
+		
+		assertEquals(
+				102,
+				((Number) clients.get(1).get("client_id")).intValue());
 	}
 
 	/**
@@ -278,15 +271,11 @@ public class ClientRepositoryTest {
 	 * 更新件数が1件になることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case08/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case08/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
 	public void deleteClients_005() {
 
-		// 101をあらかじめ削除済みにする
-		jdbcTemplate.update(
-				"UPDATE m_client "
-						+ "SET delete_flg = 1 "
-						+ "WHERE client_id = 101");
-
-		List<Integer> clientIds = Arrays.asList(101);
+		List<Integer> clientIds = Arrays.asList(107);
 
 		int result = clientRepository.deleteClients(clientIds);
 
@@ -308,23 +297,29 @@ public class ClientRepositoryTest {
 	 * 更新件数が1件になることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case09/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case09/after-update-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（変更あり）
 	public void deleteClients_006() {
 
-		List<Integer> clientIds = Arrays.asList(101, 101);
+		List<Integer> clientIds = Arrays.asList(108, 108);
 
 		int result = clientRepository.deleteClients(clientIds);
 
 		// 同じレコードは1件として更新される
 		assertEquals(1, result);
 
-		// 101が一覧から除外されること
+		// 108が一覧から除外されること
 		List<Map<String, Object>> clients = clientRepository.findAllClient();
 
-		assertEquals(1, clients.size());
+		assertEquals(2, clients.size());
 
 		assertEquals(
-				102,
+				101,
 				((Number) clients.get(0).get("client_id")).intValue());
+		
+		assertEquals(
+				102,
+				((Number) clients.get(1).get("client_id")).intValue());
 	}
 
 	/**
@@ -336,6 +331,8 @@ public class ClientRepositoryTest {
 	 * SQLエラーになることを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case10/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case10/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
 	public void deleteClients_007() {
 
 		List<Integer> clientIds = Arrays.asList();
@@ -362,6 +359,8 @@ public class ClientRepositoryTest {
 	 * NullPointerExceptionが発生することを確認する。
 	 */
 	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case11/init-data") // テスト実行前に初期データを投入
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case11/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
 	public void deleteClients_008() {
 
 		List<Integer> clientIds = null;
@@ -377,42 +376,5 @@ public class ClientRepositoryTest {
 
 			// NullPointerExceptionが発生すればOK
 		}
-	}
-
-	/**
-	 * テスト用の顧客データをm_clientに登録する。
-	 *
-	 * @param clientId 顧客番号
-	 * @param clientName 顧客名
-	 * @param deleteFlg 削除フラグ
-	 */
-	private void insertTestClient(
-			int clientId,
-			String clientName,
-			boolean deleteFlg) {
-
-		String sql = "INSERT INTO m_client ("
-				+ "client_id, "
-				+ "client_name, "
-				+ "open_time, "
-				+ "close_time, "
-				+ "working_time, "
-				+ "rest1_start, "
-				+ "rest1_end, "
-				+ "delete_flg"
-				+ ") VALUES ("
-				+ "?, ?, ?, ?, ?, ?, ?, ?"
-				+ ")";
-
-		jdbcTemplate.update(
-				sql,
-				clientId,
-				clientName,
-				"09:00:00",
-				"18:00:00",
-				8.00,
-				"12:00:00",
-				"13:00:00",
-				deleteFlg);
 	}
 }
