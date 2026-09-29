@@ -51,9 +51,14 @@
 
 			<div class="container bg-white border py-3 my-3" style="max-width: 850px">
 
-				<form th:action="@{/client/regist}" th:object="${clientForm}" method="post">
+				<form id="clientForm" th:action="@{/client/regist}" th:object="${clientForm}" method="post"
+					th:data-time-format-message="#{COM01E003('', '対象項目', '09:00')}">
 
 					<div th:if="${message}" class="text-danger mb-3" style="color: red;" th:text="${message}"></div>
+					<div th:if="${messages}">
+						<div th:each="errorMessage : ${messages}" class="text-danger" th:text="${errorMessage}">
+						</div>
+					</div>
 
 					<div class="input-group mb-3" style="max-width: 800px">
 
@@ -68,70 +73,118 @@
 					</div>
 
 					<div class="input-group mb-3" style="max-width: 800px">
+
 						<span class="input-group-text">始業時刻</span>
-						<input type="time" th:field="*{openTime}">
+						<input type="text" class="time-format" data-item-name="始業時刻" th:field="*{openTime}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">終業時刻</span>
-						<input type="time" th:field="*{closeTime}">
+						<input type="text" class="time-format" data-item-name="終業時刻" th:field="*{closeTime}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">作業時間</span>
 						<input type="text" th:field="*{workingTime}">
+
 						<span class="input-group-text">時間</span>
+
 					</div>
 
 					<div class="input-group mb-3" style="max-width: 500px">
+
 						<span class="input-group-text">休憩1</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest1Start}">
+						<input type="text" class="time-format" data-item-name="休憩1開始" th:field="*{rest1Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest1End}">
+						<input type="text" class="time-format" data-item-name="休憩1終了" th:field="*{rest1End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">休憩2</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest2Start}">
+						<input type="text" class="time-format" data-item-name="休憩2開始" th:field="*{rest2Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest2End}">
+						<input type="text" class="time-format" data-item-name="休憩2終了" th:field="*{rest2End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">休憩3</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest3Start}">
+						<input type="text" class="time-format" data-item-name="休憩3開始" th:field="*{rest3Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest3End}">
+						<input type="text" class="time-format" data-item-name="休憩3終了" th:field="*{rest3End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">休憩4</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest4Start}">
+						<input type="text" class="time-format" data-item-name="休憩4開始" th:field="*{rest4Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest4End}">
+						<input type="text" class="time-format" data-item-name="休憩4終了" th:field="*{rest4End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">休憩5</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest5Start}">
+						<input type="text" class="time-format" data-item-name="休憩5開始" th:field="*{rest5Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest5End}">
+						<input type="text" class="time-format" data-item-name="休憩5終了" th:field="*{rest5End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">休憩6</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{rest6Start}">
+						<input type="text" class="time-format" data-item-name="休憩6開始" th:field="*{rest6Start}"
+							maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{rest6End}">
+						<input type="text" class="time-format" data-item-name="休憩6終了" th:field="*{rest6End}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
+
 					<div class="input-group mb-3" style="width: 500px">
+
 						<span class="input-group-text">調整休憩時間</span>
 						<span class="input-group-text">開始</span>
-						<input type="time" th:field="*{adjustRestTimeStart}">
+						<input type="text" class="time-format" data-item-name="調整休憩時間開始"
+							th:field="*{adjustRestTimeStart}" maxlength="5" placeholder="HH:mm">
+
 						<span class="input-group-text">～</span>
 						<span class="input-group-text">終了</span>
-						<input type="time" th:field="*{adjustRestTimeEnd}">
+						<input type="text" class="time-format" data-item-name="調整休憩時間終了" th:field="*{adjustRestTimeEnd}"
+							maxlength="5" placeholder="HH:mm">
+
 					</div>
 					<p>備考</p>
 					<textarea th:field="*{comment}" maxlength="100" style="width: 100%; height: 150px;"></textarea>
@@ -189,6 +242,42 @@
 			]
 		}
 		flatpickr('.flatpickr', config);
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+
+			const form = document.getElementById("clientForm");
+			const messageTemplate = form.dataset.timeFormatMessage;
+			const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+			document.querySelectorAll(".time-format").forEach(function (input) {
+
+				input.addEventListener("blur", function () {
+
+					const value = this.value.trim();
+
+					// 空欄は必須チェック側で判定する
+					if (value === "") {
+						return;
+					}
+
+					if (!timePattern.test(value)) {
+
+						const message = messageTemplate.replace(
+							"対象項目",
+							this.dataset.itemName
+						);
+
+						alert(message);
+
+						const target = this;
+						setTimeout(function () {
+							target.focus();
+						}, 0);
+					}
+				});
+			});
+		});
 	</script>
 </body>
 

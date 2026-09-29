@@ -165,15 +165,26 @@ public class ClientController {
 
 		if (bindingResult.hasErrors()) {
 
-			String fieldName = getRequiredFieldName(bindingResult);
+			List<String> messages = new ArrayList<>();
 
-			model.addAttribute("isUpdateMode", false);
-			model.addAttribute(
-					"message",
-					getMessage(
+			for (FieldError error : bindingResult.getFieldErrors()) {
+
+				if ("NotNull".equals(error.getCode())
+						|| "NotBlank".equals(error.getCode())) {
+
+					String fieldName = getFieldDisplayName(error.getField());
+
+					String errorMessage = getMessage(
 							"COM01E001",
 							null,
-							fieldName));
+							fieldName);
+
+					messages.add(errorMessage);
+				}
+			}
+
+			model.addAttribute("isUpdateMode", false);
+			model.addAttribute("messages", messages);
 
 			return "SMSCL002";
 		}
@@ -220,10 +231,28 @@ public class ClientController {
 			Model model) {
 
 		if (bindingResult.hasErrors()) {
+
+			List<String> messages = new ArrayList<>();
+
+			for (FieldError error : bindingResult.getFieldErrors()) {
+
+				if ("NotNull".equals(error.getCode())
+						|| "NotBlank".equals(error.getCode())) {
+
+					String fieldName = getFieldDisplayName(error.getField());
+
+					String errorMessage = getMessage(
+							"COM01E001",
+							null,
+							fieldName);
+
+					messages.add(errorMessage);
+				}
+			}
+
 			model.addAttribute("isUpdateMode", false);
-			model.addAttribute(
-					"message",
-					getMessage("COM01E001", null, "必須項目"));
+			model.addAttribute("messages", messages);
+
 			return "SMSCL002";
 		}
 
@@ -269,16 +298,6 @@ public class ClientController {
 			Model model,
 			HttpSession session) {
 
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("isUpdateMode", true);
-			model.addAttribute(
-					"message",
-					getMessage("COM01E001", null, "必須項目"));
-			return "SMSCL002";
-		}
-
-		String userId = getUserId(session);
-
 		// 削除済みチェック
 		if (!clientService.existsActiveClient(clientForm.getClientId())) {
 
@@ -289,6 +308,35 @@ public class ClientController {
 
 			return "SMSCL002";
 		}
+
+		// 必須項目チェック
+		if (bindingResult.hasErrors()) {
+
+			List<String> messages = new ArrayList<>();
+
+			for (FieldError error : bindingResult.getFieldErrors()) {
+
+				if ("NotNull".equals(error.getCode())
+						|| "NotBlank".equals(error.getCode())) {
+
+					String fieldName = getFieldDisplayName(error.getField());
+
+					String errorMessage = getMessage(
+							"COM01E001",
+							null,
+							fieldName);
+
+					messages.add(errorMessage);
+				}
+			}
+
+			model.addAttribute("isUpdateMode", true);
+			model.addAttribute("messages", messages);
+
+			return "SMSCL002";
+		}
+
+		String userId = getUserId(session);
 
 		// 他ユーザーが編集中かチェック
 		if (lockService.isLockedByOtherUser(
@@ -312,8 +360,10 @@ public class ClientController {
 			return "SMSCL002";
 		}
 
+		// 更新
 		clientService.updateClient(clientForm);
 
+		// ロック解除
 		lockService.deleteLock(
 				LOCK_TABLE_NAME,
 				clientForm.getClientId(),
@@ -465,34 +515,25 @@ public class ClientController {
 		return messageSource.getMessage(code, args, null);
 	}
 
-	private String getRequiredFieldName(BindingResult bindingResult) {
+	private String getFieldDisplayName(String fieldName) {
 
-		for (FieldError error : bindingResult.getFieldErrors()) {
-
-			if ("NotNull".equals(error.getCode())
-					|| "NotBlank".equals(error.getCode())) {
-
-				switch (error.getField()) {
-				case "clientId":
-					return "顧客番号";
-				case "clientName":
-					return "顧客名";
-				case "openTime":
-					return "始業時刻";
-				case "closeTime":
-					return "終業時刻";
-				case "workingTime":
-					return "作業時間";
-				case "rest1Start":
-					return "休憩1開始時刻";
-				case "rest1End":
-					return "休憩1終了時刻";
-				default:
-					return "必須項目";
-				}
-			}
+		switch (fieldName) {
+		case "clientId":
+			return "顧客番号";
+		case "clientName":
+			return "顧客名";
+		case "openTime":
+			return "始業時刻";
+		case "closeTime":
+			return "終業時刻";
+		case "workingTime":
+			return "作業時間";
+		case "rest1Start":
+			return "休憩1開始時刻";
+		case "rest1End":
+			return "休憩1終了時刻";
+		default:
+			return "必須項目";
 		}
-
-		return "必須項目";
 	}
 }
