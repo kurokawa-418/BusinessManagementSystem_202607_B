@@ -2,3 +2,51 @@ INSERT INTO m_client ( client_id, client_name, open_time, close_time, working_ti
 VALUES (101, '株式会社アクサス', '09:00:00', '18:00:00', 8.00, '12:00:00', '13:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'コメント１', 0, '2023-01-01T00:00:00.000', 'nexus001', '2023-01-01T00:00:00.000', 'nexus001'); 
 INSERT INTO m_client ( client_id, client_name, open_time, close_time, working_time, rest1_start, rest1_end, rest2_start, rest2_end, rest3_start, rest3_end, rest4_start, rest4_end, rest5_start, rest5_end, rest6_start, rest6_end, adjust_rest_time_start, adjust_rest_time_end, comment, delete_flg, created_at, created_user, updated_at, updated_user) 
 VALUES (102, '株式会社イクサス', '09:00:00', '18:00:00', 8.00, '12:00:00', '13:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'コメント２', 0, '2023-01-01T00:00:00.000', 'nexus001', '2023-01-01T00:00:00.000', 'nexus001');
+
+INSERT INTO m_employee (
+    employee_id,
+    employee_name,
+    client_id,
+    hourly_wage,
+    paid_holiday_std,
+    delete_flg,
+    created_at,
+    created_user,
+    updated_at,
+    updated_user
+)
+VALUES (
+    1001,
+    'テスト社員001',
+    101,
+    0,
+    '2026-04-01',
+    0,
+    '2026-09-28 09:00:00',
+    'test_user',
+    '2026-09-28 09:00:00',
+    'test_user'
+);
+
+INSERT INTO m_employee_paid_vacation (
+    employee_id,
+    year,
+    remaind_this_year,
+    remaind_last_year,
+    delete_flg,
+    created_at,
+    created_user,
+    updated_at,
+    updated_user
+)
+VALUES (
+    1001,
+    '2026-04-01',
+    10,
+    5,
+    0,
+    '2026-09-28 09:00:00',
+    'test_user',
+    '2026-09-28 09:00:00',
+    'test_user'
+);
