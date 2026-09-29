@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS m_employee_paid_vacation
 (
     `seq_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `employee_id` int(4) NOT NULL,
-    `year` date DEFAULT NULL,
+    "year" date DEFAULT NULL,
     `remaind_this_year` decimal(10,0) DEFAULT NULL,
     `remaind_last_year` decimal(10,0) DEFAULT NULL,
     `delete_flg` bit(1) DEFAULT NULL,

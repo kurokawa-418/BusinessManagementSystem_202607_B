@@ -30,7 +30,7 @@ VALUES (
 
 INSERT INTO m_employee_paid_vacation (
     employee_id,
-    year,
+    "year",
     remaind_this_year,
     remaind_last_year,
     delete_flg,

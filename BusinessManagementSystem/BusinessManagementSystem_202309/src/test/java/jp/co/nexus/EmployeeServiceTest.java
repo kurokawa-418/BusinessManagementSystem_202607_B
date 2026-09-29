@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.nexus.whc.form.EmployeeForm;
 import com.nexus.whc.repository.EmployeeRepository;
 import com.nexus.whc.services.EmployeeService;
 import com.nexus.whc.services.LockService;
@@ -94,7 +95,7 @@ public class EmployeeServiceTest {
 	}
 
 	/**
-	 * isEmployeeLockedByOtherUser(他のユーザが社員情報をロックしていないか(排他チェック編集中))
+	 * isEmployeeLockedByOtherUser(他のユーザが社員情報をロックしている場合(排他チェック編集中))
 	 * 正常系テストケース
 	 * mockLockService.isLockedByOtherUserはtrueを返す
 	 * 期待値
@@ -112,6 +113,144 @@ public class EmployeeServiceTest {
 				.thenReturn(true);
 		boolean result = target.isEmployeeLockedByOtherUser(employeeId, userId);
 		assertEquals(true, result);
+	}
+
+	/**
+	 * isEmployeeLockedByOtherUser(他のユーザが社員情報をロックしていない場合(排他チェック編集中))
+	 * 正常系テストケース
+	 * mockLockService.isLockedByOtherUserはfalseを返す
+	 * 期待値
+	 * EmployeeService.isEmployeeLockedByOtherUserがfalseを返すこと
+	 */
+	@Test
+	public void isEmployeeLockedByOtherUser2() {
+		String employeeId = "001";
+		String userId = "testUser";
+
+		Mockito.when(mockLockService.isLockedByOtherUser(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId))
+				.thenReturn(false);
+
+		boolean result = target.isEmployeeLockedByOtherUser(employeeId, userId);
+
+		assertEquals(false, result);
+	}
+
+	/**deleteEmployee（社員情報を削除できる場合）
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deleteEmployeeは1を返す
+	 * 期待値
+	 * EmployeeService.deleteEmployeeが1を返すこと
+	 */
+
+	@Test
+	public void deleteEmployee() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deleteEmployee(employeeForm))
+				.thenReturn(1);
+
+		int result = target.deleteEmployee(employeeForm);
+
+		assertEquals(1, result);
+
+	}
+
+	/**
+	 * deleteEmployee(社員情報を削除できない場合)
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deleteEmployeeは0を返す
+	 * 期待値
+	 * EmployeeService.deleteEmployeeが0を返すこと
+	 */
+	@Test
+	public void deleteEmployee2() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deleteEmployee(employeeForm))
+				.thenReturn(0);
+
+		int result = target.deleteEmployee(employeeForm);
+
+		assertEquals(0, result);
+	}
+
+	/**
+	 * deleteEmployee(Repositoryから2が返却された場合)
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deleteEmployeeは2を返す
+	 * 期待値
+	 * EmployeeService.deleteEmployeeが2を返すこと
+	 */
+	@Test
+	public void deleteEmployee3() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deleteEmployee(employeeForm))
+				.thenReturn(2);
+
+		int result = target.deleteEmployee(employeeForm);
+
+		assertEquals(2, result);
+	}
+
+	/**
+	 * deletePaidVacation(有給情報を削除できる場合)
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deletePaidVacationは1を返す
+	 * 期待値
+	 * EmployeeService.deletePaidVacationが1を返すこと
+	 */
+	@Test
+	public void deletePaidVacation() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deletePaidVacation(employeeForm))
+				.thenReturn(1);
+
+		int result = target.deletePaidVacation(employeeForm);
+
+		assertEquals(1, result);
+	}
+
+	/**
+	 * deletePaidVacation(削除対象の有給情報が存在しない場合)
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deletePaidVacationは0を返す
+	 * 期待値
+	 * EmployeeService.deletePaidVacationが0を返すこと
+	 */
+	@Test
+	public void deletePaidVacation2() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deletePaidVacation(employeeForm))
+				.thenReturn(0);
+
+		int result = target.deletePaidVacation(employeeForm);
+
+		assertEquals(0, result);
+	}
+
+	/**
+	 * deletePaidVacation(Repositoryから2が返却された場合)
+	 * 正常系テストケース
+	 * mockEmployeeRepository.deletePaidVacationは2を返す
+	 * 期待値
+	 * EmployeeService.deletePaidVacationが2を返すこと
+	 */
+	@Test
+	public void deletePaidVacation3() {
+		EmployeeForm employeeForm = new EmployeeForm();
+
+		Mockito.when(mockEmployeeRepository.deletePaidVacation(employeeForm))
+				.thenReturn(2);
+
+		int result = target.deletePaidVacation(employeeForm);
+
+		assertEquals(2, result);
 	}
 
 }
