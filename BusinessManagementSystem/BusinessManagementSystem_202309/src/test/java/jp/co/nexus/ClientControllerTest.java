@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,13 +25,6 @@ import com.nexus.whc.controller.ClientController;
 import com.nexus.whc.services.ClientService;
 import com.nexus.whc.services.LockService;
 
-/**
- * ClientControllerのテストクラス
- *
- * 対象機能：
- * ・顧客一覧
- * ・顧客削除
- */
 @RunWith(MockitoJUnitRunner.class)
 public class ClientControllerTest {
 
@@ -236,7 +230,153 @@ public class ClientControllerTest {
 		verify(model, times(1))
 				.addAttribute("page", 2);
 	}
+	
+	/**
+	 * createPageNumbers
+	 * 総ページ数が5ページ以下の場合
+	 * [1, 2, 3, 4, 5]
+	 */
+	@Test
+	public void createPageNumbers_001() {
 
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						1,
+						5);
+
+		assertEquals(
+				Arrays.asList(1, 2, 3, 4, 5),
+				result);
+	}
+
+	/**
+	 * createPageNumbers
+	 * 現在ページが1～2ページ目の場合
+	 * [1, 2, 3, -1, 10]
+	 */
+	@Test
+	public void createPageNumbers_002() {
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						1,
+						10);
+
+		assertEquals(
+				Arrays.asList(1, 2, 3, -1, 10),
+				result);
+	}
+
+	/**
+	 * createPageNumbers
+	 * 現在ページが3ページ目の場合
+	 * [1, 2, 3, 4, -1, 10]
+	 */
+	@Test
+	public void createPageNumbers_003() {
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						3,
+						10);
+
+		assertEquals(
+				Arrays.asList(1, 2, 3, 4, -1, 10),
+				result);
+	}
+
+	/**
+	 * createPageNumbers
+	 * 現在ページが最終ページの2つ前の場合
+	 * [1, -1, 7, 8, 9, 10]
+	 */
+	@Test
+	public void createPageNumbers_004() {
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						8,
+						10);
+
+		assertEquals(
+				Arrays.asList(1, -1, 7, 8, 9, 10),
+				result);
+	}
+
+	/**
+	 * createPageNumbers
+	 * 現在ページが最終ページの1つ前の場合
+	 * [1, -1, 8, 9, 10]
+	 */
+	@Test
+	public void createPageNumbers_005() {
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						9,
+						10);
+
+		assertEquals(
+				Arrays.asList(1, -1, 8, 9, 10),
+				result);
+	}
+
+	/**
+	 * createPageNumbers
+	 * 現在ページが中間ページの場合
+	 * [1, -1, 4, 5, 6, -1, 10]
+	 */
+	@Test
+	public void createPageNumbers_006() {
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>) ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						5,
+						10);
+
+		assertEquals(
+				Arrays.asList(1, -1, 4, 5, 6, -1, 10),
+				result);
+	}
+	
+	/**
+	 * createPageNumbers
+	 * 検索結果が0件の場合
+	 * ページ番号が表示されないこと
+	 */
+	@Test
+	public void createPageNumbers_007() {
+		
+		@SuppressWarnings("unchecked")
+		List<Integer> result =
+				(List<Integer>)ReflectionTestUtils.invokeMethod(
+						clientController,
+						"createPageNumbers",
+						1,
+						0);
+		assertEquals(
+				Arrays.asList(),
+				result);
+	}
+	
 	/**
 	 * postDelete
 	 * 顧客を1件正常に削除できることを確認する。

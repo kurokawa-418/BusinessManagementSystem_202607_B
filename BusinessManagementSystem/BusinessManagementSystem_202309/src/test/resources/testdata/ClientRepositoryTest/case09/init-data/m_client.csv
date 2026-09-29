@@ -1,3 +1,4 @@
 client_id,client_name,open_time,close_time,working_time,rest1_start,rest1_end,comment,delete_flg,created_at,created_user,updated_at,updated_user
 101,株式会社アクサス,9:00:00,18:00:00,8,12:00:00,13:00:00,コメント１,false,2023-01-01 00:00:00,nexus001,2023-01-01 00:00:00,nexus001
 102,株式会社イクサス,9:00:00,18:00:00,8,12:00:00,13:00:00,コメント２,false,2023-01-01 00:00:00,nexus001,2023-01-01 00:00:00,nexus001
+108,株式会社ククサス,9:00:00,18:00:00,8,12:00:00,13:00:00,コメント8,false,2023-01-01 00:00:00,nexus001,2023-01-01 00:00:00,nexus001
