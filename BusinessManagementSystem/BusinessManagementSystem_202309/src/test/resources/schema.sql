@@ -31,3 +31,24 @@ CREATE TABLE IF NOT EXISTS m_client
    `updated_at` DATETIME NULL DEFAULT NULL,
    `updated_user` VARCHAR (16) NULL DEFAULT NULL
 );
+
+CREATE TABLE IF NOT EXISTS m_user
+(
+    seq_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(16) NOT NULL UNIQUE,
+    user_name VARCHAR(16) NOT NULL,
+    password VARCHAR(64) NOT NULL,
+    auth_id INT NOT NULL,
+    mail_address VARCHAR(254) NOT NULL,
+    delete_flg BOOLEAN,
+    created_at DATETIME,
+    created_user VARCHAR(16),
+    updated_at DATETIME,
+    updated_user VARCHAR(16)
+);
+
+CREATE TABLE IF NOT EXISTS m_authority
+(
+    auth_id INT PRIMARY KEY,
+    auth_status VARCHAR(10) NOT NULL UNIQUE
+);
