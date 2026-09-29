@@ -1,1 +1,2 @@
-test
+seq_id,user_id,user_name,password,auth_id,mail_address,delete_flg
+1,test001,テストユーザ,password,1,test001@example.com,1
