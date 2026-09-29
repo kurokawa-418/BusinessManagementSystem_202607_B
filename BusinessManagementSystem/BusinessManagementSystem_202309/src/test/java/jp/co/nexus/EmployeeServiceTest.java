@@ -41,12 +41,12 @@ public class EmployeeServiceTest {
 	/**
 	 * searchEmployeeList(社員一覧を取得できる場合)
 	 * 正常系テストケース
-	 * mockEmployeeRepository.searchEmployeeは社員一覧を返す
+	 * mockEmployeeRepository.searchEmployeeListは社員一覧を返す
 	 * 期待値
 	 * EmployeeService.searchEmployeeListがその社員一覧を返すこと
 	 */
 	@Test
-	public void searchEmployee() {
+	public void searchEmployeeList() {
 		List<Map<String, Object>> mockList = new ArrayList<>();
 		Map<String, Object> mockMap = new HashMap<>();
 
@@ -64,6 +64,26 @@ public class EmployeeServiceTest {
 
 		/*ListにMapを格納*/
 		mockList.add(mockMap);
+		/*実際にServiceを呼ぶ*/
+		Mockito.when(mockEmployeeRepository.searchEmployeeList())
+				.thenReturn(mockList);
+
+		List<Map<String, Object>> result = target.searchEmployeeList();
+		/*結果を期待値と比較*/
+		assertEquals(mockList, result);
+
+	}
+
+	/**
+	 * searchEmployeeList（社員一覧が0件の場合）
+	 * 正常系テストケース
+	 * mockEmployeeRepository.searchEmployeeListは0件のListを返す
+	 * 期待値
+	 * ・0件のListが返却されること
+	 */
+	@Test
+	public void searchEmployeeList2() {
+		List<Map<String, Object>> mockList = new ArrayList<>();
 
 		Mockito.when(mockEmployeeRepository.searchEmployeeList())
 				.thenReturn(mockList);
@@ -71,7 +91,27 @@ public class EmployeeServiceTest {
 		List<Map<String, Object>> result = target.searchEmployeeList();
 
 		assertEquals(mockList, result);
+	}
 
+	/**
+	 * isEmployeeLockedByOtherUser(他のユーザが社員情報をロックしていないか(排他チェック編集中))
+	 * 正常系テストケース
+	 * mockLockService.isLockedByOtherUserはtrueを返す
+	 * 期待値
+	 * EmployeeService.isEmployeeLockedByOtherUserがtrueを返すこと
+	 */
+
+	@Test
+	public void isEmployeeLockedByOtherUser() {
+		String employeeId = "001";
+		String userId = "testUser";
+		Mockito.when(mockLockService.isLockedByOtherUser(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId))
+				.thenReturn(true);
+		boolean result = target.isEmployeeLockedByOtherUser(employeeId, userId);
+		assertEquals(true, result);
 	}
 
 }
