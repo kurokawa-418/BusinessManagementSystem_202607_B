@@ -65,3 +65,21 @@ CREATE TABLE IF NOT EXISTS m_authority
     `updated_at` DATETIME NULL DEFAULT NULL ,
     `updated_user` VARCHAR(16) NULL DEFAULT NULL 
     );
+
+CREATE TABLE IF NOT EXISTS m_employee_paid_vacation
+(
+    `seq_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `employee_id` int(4) NOT NULL,
+    "year" date DEFAULT NULL,
+    `remaind_this_year` decimal(10,0) DEFAULT NULL,
+    `remaind_last_year` decimal(10,0) DEFAULT NULL,
+    `delete_flg` bit(1) DEFAULT NULL,
+    `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+    `created_user` varchar(11) DEFAULT NULL,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
+    `updated_user` varchar(11) DEFAULT NULL,
+    PRIMARY KEY (`seq_id`),
+    KEY `employee_id` (`employee_id`),
+    CONSTRAINT `m_employee_paid_vacation_ibfk_1`
+        FOREIGN KEY (`employee_id`) REFERENCES `m_employee` (`employee_id`)
+);
