@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS m_employee_paid_vacation
     `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
     `updated_user` varchar(11) DEFAULT NULL,
     PRIMARY KEY (`seq_id`),
-    KEY `employee_id` (`employee_id`),
-    CONSTRAINT `m_employee_paid_vacation_ibfk_1`
-        FOREIGN KEY (`employee_id`) REFERENCES `m_employee` (`employee_id`)
+    KEY `employee_id` (`employee_id`)
+    
 );
