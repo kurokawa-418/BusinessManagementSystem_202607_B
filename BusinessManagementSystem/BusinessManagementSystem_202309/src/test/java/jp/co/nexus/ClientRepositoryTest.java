@@ -31,8 +31,8 @@ import com.nexus.whc.repository.ClientRepository;
 @RunWith(SpringRunner.class)
 @DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class) // DBUnitでCSVファイルを使えるよう指定。
 @TestExecutionListeners({
-	DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
-	TransactionDbUnitTestExecutionListener.class // @DatabaseSetupや＠ExpectedDatabaseなどを使えるように指定
+		DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
+		TransactionDbUnitTestExecutionListener.class // @DatabaseSetupや＠ExpectedDatabaseなどを使えるように指定
 })
 @SpringBootApplication
 @SpringBootTest(classes = ClientRepositoryTest.TestConfig.class)
@@ -157,7 +157,7 @@ public class ClientRepositoryTest {
 	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case04/after-update-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（変更あり）
 	public void deleteClients_001() {
 
-		List<Integer> clientIds = Arrays.asList(101);
+		List<Integer> clientIds = Arrays.asList(100);
 
 		int result = clientRepository.deleteClients(clientIds);
 
@@ -167,13 +167,17 @@ public class ClientRepositoryTest {
 		// 削除後の一覧を取得
 		List<Map<String, Object>> clients = clientRepository.findAllClient();
 
-		// 102だけ残っていること
-		assertEquals(1, clients.size());
+		// 101,102だけ残っていること
+		assertEquals(2, clients.size());
+
+		assertEquals(
+				101,
+				((Number) clients.get(0).get("client_id")).intValue());
 
 		assertEquals(
 				102,
-				((Number) clients.get(0).get("client_id")).intValue());
-		
+				((Number) clients.get(1).get("client_id")).intValue());
+
 	}
 
 	/**
@@ -256,7 +260,7 @@ public class ClientRepositoryTest {
 		assertEquals(
 				101,
 				((Number) clients.get(0).get("client_id")).intValue());
-		
+
 		assertEquals(
 				102,
 				((Number) clients.get(1).get("client_id")).intValue());
@@ -316,7 +320,7 @@ public class ClientRepositoryTest {
 		assertEquals(
 				101,
 				((Number) clients.get(0).get("client_id")).intValue());
-		
+
 		assertEquals(
 				102,
 				((Number) clients.get(1).get("client_id")).intValue());
@@ -377,4 +381,347 @@ public class ClientRepositoryTest {
 			// NullPointerExceptionが発生すればOK
 		}
 	}
+
+	/**
+	 * searchClients
+	 * 一覧検索の正常系。
+	 *
+	 * 顧客ID、顧客名を指定しない場合、
+	 * 有効な顧客がclient_id昇順で取得されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_001() {
+
+		List<Map<String, Object>> result = clientRepository.searchClients("", "", 1);
+
+		assertEquals(5, result.size());
+
+		assertEquals(
+				109,
+				((Number) result.get(0).get("client_id")).intValue());
+
+		assertEquals(
+				113,
+				((Number) result.get(4).get("client_id")).intValue());
+	}
+	
+	/**
+	 * searchClients
+	 * 顧客ID検索の正常系。
+	 *
+	 * 顧客IDを指定した場合、
+	 * 指定した顧客だけが取得されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_002() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients("109", "", 1);
+
+	    assertEquals(1, result.size());
+
+	    assertEquals(
+	            109,
+	            ((Number) result.get(0).get("client_id")).intValue());
+
+	    assertEquals(
+	            "株式会社ケクサス",
+	            result.get(0).get("client_name"));
+	}
+	
+	/**
+	 * searchClients
+	 * 顧客名検索の正常系。
+	 *
+	 * 顧客名の一部を指定した場合、
+	 * 指定文字列を含む顧客が取得されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_003() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients("", "ケクサス", 1);
+
+	    assertEquals(1, result.size());
+
+	    assertEquals(
+	            "株式会社ケクサス",
+	            result.get(0).get("client_name"));
+	}
+	
+	/**
+	 * searchClients
+	 * 顧客ID、顧客名検索の正常系。
+	 *
+	 * 顧客IDと顧客名の両方を指定した場合、
+	 * 両方の条件を満たす顧客だけが取得されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_004() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients(
+	                    "109",
+	                    "ケクサス",
+	                    1);
+
+	    assertEquals(1, result.size());
+
+	    assertEquals(
+	            109,
+	            ((Number) result.get(0).get("client_id")).intValue());
+	}
+	
+	/**
+	 * searchClients
+	 * 一覧検索の異常系。
+	 *
+	 * 該当する顧客が存在しない場合、
+	 * 空のListが返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_005() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients("999", "", 1);
+
+	    assertEquals(0, result.size());
+	}
+	
+	/**
+	 * searchClients
+	 * 一覧検索の正常系。
+	 *
+	 * 顧客IDと顧客名がnullの場合、
+	 * 検索条件なしとして取得されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_006() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients(null, null, 1);
+
+	    assertEquals(5, result.size());
+	}
+	
+	/**
+	 * searchClients
+	 * 一覧検索の異常系。
+	 *
+	 * 顧客IDと顧客名の両方を指定し、
+	 * 両方の条件を満たす顧客が存在しない場合、
+	 * 空のListが返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void searchClients_007() {
+
+	    List<Map<String, Object>> result =
+	            clientRepository.searchClients(
+	                    "101",
+	                    "存在しない顧客",
+	                    1);
+
+	    assertEquals(0, result.size());
+	}
+	
+	/**
+	 * countClients
+	 * 顧客件数取得の正常系。
+	 *
+	 * 検索条件を指定しない場合、
+	 * 有効な顧客の総件数が取得できることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_001() {
+
+	    int result =
+	            clientRepository.countClients("", "");
+
+	    assertEquals(5, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客ID検索の正常系。
+	 *
+	 * 顧客IDを指定した場合、
+	 * 該当する顧客の件数が取得できることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_002() {
+
+	    int result =
+	            clientRepository.countClients("110", "");
+
+	    assertEquals(1, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客名検索の正常系。
+	 *
+	 * 顧客名を指定した場合、
+	 * 指定文字列を含む顧客の件数が取得できることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_003() {
+
+	    int result =
+	            clientRepository.countClients("", "コクサス");
+
+	    assertEquals(1, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客ID、顧客名検索の正常系。
+	 *
+	 * 顧客IDと顧客名の両方を指定した場合、
+	 * 両方の条件を満たす顧客の件数が取得できることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_004() {
+
+	    int result =
+	            clientRepository.countClients(
+	                    "110",
+	                    "コクサス");
+
+	    assertEquals(1, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客件数取得の異常系。
+	 *
+	 * 該当する顧客が存在しない場合、
+	 * 0件が返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_005() {
+
+	    int result =
+	            clientRepository.countClients("999", "");
+
+	    assertEquals(0, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客件数取得の正常系。
+	 *
+	 * 顧客IDと顧客名がnullの場合、
+	 * 検索条件なしとして件数を取得することを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_006() {
+
+	    int result =
+	            clientRepository.countClients(null, null);
+
+	    assertEquals(5, result);
+	}
+	
+	/**
+	 * countClients
+	 * 顧客件数取得の異常系。
+	 *
+	 * 顧客IDと顧客名の両方を指定し、
+	 * 両方の条件を満たす顧客が存在しない場合、
+	 * 0件が返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void countClients_007() {
+
+	    int result =
+	            clientRepository.countClients(
+	                    "101",
+	                    "存在しない顧客");
+
+	    assertEquals(0, result);
+	}
+	
+	/**
+	 * existsActiveClient
+	 * 有効顧客存在チェックの正常系。
+	 *
+	 * 存在する有効な顧客IDを指定した場合、
+	 * trueが返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void existsActiveClient_001() {
+
+	    boolean result =
+	            clientRepository.existsActiveClient(111);
+
+	    assertTrue(result);
+	}
+	
+	/**
+	 * existsActiveClient
+	 * 有効顧客存在チェックの異常系。
+	 *
+	 * 存在する顧客でも削除済みの場合、
+	 * falseが返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case13/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case13/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void existsActiveClient_002() {
+
+	    boolean result =
+	            clientRepository.existsActiveClient(102);
+
+	    assertFalse(result);
+	}
+	
+	/**
+	 * existsActiveClient
+	 * 有効顧客存在チェックの異常系。
+	 *
+	 * 存在しない顧客IDを指定した場合、
+	 * falseが返却されることを確認する。
+	 */
+	@Test
+	@DatabaseSetup("/testdata/ClientRepositoryTest/case12/init-data")
+	@ExpectedDatabase(value = "/testdata/ClientRepositoryTest/case12/init-data", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED) // テスト実行後のデータ検証（初期データのままであること）
+	public void existsActiveClient_003() {
+
+	    boolean result =
+	            clientRepository.existsActiveClient(999);
+
+	    assertFalse(result);
+	}
+	
+	
 }
