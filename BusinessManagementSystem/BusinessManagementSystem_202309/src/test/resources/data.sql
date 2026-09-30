@@ -28,6 +28,30 @@ VALUES (
     'test_user'
 );
 
+INSERT INTO m_employee (
+    employee_id,
+    employee_name,
+    client_id,
+    hourly_wage,
+    paid_holiday_std,
+    delete_flg,
+    created_at,
+    created_user,
+    updated_at,
+    updated_user
+)
+VALUES (
+    1002,
+    'テスト社員002',
+    101,
+    0,
+    '2026-04-01',
+    0,
+    '2026-09-28 09:00:00',
+    'test_user',
+    '2026-09-28 09:00:00',
+    'test_user'
+);
 INSERT INTO m_employee_paid_vacation (
     employee_id, `year`, remaind_this_year,
     remaind_last_year,
@@ -39,6 +63,27 @@ INSERT INTO m_employee_paid_vacation (
 )
 VALUES (
     1001,
+    '2026-04-01',
+    10,
+    5,
+    0,
+    '2026-09-28 09:00:00',
+    'test_user',
+    '2026-09-28 09:00:00',
+    'test_user'
+);
+
+INSERT INTO m_employee_paid_vacation (
+    employee_id, `year`, remaind_this_year,
+    remaind_last_year,
+    delete_flg,
+    created_at,
+    created_user,
+    updated_at,
+    updated_user
+)
+VALUES (
+    1002,
     '2026-04-01',
     10,
     5,
