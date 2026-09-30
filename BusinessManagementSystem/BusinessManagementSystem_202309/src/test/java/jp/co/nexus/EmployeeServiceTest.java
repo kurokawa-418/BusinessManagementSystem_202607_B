@@ -155,7 +155,6 @@ public class EmployeeServiceTest {
 		int result = target.deleteEmployee(employeeForm);
 
 		assertEquals(1, result);
-
 	}
 
 	/**
