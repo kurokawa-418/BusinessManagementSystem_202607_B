@@ -39,9 +39,9 @@ public class EmployeeService {
 	public int registEmployee(EmployeeForm employeeForm) {
 		return employeeRepository.registEmployee(employeeForm);
 	}
-	
+
 	public boolean existsEmployeeName(String employeeName) {
-	    return employeeRepository.existsEmployeeName(employeeName);
+		return employeeRepository.existsEmployeeName(employeeName);
 	}
 
 	public int registPaidVacation(EmployeeForm employeeForm) {
@@ -112,7 +112,7 @@ public class EmployeeService {
 	public int deletePaidVacation(EmployeeForm employeeForm) {
 		return employeeRepository.deletePaidVacation(employeeForm);
 	}
-	
+
 	public boolean existsEmployee(String employeeId) {
 		return employeeRepository.existsEmployee(employeeId);
 	}
@@ -146,14 +146,14 @@ public class EmployeeService {
 				Integer.valueOf(employeeId),
 				userId);
 	}
-	
-	public String getEmployeeLockingUserId(
-	        String employeeId,
-	        String userId) {
 
-	    return lockService.getLockingUserId(
-	            "m_employee",
-	            Integer.valueOf(employeeId),
-	            userId);
+	public String getEmployeeLockingUserId(
+			String employeeId,
+			String userId) {
+
+		return lockService.getLockingUserId(
+				"m_employee",
+				Integer.valueOf(employeeId),
+				userId);
 	}
 }
