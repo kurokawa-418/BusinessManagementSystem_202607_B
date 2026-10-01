@@ -654,7 +654,7 @@ public class ClientRepositoryTest {
 
 	    int result =
 	            clientRepository.countClients(
-	                    "101",
+	                    "999",
 	                    "存在しない顧客");
 
 	    assertEquals(0, result);
@@ -691,7 +691,7 @@ public class ClientRepositoryTest {
 	public void existsActiveClient_002() {
 
 	    boolean result =
-	            clientRepository.existsActiveClient(102);
+	            clientRepository.existsActiveClient(111);
 
 	    assertFalse(result);
 	}
