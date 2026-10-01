@@ -9,14 +9,12 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,28 +26,21 @@ import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.nexus.whc.repository.ClientRepository;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
 @DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class) // DBUnitでCSVファイルを使えるよう指定。
 @TestExecutionListeners({
 		DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
 		TransactionDbUnitTestExecutionListener.class // @DatabaseSetupや＠ExpectedDatabaseなどを使えるように指定
 })
+@ContextConfiguration(classes = ClientRepository.class)
+@TestPropertySource(locations = "classpath:application.properties")
 @SpringBootApplication
-@SpringBootTest(classes = ClientRepositoryTest.TestConfig.class)
 @Transactional
 public class ClientRepositoryTest {
 
 	@Autowired
 	private ClientRepository clientRepository;
-
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Configuration
-	@EnableAutoConfiguration
-	@ComponentScan(basePackageClasses = ClientRepository.class)
-	public static class TestConfig {
-	}
 
 	/**
 	 * findAllClient
