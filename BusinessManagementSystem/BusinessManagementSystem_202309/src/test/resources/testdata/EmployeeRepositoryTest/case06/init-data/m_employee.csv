@@ -1,2 +1,2 @@
 employee_id,employee_name,client_id,hourly_wage,paid_holiday_std,delete_flg,created_at,created_user,updated_at,updated_user
-1002,'テスト社員002',101,0,'2026-04-01',0,'2026-09-28 09:00:00','test_user','2026-09-28 09:00:00','test_user'
+1001,テスト社員001,101,0,2026-04-01,0,2026-09-28 09:00:00,test_user,2026-09-28 09:00:00,test_user
