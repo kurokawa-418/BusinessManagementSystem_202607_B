@@ -713,6 +713,5 @@ public class ClientRepositoryTest {
 
 	    assertFalse(result);
 	}
-	
-	
+
 }
